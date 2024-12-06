@@ -247,6 +247,9 @@
             fullscreen.style.display = 'none';
             if (isSoundOn) endSound.play();
             // Add congratulation screen with cool effect here
+             setTimeout(() => {
+        returnToMenu();
+    }, 10);
         }
 
         function formatTime(seconds) {
