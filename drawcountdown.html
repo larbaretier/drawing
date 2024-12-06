@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing Practice App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #app {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        #fullscreen img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        #countdown-container {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+        }
+        #countdown {
+            color: white;
+            font-size: 24px;
+            margin-right: 10px;
+            transition: font-size 0.3s ease;
+        }
+        #countdown.big {
+            font-size: 48px;
+            color: #ff4444;
+        }
+        #phaseTitle {
+            position: fixed;
+            top: 50px;
+            left: 10px;
+            color: white;
+            font-size: 32px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #configPanel {
+            display: none;
+            margin-top: 20px;
+        }
+        .control-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Drawing Practice App</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="startButton">Start</button>
+        <button id="optionsButton">Options</button>
+        <div id="configPanel">
+            <h2>Configuration</h2>
+            <div id="phaseConfig"></div>
+            <button id="addPhaseButton">Add Phase</button>
+            <button id="exportConfig">Export Config</button>
+            <input type="file" id="importConfig" accept=".json">
+            <button id="resetConfig">Reset Config</button>
+        </div>
+    </div>
+    <div id="fullscreen">
+        <img id="fullscreenImage" src="" alt="Practice Image">
+        <div id="countdown-container">
+            <div id="countdown"></div>
+            <button id="pauseButton" class="control-button">Pause</button>
+            <button id="soundButton" class="control-button">Sound On</button>
+            <button id="menuButton" class="control-button">Menu</button>
+        </div>
+        <div id="phaseTitle"></div>
+    </div>
+
+    <script>
+        const app = document.getElementById('app');
+        const fullscreen = document.getElementById('fullscreen');
+        const fullscreenImage = document.getElementById('fullscreenImage');
+        const countdown = document.getElementById('countdown');
+        const phaseTitle = document.getElementById('phaseTitle');
+        const startButton = document.getElementById('startButton');
+        const imageInput = document.getElementById('imageInput');
+        const optionsButton = document.getElementById('optionsButton');
+        const configPanel = document.getElementById('configPanel');
+        const phaseConfig = document.getElementById('phaseConfig');
+        const addPhaseButton = document.getElementById('addPhaseButton');
+        const exportConfigButton = document.getElementById('exportConfig');
+        const importConfigInput = document.getElementById('importConfig');
+        const resetConfigButton = document.getElementById('resetConfig');
+        const pauseButton = document.getElementById('pauseButton');
+        const soundButton = document.getElementById('soundButton');
+        const menuButton = document.getElementById('menuButton');
+
+        let config = [
+            {type: "observation", duration: 3},
+            {type: "model", duration: 60},
+            {type: "memory", duration: 150},
+            {type: "model", duration: 240},
+            {type: "model", duration: 90},
+            {type: "model", duration: 45},
+            {type: "model", duration: 25},
+            {type: "model", duration: 10},
+            {type: "model", duration: 25},
+            {type: "model", duration: 45},
+            {type: "model", duration: 90},
+            {type: "memory", duration: 150}
+        ];
+
+        let currentPhase = 0;
+        let timer;
+        let isPaused = false;
+        let isSoundOn = true;
+        let remainingTime = 0;
+
+        const transitionSound = new Audio('https://example.com/transition.mp3');
+        const startSound = new Audio('https://example.com/start.mp3');
+        const endSound = new Audio('https://example.com/end.mp3');
+        const warningSound = new Audio('https://example.com/warning.mp3');
+
+        function updateConfigPanel() {
+            // ... (unchanged)
+        }
+
+        function startPractice() {
+            currentPhase = 0;
+            fullscreen.style.display = 'flex';
+            nextPhase();
+        }
+
+        function nextPhase() {
+            if (currentPhase >= config.length) {
+                endPractice();
+                return;
+            }
+
+            const phase = config[currentPhase];
+            countdown.textContent = formatTime(phase.duration);
+            fullscreenImage.style.display = phase.type !== 'memory' ? 'block' : 'none';
+
+            if (currentPhase === 0) {
+                phaseTitle.textContent = "Observation (don't draw)";
+                if (isSoundOn) startSound.play();
+            } else if (phase.type === 'memory') {
+                phaseTitle.textContent = "From Memory";
+            } else if (phase.type === 'model') {
+                phaseTitle.textContent = "From Model";
+            }
+
+            if (currentPhase > 0 && isSoundOn) {
+                transitionSound.play();
+            }
+
+            remainingTime = phase.duration;
+            timer = setInterval(() => {
+                if (!isPaused) {
+                    remainingTime--;
+                    countdown.textContent = formatTime(remainingTime);
+                    
+                    // Enhance countdown for last 5 seconds
+                    if (remainingTime <= 5) {
+                        countdown.classList.add('big');
+                        if (isSoundOn && remainingTime === 5) {
+                            warningSound.play();
+                        }
+                    } else {
+                        countdown.classList.remove('big');
+                    }
+                    
+                    if (remainingTime <= 0) {
+                        clearInterval(timer);
+                        currentPhase++;
+                        nextPhase();
+                    }
+                }
+            }, 1000);
+        }
+
+        function endPractice() {
+            fullscreen.style.display = 'none';
+            if (isSoundOn) endSound.play();
+            // Add congratulation screen with cool effect here
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function returnToMenu() {
+            clearInterval(timer);
+            fullscreen.style.display = 'none';
+            app.style.display = 'block';
+            currentPhase = 0;
+            isPaused = false;
+            pauseButton.textContent = 'Pause';
+        }
+
+        startButton.addEventListener('click', () => {
+            if (imageInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    fullscreenImage.src = e.target.result;
+                    app.style.display = 'none';
+                    startPractice();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            }
+        });
+
+        optionsButton.addEventListener('click', () => {
+            configPanel.style.display = configPanel.style.display === 'none' ? 'block' : 'none';
+            updateConfigPanel();
+        });
+
+        addPhaseButton.addEventListener('click', () => {
+            config.push({type: 'model', duration: 60});
+            updateConfigPanel();
+        });
+
+        phaseConfig.addEventListener('change', (e) => {
+            const index = e.target.dataset.index;
+            if (e.target.tagName === 'SELECT') {
+                config[index].type = e.target.value;
+            } else if (e.target.tagName === 'INPUT') {
+                config[index].duration = parseInt(e.target.value);
+            }
+        });
+
+        phaseConfig.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                config.splice(e.target.dataset.index, 1);
+                updateConfigPanel();
+            }
+        });
+
+        exportConfigButton.addEventListener('click', () => {
+            const blob = new Blob([JSON.stringify(config)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'drawing_practice_config.json';
+            a.click();
+        });
+
+        importConfigInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                config = JSON.parse(e.target.result);
+                updateConfigPanel();
+            };
+            reader.readAsText(file);
+        });
+
+        resetConfigButton.addEventListener('click', () => {
+            config = [
+                {type: "observation", duration: 3},
+                {type: "model", duration: 60},
+                {type: "memory", duration: 150},
+                {type: "model", duration: 240},
+                {type: "model", duration: 90},
+                {type: "model", duration: 45},
+                {type: "model", duration: 25},
+                {type: "model", duration: 10},
+                {type: "model", duration: 25},
+                {type: "model", duration: 45},
+                {type: "model", duration: 90},
+                {type: "memory", duration: 150}
+            ];
+            updateConfigPanel();
+        });
+
+        pauseButton.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+        });
+
+        soundButton.addEventListener('click', () => {
+            isSoundOn = !isSoundOn;
+            soundButton.textContent = isSoundOn ? 'Sound On' : 'Sound Off';
+        });
+
+        menuButton.addEventListener('click', returnToMenu);
+        
+         function updateConfigPanel() {
+        phaseConfig.innerHTML = '';
+        config.forEach((phase, index) => {
+            const phaseDiv = document.createElement('div');
+            phaseDiv.innerHTML = `
+                <select data-index="${index}">
+                    <option value="observation" ${phase.type === 'observation' ? 'selected' : ''}>Observation</option>
+                    <option value="model" ${phase.type === 'model' ? 'selected' : ''}>Model</option>
+                    <option value="memory" ${phase.type === 'memory' ? 'selected' : ''}>Memory</option>
+                </select>
+                <input type="number" value="${phase.duration}" data-index="${index}">
+                <button data-index="${index}">Remove</button>
+            `;
+            phaseConfig.appendChild(phaseDiv);
+        });
+    }
+
+    optionsButton.addEventListener('click', () => {
+        configPanel.style.display = configPanel.style.display === 'none' ? 'block' : 'none';
+        updateConfigPanel();
+    });
+
+    addPhaseButton.addEventListener('click', () => {
+        config.push({type: 'model', duration: 60});
+        updateConfigPanel();
+    });
+
+    phaseConfig.addEventListener('change', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        if (e.target.tagName === 'SELECT') {
+            config[index].type = e.target.value;
+        } else if (e.target.tagName === 'INPUT') {
+            config[index].duration = parseInt(e.target.value);
+        }
+    });
+
+    phaseConfig.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            const index = parseInt(e.target.dataset.index);
+            config.splice(index, 1);
+            updateConfigPanel();
+        }
+    });
+
+    exportConfigButton.addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(config)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'drawing_practice_config.json';
+        a.click();
+    });
+
+    importConfigInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                config = JSON.parse(e.target.result);
+                updateConfigPanel();
+            } catch (error) {
+                console.error('Error parsing config file:', error);
+                alert('Invalid configuration file');
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    resetConfigButton.addEventListener('click', () => {
+        config = [
+            {type: "observation", duration: 3},
+            {type: "model", duration: 60},
+            {type: "memory", duration: 150},
+            {type: "model", duration: 240},
+            {type: "model", duration: 90},
+            {type: "model", duration: 45},
+            {type: "model", duration: 25},
+            {type: "model", duration: 10},
+            {type: "model", duration: 25},
+            {type: "model", duration: 45},
+            {type: "model", duration: 90},
+            {type: "memory", duration: 150}
+        ];
+        updateConfigPanel();
+    });
+    </script>
+</body>
+</html>
