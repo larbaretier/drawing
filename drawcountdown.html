@@ -36,6 +36,7 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
         }
         #countdown-container {
             position: fixed;
@@ -79,6 +80,11 @@
             padding: 5px 10px;
             margin-left: 5px;
         }
+        #image-controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -105,6 +111,11 @@
             <button id="menuButton" class="control-button">Menu</button>
         </div>
         <div id="phaseTitle"></div>
+        <div id="image-controls">
+            <button id="zoomInButton" class="control-button">Zoom+</button>
+            <button id="zoomOutButton" class="control-button">Zoom-</button>
+            <button id="resetZoomButton" class="control-button">Reset Zoom</button>
+        </div>
     </div>
 
     <script>
@@ -125,6 +136,9 @@
         const pauseButton = document.getElementById('pauseButton');
         const soundButton = document.getElementById('soundButton');
         const menuButton = document.getElementById('menuButton');
+        const zoomInButton = document.getElementById('zoomInButton');
+        const zoomOutButton = document.getElementById('zoomOutButton');
+        const resetZoomButton = document.getElementById('resetZoomButton');
 
         let config = [
             {type: "observation", duration: 3},
@@ -146,6 +160,8 @@
         let isPaused = false;
         let isSoundOn = true;
         let remainingTime = 0;
+        let currentZoom = 1;
+        const zoomStep = 0.1;
 
         const transitionSound = new Audio('https://example.com/transition.mp3');
         const startSound = new Audio('https://example.com/start.mp3');
@@ -153,7 +169,20 @@
         const warningSound = new Audio('https://example.com/warning.mp3');
 
         function updateConfigPanel() {
-            // ... (unchanged)
+            phaseConfig.innerHTML = '';
+            config.forEach((phase, index) => {
+                const phaseDiv = document.createElement('div');
+                phaseDiv.innerHTML = `
+                    <select data-index="${index}">
+                        <option value="observation" ${phase.type === 'observation' ? 'selected' : ''}>Observation</option>
+                        <option value="model" ${phase.type === 'model' ? 'selected' : ''}>Model</option>
+                        <option value="memory" ${phase.type === 'memory' ? 'selected' : ''}>Memory</option>
+                    </select>
+                    <input type="number" value="${phase.duration}" data-index="${index}">
+                    <button data-index="${index}">Remove</button>
+                `;
+                phaseConfig.appendChild(phaseDiv);
+            });
         }
 
         function startPractice() {
@@ -172,16 +201,11 @@
             countdown.textContent = formatTime(phase.duration);
             fullscreenImage.style.display = phase.type !== 'memory' ? 'block' : 'none';
 
-            if (currentPhase === 0) {
-                phaseTitle.textContent = "Observation (don't draw)";
-                if (isSoundOn) startSound.play();
-            } else if (phase.type === 'memory') {
-                phaseTitle.textContent = "From Memory";
-            } else if (phase.type === 'model') {
-                phaseTitle.textContent = "From Model";
-            }
+            updatePhaseTitle(phase);
 
-            if (currentPhase > 0 && isSoundOn) {
+            if (currentPhase === 0 && isSoundOn) {
+                startSound.play();
+            } else if (currentPhase > 0 && isSoundOn) {
                 transitionSound.play();
             }
 
@@ -191,7 +215,6 @@
                     remainingTime--;
                     countdown.textContent = formatTime(remainingTime);
                     
-                    // Enhance countdown for last 5 seconds
                     if (remainingTime <= 5) {
                         countdown.classList.add('big');
                         if (isSoundOn && remainingTime === 5) {
@@ -208,6 +231,16 @@
                     }
                 }
             }, 1000);
+        }
+
+        function updatePhaseTitle(phase) {
+            if (phase.type === 'observation') {
+                phaseTitle.textContent = "Observation (don't draw)";
+            } else if (phase.type === 'memory') {
+                phaseTitle.textContent = "From Memory";
+            } else if (phase.type === 'model') {
+                phaseTitle.textContent = "From Model";
+            }
         }
 
         function endPractice() {
@@ -229,6 +262,20 @@
             currentPhase = 0;
             isPaused = false;
             pauseButton.textContent = 'Pause';
+        }
+
+        function zoomImage(zoomIn) {
+            if (zoomIn) {
+                currentZoom += zoomStep;
+            } else {
+                currentZoom = Math.max(currentZoom - zoomStep, zoomStep);
+            }
+            fullscreenImage.style.transform = `scale(${currentZoom})`;
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            fullscreenImage.style.transform = 'scale(1)';
         }
 
         startButton.addEventListener('click', () => {
@@ -254,7 +301,7 @@
         });
 
         phaseConfig.addEventListener('change', (e) => {
-            const index = e.target.dataset.index;
+            const index = parseInt(e.target.dataset.index);
             if (e.target.tagName === 'SELECT') {
                 config[index].type = e.target.value;
             } else if (e.target.tagName === 'INPUT') {
@@ -264,7 +311,8 @@
 
         phaseConfig.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') {
-                config.splice(e.target.dataset.index, 1);
+                const index = parseInt(e.target.dataset.index);
+                config.splice(index, 1);
                 updateConfigPanel();
             }
         });
@@ -282,8 +330,13 @@
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
-                config = JSON.parse(e.target.result);
-                updateConfigPanel();
+                try {
+                    config = JSON.parse(e.target.result);
+                    updateConfigPanel();
+                } catch (error) {
+                    console.error('Error parsing config file:', error);
+                    alert('Invalid configuration file');
+                }
             };
             reader.readAsText(file);
         });
@@ -317,92 +370,10 @@
         });
 
         menuButton.addEventListener('click', returnToMenu);
-        
-         function updateConfigPanel() {
-        phaseConfig.innerHTML = '';
-        config.forEach((phase, index) => {
-            const phaseDiv = document.createElement('div');
-            phaseDiv.innerHTML = `
-                <select data-index="${index}">
-                    <option value="observation" ${phase.type === 'observation' ? 'selected' : ''}>Observation</option>
-                    <option value="model" ${phase.type === 'model' ? 'selected' : ''}>Model</option>
-                    <option value="memory" ${phase.type === 'memory' ? 'selected' : ''}>Memory</option>
-                </select>
-                <input type="number" value="${phase.duration}" data-index="${index}">
-                <button data-index="${index}">Remove</button>
-            `;
-            phaseConfig.appendChild(phaseDiv);
-        });
-    }
 
-    optionsButton.addEventListener('click', () => {
-        configPanel.style.display = configPanel.style.display === 'none' ? 'block' : 'none';
-        updateConfigPanel();
-    });
-
-    addPhaseButton.addEventListener('click', () => {
-        config.push({type: 'model', duration: 60});
-        updateConfigPanel();
-    });
-
-    phaseConfig.addEventListener('change', (e) => {
-        const index = parseInt(e.target.dataset.index);
-        if (e.target.tagName === 'SELECT') {
-            config[index].type = e.target.value;
-        } else if (e.target.tagName === 'INPUT') {
-            config[index].duration = parseInt(e.target.value);
-        }
-    });
-
-    phaseConfig.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            const index = parseInt(e.target.dataset.index);
-            config.splice(index, 1);
-            updateConfigPanel();
-        }
-    });
-
-    exportConfigButton.addEventListener('click', () => {
-        const blob = new Blob([JSON.stringify(config)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'drawing_practice_config.json';
-        a.click();
-    });
-
-    importConfigInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                config = JSON.parse(e.target.result);
-                updateConfigPanel();
-            } catch (error) {
-                console.error('Error parsing config file:', error);
-                alert('Invalid configuration file');
-            }
-        };
-        reader.readAsText(file);
-    });
-
-    resetConfigButton.addEventListener('click', () => {
-        config = [
-            {type: "observation", duration: 3},
-            {type: "model", duration: 60},
-            {type: "memory", duration: 150},
-            {type: "model", duration: 240},
-            {type: "model", duration: 90},
-            {type: "model", duration: 45},
-            {type: "model", duration: 25},
-            {type: "model", duration: 10},
-            {type: "model", duration: 25},
-            {type: "model", duration: 45},
-            {type: "model", duration: 90},
-            {type: "memory", duration: 150}
-        ];
-        updateConfigPanel();
-    });
+        zoomInButton.addEventListener('click', () => zoomImage(true));
+        zoomOutButton.addEventListener('click', () => zoomImage(false));
+        resetZoomButton.addEventListener('click', resetZoom);
     </script>
 </body>
 </html>
