@@ -180,24 +180,49 @@
         }
         updateTotalTimeDisplay()
 
+        function updatdeRowsTimeDisplayed(){
+            document.querySelectorAll('.duration-row').forEach(row => {
+    const input = row.querySelector('.duration-input');
+    const display = row.querySelector('.time-display');
+
+    function updateTimeDisplay() {
+        const seconds = parseInt(input.value) || 0;
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        const timeString = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        display.textContent = timeString;
+    }
+
+    input.addEventListener('input', updateTimeDisplay);
+    updateTimeDisplay(); // Initial display
+});
+        }
+        
+        
+
         function updateConfigPanel() {
             updateTotalTimeDisplay()
             phaseConfig.innerHTML = '';
             config.forEach((phase, index) => {
                 const phaseDiv = document.createElement('div');
                 phaseDiv.innerHTML = `
+                <div class="duration-row">
                     <select data-index="${index}">
                         <option value="observation" ${phase.type === 'observation' ? 'selected' : ''}>Observation</option>
                         <option value="model" ${phase.type === 'model' ? 'selected' : ''}>Model</option>
                         <option value="memory" ${phase.type === 'memory' ? 'selected' : ''}>Memory</option>
                         <option value="wait" ${phase.type === 'wait' ? 'selected' : ''}>Wait</option>
                     </select>
-                    <input type="number" value="${phase.duration}" data-index="${index}">
+                    
+    <input type="number" value="${phase.duration}" data-index="${index}" class="duration-input">
+    <span class="time-display">fff</span>
+</div>
                     <button data-index="${index}">Remove</button>
                 `;
                 phaseConfig.appendChild(phaseDiv);
             });
             totalDuration = config.reduce((sum, item) => sum + item.duration, 0);
+            updatdeRowsTimeDisplayed()
         }
 
         function startPractice() {
