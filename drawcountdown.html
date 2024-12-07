@@ -142,7 +142,7 @@
         const resetZoomButton = document.getElementById('resetZoomButton');
 
         let config = [
-            {type: "memory", duration: 5},
+            {type: "wait", duration: 5},
             {type: "observation", duration: 60},
             {type: "memory", duration: 150},
             {type: "model", duration: 240},
@@ -190,6 +190,7 @@
                         <option value="observation" ${phase.type === 'observation' ? 'selected' : ''}>Observation</option>
                         <option value="model" ${phase.type === 'model' ? 'selected' : ''}>Model</option>
                         <option value="memory" ${phase.type === 'memory' ? 'selected' : ''}>Memory</option>
+                        <option value="wait" ${phase.type === 'wait' ? 'selected' : ''}>Wait</option>
                     </select>
                     <input type="number" value="${phase.duration}" data-index="${index}">
                     <button data-index="${index}">Remove</button>
@@ -213,7 +214,7 @@
 
             const phase = config[currentPhase];
             countdown.textContent = formatTime(phase.duration);
-            fullscreenImage.style.display = phase.type !== 'memory' ? 'block' : 'none';
+            fullscreenImage.style.display = phase.type !== 'memory' && phase.type!=='wait'  ? 'block' : 'none';
 
             updatePhaseTitle(phase);
 
@@ -252,6 +253,8 @@
                 phaseTitle.textContent = "Observation (don't draw)";
             } else if (phase.type === 'memory') {
                 phaseTitle.textContent = "From Memory";
+             } else if (phase.type === 'wait') {
+                phaseTitle.textContent = "Waiting :)";
             } else if (phase.type === 'model') {
                 phaseTitle.textContent = "From Model";
             }
@@ -365,7 +368,7 @@
 
         resetConfigButton.addEventListener('click', () => {
             config = [
-                {type: "memory", duration: 5},
+                {type: "wait", duration: 5},
                 {type: "observation", duration: 60},
                 {type: "memory", duration: 150},
                 {type: "model", duration: 240},
