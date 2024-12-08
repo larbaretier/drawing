@@ -417,11 +417,11 @@
                 score++;
                 messageElement.textContent = 'Correct!';
                 messageElement.style.color = 'var(--correct-color)';
-                playSound('https://example.com/victory.mp3');
+                playSound('https://www.myinstants.com/media/sounds/super-mario-coin-sound.mp3');
             } else {
                 messageElement.textContent = 'Wrong!';
                 messageElement.style.color = 'var(--wrong-color)';
-                playSound('https://example.com/lose.mp3');
+                playSound('https://www.myinstants.com/media/sounds/minecraft_hit_soundmp3converter.mp3');
             }
             showAnswer();
             setTimeout(nextRound, 2000);
@@ -430,7 +430,7 @@
         function handleTimeout() {
             messageElement.textContent = 'Too slow!';
             messageElement.style.color = 'var(--wrong-color)';
-            playSound('https://example.com/timeup.mp3');
+            playSound('https://www.myinstants.com/media/sounds/tmp_7901-951678082.mp3');
             showAnswer();
             setTimeout(nextRound, 2000);
         }
@@ -486,12 +486,12 @@
 
         function endGame() {
             let scoreSound;
-            if (score <= 10) scoreSound = 'https://example.com/score_0_10.mp3';
-            else if (score <= 20) scoreSound = 'https://example.com/score_11_20.mp3';
-            else if (score <= 30) scoreSound = 'https://example.com/score_21_30.mp3';
-            else if (score <= 40) scoreSound = 'https://example.com/score_31_40.mp3';
-            else if (score <= 49) scoreSound = 'https://example.com/score_41_49.mp3';
-            else scoreSound = 'https://example.com/score_50.mp3';
+            if (score <= config.rounds *1/5) scoreSound = 'https://www.myinstants.com/media/sounds/megaman-3-death-sound-effect.mp3';
+            else if (score <= config.rounds *2/5) scoreSound = 'https://www.myinstants.com/media/sounds/woody-snakeboots.mp3';
+            else if (score <= config.rounds *3/5) scoreSound = 'https://www.myinstants.com/media/sounds/yu-mo-gwai-gui-fai-di-zao.mp3';
+            else if (score <= config.rounds *4/5) scoreSound = 'https://www.myinstants.com/media/sounds/felicitations_SfaNiLZ.mp3';
+            else if (score <= config.rounds *5/5 -1) scoreSound = 'https://www.myinstants.com/media/sounds/super-smash-bros-ultimate-final-ko-sound-effect.mp3';
+            else scoreSound = 'https://www.myinstants.com/media/sounds/final_fantasy_KDr5Pxg.mp3';
 
             playSound(scoreSound);
 
