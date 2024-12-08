@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rectangle Ratio Game</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --button-color: #e74c3c;
+            --correct-color: #2ecc71;
+            --wrong-color: #e74c3c;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        #game-container {
+            text-align: center;
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            background-color: white;
+        }
+        #game-area {
+            width: 100%;
+            height: 300px;
+            border: 2px solid var(--primary-color);
+            margin: 20px auto;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #rectangle {
+            position: absolute;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .split-line {
+            position: absolute;
+            background-color: white;
+            z-index: 2;
+        }
+        .button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #c0392b;
+        }
+        #timer, #round-counter {
+            font-size: 18px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            background-color: rgba(255,255,255,0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        #round-counter {
+            top: 40px;
+        }
+        #message {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        #config-menu {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        #pause-button, #menu-button, #mute-button {
+            position: absolute;
+            top: 10px;
+            z-index: 10;
+        }
+        #pause-button {
+            right: 10px;
+        }
+        #menu-button {
+            right: 100px;
+        }
+        #mute-button {
+            right: 190px;
+        }
+        h1 {
+            color: var(--primary-color);
+        }
+        #buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+       
+        <div id="start-screen">
+           <h1>Rectangle Ratio Game</h1>
+            <button id="start-button" class="button">Start Game</button>
+            <button id="options-button" class="button">Options</button>
+            <div id="score"></div>
+        </div>
+      <h1>‎  </h1>
+        <div id="game-screen" style="display: none;">
+            <div id="game-area">
+                <div id="rectangle"></div>
+            </div>
+            <div id="timer">3</div>
+            <div id="round-counter">Round: 1/50</div>
+            <button id="pause-button" class="button">Pause</button>
+            <button id="menu-button" class="button">Menu</button>
+            <button id="mute-button" class="button">Mute</button>
+            <div id="message"></div>
+            <div id="buttons"></div>
+        </div>
+        <div id="config-menu">
+            <h2>Game Configuration</h2>
+            <label>Number of rounds: <input type="number" id="rounds" min="1" value="50"></label><br>
+            <label>Time per round (seconds): <input type="number" id="time-per-round" min="1" value="3"></label><br>
+            <h3>Ratios:</h3>
+            <div id="ratio-checkboxes"></div>
+            <p>Total game time: <span id="total-time"></span></p>
+            <button id="export-config" class="button">Export Settings</button>
+            <button id="import-config" class="button">Import Settings</button>
+            <button id="reset-config" class="button">Reset to Default</button>
+            <button id="close-config" class="button">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const startButton = document.getElementById('start-button');
+        const optionsButton = document.getElementById('options-button');
+        const gameArea = document.getElementById('game-area');
+        const rectangle = document.getElementById('rectangle');
+        const timerElement = document.getElementById('timer');
+        const roundCounterElement = document.getElementById('round-counter');
+        const messageElement = document.getElementById('message');
+        const buttonsContainer = document.getElementById('buttons');
+        const scoreElement = document.getElementById('score');
+        const configMenu = document.getElementById('config-menu');
+        const roundsInput = document.getElementById('rounds');
+        const timePerRoundInput = document.getElementById('time-per-round');
+        const ratioCheckboxes = document.getElementById('ratio-checkboxes');
+        const totalTimeElement = document.getElementById('total-time');
+        const exportConfigButton = document.getElementById('export-config');
+        const importConfigButton = document.getElementById('import-config');
+        const resetConfigButton = document.getElementById('reset-config');
+        const closeConfigButton = document.getElementById('close-config');
+        const pauseButton = document.getElementById('pause-button');
+        const menuButton = document.getElementById('menu-button');
+        const muteButton = document.getElementById('mute-button');
+
+        const ratios = [
+            { value: 1, label: '1', group: 1 },
+            { value: 7/6, label: '1+1/6', group: 1 },
+            { value: 4/3, label: '1+1/3', group: 1 },
+            { value: 1.5, label: '1+1/2', group: 1 },
+            { value: 5/3, label: '1+2/3', group: 1 },
+            { value: 11/6, label: '1+5/6', group: 1 },
+            { value: 2, label: '2', group: 2 },
+          { value: 2.5, label: '2+1/2', group: 2 },
+            { value: 8/3, label: '2+2/3', group: 2 },
+            { value: 3, label: '3', group: 3 },
+            { value: 3.5, label: '3+1/2', group: 3 },
+            { value: 4, label: '4', group: 4 },
+            { value: 4.5, label: '4+1/2', group: 4 },
+            { value: 5, label: '5', group: 4 }
+        ];
+
+        let config = {
+            rounds: 50,
+            timePerRound: 3,
+            enabledRatios: ratios.map(r => r.value)
+        };
+
+        let currentRound = 0;
+        let score = 0;
+        let timer;
+        let currentRatio;
+        let isPaused = false;
+        let remainingTime;
+        let isMuted = false;
+
+        function updateTotalTime() {
+            const totalSeconds = config.rounds * config.timePerRound;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            totalTimeElement.textContent = `${minutes}m ${seconds}s`;
+        }
+
+        function createRatioCheckboxes() {
+            ratioCheckboxes.innerHTML = '';
+            ratios.forEach(ratio => {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = ratio.value;
+                checkbox.checked = config.enabledRatios.includes(ratio.value);
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        config.enabledRatios.push(parseFloat(checkbox.value));
+                    } else {
+                        config.enabledRatios = config.enabledRatios.filter(r => r !== parseFloat(checkbox.value));
+                    }
+                    updateTotalTime();
+                });
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(` ${ratio.label}`));
+                ratioCheckboxes.appendChild(label);
+                ratioCheckboxes.appendChild(document.createElement('br'));
+            });
+        }
+
+        function initConfigMenu() {
+            createRatioCheckboxes();
+            roundsInput.value = config.rounds;
+            timePerRoundInput.value = config.timePerRound;
+            updateTotalTime();
+
+            roundsInput.addEventListener('input', () => {
+                config.rounds = parseInt(roundsInput.value);
+                updateTotalTime();
+            });
+
+            timePerRoundInput.addEventListener('input', () => {
+                config.timePerRound = parseInt(timePerRoundInput.value);
+                updateTotalTime();
+            });
+
+            exportConfigButton.addEventListener('click', () => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "rectangle_game_config.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            });
+
+            importConfigButton.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.readAsText(file, 'UTF-8');
+                    reader.onload = readerEvent => {
+                        const content = readerEvent.target.result;
+                        config = JSON.parse(content);
+                        roundsInput.value = config.rounds;
+                        timePerRoundInput.value = config.timePerRound;
+                        createRatioCheckboxes();
+                        updateTotalTime();
+                    }
+                }
+                input.click();
+            });
+
+            resetConfigButton.addEventListener('click', () => {
+                config = {
+                    rounds: 50,
+                    timePerRound: 3,
+                    enabledRatios: ratios.map(r => r.value)
+                };
+                roundsInput.value = config.rounds;
+                timePerRoundInput.value = config.timePerRound;
+                createRatioCheckboxes();
+                updateTotalTime();
+            });
+
+            closeConfigButton.addEventListener('click', () => {
+                configMenu.style.display = 'none';
+            });
+        }
+
+        function startGame() {
+            currentRound = 0;
+            score = 0;
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            isPaused = false;
+            pauseButton.textContent = 'Pause';
+            nextRound();
+        }
+
+        function nextRound() {
+            if (currentRound >= config.rounds) {
+                endGame();
+                return;
+            }
+
+            currentRound++;
+            roundCounterElement.textContent = `Round: ${currentRound}/${config.rounds}`;
+            const randomRatio = config.enabledRatios[Math.floor(Math.random() * config.enabledRatios.length)];
+            currentRatio = randomRatio;
+
+            const angle = Math.random() * 360;
+            const radians = angle * Math.PI / 180;
+
+            const maxWidth = gameArea.clientWidth * 0.7;
+            const maxHeight = gameArea.clientHeight * 0.7;
+
+            let width, height;
+            if (randomRatio >= 1) {
+                height = Math.min(maxHeight, maxWidth / randomRatio);
+                width = height * randomRatio;
+            } else {
+                width = Math.min(maxWidth, maxHeight * randomRatio);
+                height = width / randomRatio;
+            }
+
+            // Adjust size based on angle
+            const diagonal = Math.sqrt(width * width + height * height);
+            const scale = Math.min(maxWidth / diagonal, maxHeight / diagonal);
+            width *= scale;
+            height *= scale;
+
+            const left = (gameArea.clientWidth - width) / 2;
+            const top = (gameArea.clientHeight - height) / 2;
+
+            rectangle.style.width = `${width}px`;
+            rectangle.style.height = `${height}px`;
+            rectangle.style.transform = `rotate(${angle}deg)`;
+            rectangle.style.left = `${left}px`;
+            rectangle.style.top = `${top}px`;
+
+            // Remove split lines
+            document.querySelectorAll('.split-line').forEach(el => el.remove());
+
+            createButtons();
+
+            timerElement.textContent = config.timePerRound;
+            messageElement.textContent = '';
+
+            remainingTime = config.timePerRound;
+            startTimer();
+        }
+        function createButtons() {
+            buttonsContainer.innerHTML = '';
+            const enabledRatios = ratios.filter(r => config.enabledRatios.includes(r.value));
+            const groups = [1, 2, 3, 4];
+
+            groups.forEach(group => {
+                const rowRatios = enabledRatios.filter(r => r.group === group);
+                if (rowRatios.length > 0) {
+                    const row = document.createElement('div');
+                    row.className = 'button-row';
+                    rowRatios.forEach(ratio => {
+                        const button = document.createElement('button');
+                        button.textContent = ratio.label;
+                        button.classList.add('button');
+                        button.dataset.ratio = ratio.value;
+                        button.addEventListener('click', () => checkAnswer(ratio.value));
+                        row.appendChild(button);
+                    });
+                    buttonsContainer.appendChild(row);
+                }
+            });
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (!isPaused) {
+                    remainingTime--;
+                    timerElement.textContent = remainingTime;
+                    if (remainingTime === 0) {
+                        clearInterval(timer);
+                        handleTimeout();
+                    }
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selectedRatio) {
+            clearInterval(timer);
+            if (selectedRatio === currentRatio) {
+                score++;
+                messageElement.textContent = 'Correct!';
+                messageElement.style.color = 'var(--correct-color)';
+                playSound('https://example.com/victory.mp3');
+            } else {
+                messageElement.textContent = 'Wrong!';
+                messageElement.style.color = 'var(--wrong-color)';
+                playSound('https://example.com/lose.mp3');
+            }
+            showAnswer();
+            setTimeout(nextRound, 2000);
+        }
+
+        function handleTimeout() {
+            messageElement.textContent = 'Too slow!';
+            messageElement.style.color = 'var(--wrong-color)';
+            playSound('https://example.com/timeup.mp3');
+            showAnswer();
+            setTimeout(nextRound, 2000);
+        }
+
+        function showAnswer() {
+            const width = parseFloat(rectangle.style.width);
+            const height = parseFloat(rectangle.style.height);
+            const ratio = width / height;
+
+            // Remove existing split lines
+            document.querySelectorAll('.split-line').forEach(el => el.remove());
+
+            if (ratio === 1) {
+                // No split for 1:1 ratio
+                return;
+            }
+
+            const splitLines = [];
+            if (ratio > 1) {
+                // Vertical splits
+                const unitWidth = height;
+                for (let i = 1; i < ratio; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'split-line';
+                    line.style.width = '2px';
+                    line.style.height = '100%';
+                    line.style.left = `${i * unitWidth}px`;
+                    splitLines.push(line);
+                }
+            } else {
+                // Horizontal splits
+                const unitHeight = width;
+                for (let i = 1; i < 1/ratio; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'split-line';
+                    line.style.width = '100%';
+                    line.style.height = '2px';
+                    line.style.top = `${i * unitHeight}px`;
+                    splitLines.push(line);
+                }
+            }
+
+            splitLines.forEach(line => rectangle.appendChild(line));
+
+            // Highlight the correct answer button
+            const buttons = buttonsContainer.querySelectorAll('.button');
+            buttons.forEach(button => {
+                if (parseFloat(button.dataset.ratio) === currentRatio) {
+                    button.style.backgroundColor = 'var(--correct-color)';
+                }
+            });
+        }
+
+        function endGame() {
+            let scoreSound;
+            if (score <= 10) scoreSound = 'https://example.com/score_0_10.mp3';
+            else if (score <= 20) scoreSound = 'https://example.com/score_11_20.mp3';
+            else if (score <= 30) scoreSound = 'https://example.com/score_21_30.mp3';
+            else if (score <= 40) scoreSound = 'https://example.com/score_31_40.mp3';
+            else if (score <= 49) scoreSound = 'https://example.com/score_41_49.mp3';
+            else scoreSound = 'https://example.com/score_50.mp3';
+
+            playSound(scoreSound);
+
+            setTimeout(() => {
+                startScreen.style.display = 'block';
+                gameScreen.style.display = 'none';
+                scoreElement.textContent = `Score: ${score}/${config.rounds}`;
+            }, 1000); // Wait for 1 second to allow the score sound to play
+        }
+
+        function playSound(url) {
+            if (!isMuted) {
+                const audio = new Audio(url);
+                audio.play();
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            if (isPaused) {
+                clearInterval(timer);
+                pauseButton.textContent = 'Resume';
+            } else {
+                startTimer();
+                pauseButton.textContent = 'Pause';
+            }
+        }
+
+        function goToMenu() {
+            clearInterval(timer);
+            startScreen.style.display = 'block';
+            gameScreen.style.display = 'none';
+            scoreElement.textContent = '';
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
+        }
+
+        startButton.addEventListener('click', startGame);
+        optionsButton.addEventListener('click', () => {
+            configMenu.style.display = 'block';
+        });
+        pauseButton.addEventListener('click', togglePause);
+        menuButton.addEventListener('click', goToMenu);
+        muteButton.addEventListener('click', toggleMute);
+
+        initConfigMenu();
+    </script>
+</body>
+</html>
