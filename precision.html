@@ -214,25 +214,25 @@
                     drawLine(refCtx, 100, 100, 100 + Math.cos(angle) * baseLength, 100 + Math.sin(angle) * baseLength);
                     targetPath = [{x: 200, y: 200}, {x: 200 + Math.cos(angle) * targetLength, y: 200 + Math.sin(angle) * targetLength}];
                     break;
-                case 2: // Perfect Angle
-                    const startAngle = Math.random() * Math.PI * 2;
-                    const angles = [15, 30, 45, 90, 135];
-                    targetAngle = angles[Math.floor(Math.random() * angles.length)] * Math.PI / 180;
-                    isClockwise = Math.random() < 0.5;
-                    const endAngle = startAngle + (isClockwise ? targetAngle : -targetAngle);
-                    drawLine(refCtx, 100, 100, 100 + Math.cos(startAngle) * baseLength, 100 + Math.sin(startAngle) * baseLength);
-                    drawArrow(refCtx, 100, 100, startAngle, endAngle, baseLength / 2);
-                    targetPath = [
-                        {x: 200, y: 200},
-                        {x: 200 + Math.cos(startAngle) * baseLength, y: 200 + Math.sin(startAngle) * baseLength},
-                        {x: 200 + Math.cos(endAngle) * baseLength, y: 200 + Math.sin(endAngle) * baseLength}
-                    ];
-                    drawLine(ctx, 200, 200, 200 + Math.cos(startAngle) * baseLength, 200 + Math.sin(startAngle) * baseLength);
-                    ctx.fillStyle = 'red';
-                    ctx.beginPath();
-                    ctx.arc(200 + Math.cos(startAngle) * baseLength, 200 + Math.sin(startAngle) * baseLength, 5, 0, Math.PI * 2);
-                    ctx.fill();
-                    break;
+               case 2: // Perfect Angle
+        const startAngle = Math.random() * Math.PI * 2;
+        const angles = [15, 30, 45, 90, 135];
+        targetAngle = angles[Math.floor(Math.random() * angles.length)] * Math.PI / 180;
+        isClockwise = Math.random() < 0.5;
+        const endAngle = isClockwise ? startAngle + targetAngle : startAngle - targetAngle;
+        drawLine(refCtx, 100, 100, 100 + Math.cos(startAngle) * baseLength, 100 + Math.sin(startAngle) * baseLength);
+        drawArrow(refCtx, 100, 100, startAngle, endAngle, baseLength / 2);
+        targetPath = [
+            {x: 200, y: 200},
+            {x: 200 + Math.cos(startAngle) * baseLength, y: 200 + Math.sin(startAngle) * baseLength},
+            {x: 200 + Math.cos(endAngle) * baseLength, y: 200 + Math.sin(endAngle) * baseLength}
+        ];
+        drawLine(ctx, 200, 200, 200 + Math.cos(startAngle) * baseLength, 200 + Math.sin(startAngle) * baseLength);
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(200 + Math.cos(startAngle) * baseLength, 200 + Math.sin(startAngle) * baseLength, 5, 0, Math.PI * 2);
+        ctx.fill();
+        break;
                 case 3: // Perfect Square
                     drawSquare(refCtx, 50, 50, baseLength);
                     targetPath = [
@@ -365,7 +365,7 @@
             }
         }
 
-           function submitDrawing() {
+               function submitDrawing() {
             if (gameTimer) clearTimeout(gameTimer);
             if (timerInterval) clearInterval(timerInterval);
             document.getElementById('submit-btn').disabled = true;
@@ -440,7 +440,8 @@
 
         function calculateAngleAccuracy() {
             const userAngle = calculateAngle(userPath[0], userPath[Math.floor(userPath.length / 2)], userPath[userPath.length - 1]);
-            return Math.max(0, 100 - Math.abs((userAngle - targetAngle) / (Math.PI) * 100));
+            const targetAngleDiff = isClockwise ? targetAngle : -targetAngle;
+            return Math.max(0, 100 - Math.abs((userAngle - targetAngleDiff) / Math.PI * 100));
         }
 
         function calculateStraightnessAccuracy() {
@@ -462,9 +463,9 @@
         function calculateSquareAngleAccuracies() {
             const angles = [];
             for (let i = 0; i < 4; i++) {
-                const p1 = userPath[i * Math.floor(userPath.length / 4)];
-                const p2 = userPath[(i + 1) * Math.floor(userPath.length / 4) % userPath.length];
-                const p3 = userPath[(i + 2) * Math.floor(userPath.length / 4) % userPath.length];
+                const p1 = userPath[Math.floor(i * userPath.length / 4)];
+                const p2 = userPath[Math.floor(((i + 1) % 4) * userPath.length / 4)];
+                const p3 = userPath[Math.floor(((i + 2) % 4) * userPath.length / 4)];
                 const angle = calculateAngle(p1, p2, p3);
                 const accuracy = Math.max(0, 100 - Math.abs((angle - Math.PI/2) / (Math.PI/2) * 100));
                 angles.push(accuracy);
@@ -506,7 +507,7 @@
         function calculateAngle(p1, p2, p3) {
             const v1 = { x: p2.x - p1.x, y: p2.y - p1.y };
             const v2 = { x: p3.x - p2.x, y: p3.y - p2.y };
-            return Math.abs(Math.atan2(v2.y, v2.x) - Math.atan2(v1.y, v1.x));
+            return Math.atan2(v2.y, v2.x) - Math.atan2(v1.y, v1.x);
         }
 
         function pointLineDistance(p, a, b) {
@@ -587,23 +588,41 @@
             animate();
         }
 
-        function animateAngle(start, middle, end) {
-            let progress = 0;
-            function animate() {
-                if (progress < 1) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    drawUserPath();
-                    ctx.beginPath();
-                    ctx.moveTo(start.x, start.y);
-                    ctx.lineTo(middle.x, middle.y);
-                    ctx.lineTo(middle.x + (end.x - middle.x) * progress, middle.y + (end.y - middle.y) * progress);
-                    ctx.stroke();
-                    progress += 0.05;
-                    requestAnimationFrame(animate);
-                }
-            }
-            animate();
+       function calculateAngleAccuracy() {
+    const userStartVector = {
+        x: userPath[Math.floor(userPath.length / 2)].x - userPath[0].x,
+        y: userPath[Math.floor(userPath.length / 2)].y - userPath[0].y
+    };
+    const userEndVector = {
+        x: userPath[userPath.length - 1].x - userPath[Math.floor(userPath.length / 2)].x,
+        y: userPath[userPath.length - 1].y - userPath[Math.floor(userPath.length / 2)].y
+    };
+    const userAngle = Math.atan2(userEndVector.y, userEndVector.x) - Math.atan2(userStartVector.y, userStartVector.x);
+    const normalizedUserAngle = (userAngle + 2 * Math.PI) % (2 * Math.PI);
+    const normalizedTargetAngle = isClockwise ? targetAngle : -targetAngle;
+    return Math.max(0, 100 - Math.abs((normalizedUserAngle - normalizedTargetAngle) / Math.PI * 100));
+}
+
+function animateAngle(start, middle, end) {
+    let progress = 0;
+    function animate() {
+        if (progress < 1) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawUserPath();
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(middle.x, middle.y);
+            const angle = isClockwise ? targetAngle * progress : -targetAngle * progress;
+            const endX = middle.x + Math.cos(Math.atan2(middle.y - start.y, middle.x - start.x) + angle) * (end.x - middle.x);
+            const endY = middle.y + Math.sin(Math.atan2(middle.y - start.y, middle.x - start.x) + angle) * (end.y - middle.y);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            progress += 0.05;
+            requestAnimationFrame(animate);
         }
+    }
+    animate();
+}
 
         function animateSquare(path) {
             let progress = 0;
@@ -673,7 +692,7 @@
                 if (roundResults[i].size !== undefined) finalResultText += `Size Accuracy: ${roundResults[i].size.toFixed(2)}%<br>`;
                 if (roundResults[i].angle !== undefined) finalResultText += `Angle Accuracy: ${roundResults[i].angle.toFixed(2)}%<br>`;
                 if (roundResults[i].straightness !== undefined) finalResultText += `Straightness Accuracy: ${roundResults[i].straightness.toFixed(2)}%<br>`;
-                              if (roundResults[i].roundness !== undefined) finalResultText += `Roundness Accuracy: ${roundResults[i].roundness.toFixed(2)}%<br>`;
+                               if (roundResults[i].roundness !== undefined) finalResultText += `Roundness Accuracy: ${roundResults[i].roundness.toFixed(2)}%<br>`;
                 if (roundResults[i].side !== undefined) finalResultText += `Side Length Accuracy: ${roundResults[i].side.toFixed(2)}%<br>`;
                 if (roundResults[i].radius !== undefined) finalResultText += `Radius Accuracy: ${roundResults[i].radius.toFixed(2)}%<br>`;
                 if (roundResults[i].angles) {
@@ -739,3 +758,5 @@
     </script>
 </body>
 </html>
+
+
