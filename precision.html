@@ -82,13 +82,6 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
-        #final-results h3 {
-            font-size: 1.2em;
-        }
-        #final-results .highlight {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -457,8 +450,10 @@
         function calculateSquareAngleAccuracies() {
             const angles = [];
             for (let i = 0; i < 4; i++) {
-                const angle = calculateAngle(userPath[i], userPath[(i + 1) % 4], userPath[(i + 2) % 4]);
-                const accuracy = Math.max(0, 100 - Math.abs((angle - Math.PI / 2) / (Math.PI / 2) * 100));
+                const angle = calculateAngle(userPath[i * Math.floor(userPath.length / 4)], 
+                                             userPath[(i + 1) * Math.floor(userPath.length / 4) % userPath.length], 
+                                             userPath[(i + 2) * Math.floor(userPath.length / 4) % userPath.length]);
+                const accuracy = Math.max(0, 100 - Math.abs((angle - Math.PI/2) / (Math.PI/2) * 100));
                 angles.push(accuracy);
             }
             return angles;
@@ -517,24 +512,22 @@
         function calculateAverageRadius(path, center) {
             return path.reduce((sum, p) => sum + Math.sqrt((p.x - center.x) ** 2 + (p.y - center.y) ** 2), 0) / path.length;
         }
-  function displayResults(accuracy) {
+
+        function displayResults(accuracy) {
             let resultText = '';
-            if (accuracy.size !== undefined) resultText += `<b>Size Accuracy:</b> ${accuracy.size.toFixed(2)}%<br>`;
-            if (accuracy.angle !== undefined) {
-                let angleSymbol = isClockwise ? '+' : '-';
-                resultText += `<b>Angle Accuracy:</b> ${angleSymbol}${accuracy.angle.toFixed(2)}%<br>`;
-            }
-            if (accuracy.straightness !== undefined) resultText += `<b>Straightness Accuracy:</b> ${accuracy.straightness.toFixed(2)}%<br>`;
-            if (accuracy.roundness !== undefined) resultText += `<b>Roundness Accuracy:</b> ${accuracy.roundness.toFixed(2)}%<br>`;
-            if (accuracy.side !== undefined) resultText += `<b>Side Length Accuracy:</b> ${accuracy.side.toFixed(2)}%<br>`;
-            if (accuracy.radius !== undefined) resultText += `<b>Radius Accuracy:</b> ${accuracy.radius.toFixed(2)}%<br>`;
+            if (accuracy.size !== undefined) resultText += getColoredText(Size Accuracy: ${accuracy.size.toFixed(2)}%, accuracy.size) + '<br>';
+            if (accuracy.angle !== undefined) resultText += getColoredText(Angle Accuracy: ${accuracy.angle.toFixed(2)}%, accuracy.angle) + '<br>';
+            if (accuracy.straightness !== undefined) resultText += getColoredText(Straightness Accuracy: ${accuracy.straightness.toFixed(2)}%, accuracy.straightness) + '<br>';
+            if (accuracy.roundness !== undefined) resultText += getColoredText(Roundness Accuracy: ${accuracy.roundness.toFixed(2)}%, accuracy.roundness) + '<br>';
+            if (accuracy.side !== undefined) resultText += getColoredText(Side Length Accuracy: ${accuracy.side.toFixed(2)}%, accuracy.side) + '<br>';
+            if (accuracy.radius !== undefined) resultText += getColoredText(Radius Accuracy: ${accuracy.radius.toFixed(2)}%, accuracy.radius) + '<br>';
             if (accuracy.angles) {
-                resultText += '<b>Square Angle Accuracies:</b><br>';
+                resultText += 'Square Angle Accuracies:<br>';
                 accuracy.angles.forEach((angle, index) => {
-                    resultText += `&nbsp;&nbsp;&nbsp;Angle ${index + 1}: ${angle.toFixed(2)}%<br>`;
+                    resultText += getColoredText(  Angle ${index + 1}: ${angle.toFixed(2)}%, angle) + '<br>';
                 });
             }
-            resultText += `<b>Total Accuracy:</b> <span style="color: blue; font-size: 1.2em">${accuracy.total.toFixed(2)}%</span>`;
+            resultText += getColoredText(Total Accuracy: ${accuracy.total.toFixed(2)}%, accuracy.total);
             document.getElementById('result').innerHTML = resultText;
         }
 
@@ -636,20 +629,36 @@
             ctx.lineWidth = 3;
         }
 
-         function showFinalResults() {
+        function showFinalResults() {
             document.getElementById('game-area').style.display = 'none';
             document.getElementById('results-popup').style.display = 'block';
-
+            
             let finalResultText = "";
             let totalAccuracy = 0;
             for (let i = 0; i < roundResults.length; i++) {
-                finalResultText += `<h3>Round ${i + 1}</h3>`;
-                finalResultText += `<p>${roundResults[i].total.toFixed(2)}%</p>`;
+                finalResultText += <h3>Round ${i + 1}</h3>;
+                if (roundResults[i].size !== undefined) finalResultText += Size Accuracy: ${roundResults[i].size.toFixed(2)}%<br>;
+                if (roundResults[i].angle !== undefined) finalResultText += Angle Accuracy: ${roundResults[i].angle.toFixed(2)}%<br>;
+                if (roundResults[i].straightness !== undefined) finalResultText += Straightness Accuracy: ${roundResults[i].straightness.toFixed(2)}%<br>;
+                if (roundResults[i].roundness !== undefined) finalResultText += Roundness Accuracy: ${roundResults[i].roundness.toFixed(2)}%<br>;
+                if (roundResults[i].side !== undefined) finalResultText += Side Length Accuracy: ${roundResults[i].side.toFixed(2)}%<br>;
+                if (roundResults[i].radius !== undefined) finalResultText += Radius Accuracy: ${roundResults[i].radius.toFixed(2)}%<br>;
+                if (roundResults[i].angles) {
+                    finalResultText += 'Square Angle Accuracies:<br>';
+                    roundResults[i].angles.forEach((angle, index) => {
+                        finalResultText +=   Angle ${index + 1}: ${angle.toFixed(2)}%<br>;
+                    });
+                }
+                finalResultText += Total Accuracy: ${roundResults[i].total.toFixed(2)}%<br><br>;
                 totalAccuracy += roundResults[i].total;
             }
-
+            
             const averageAccuracy = totalAccuracy / roundResults.length;
-            finalResultText += `<div class="highlight">Average Accuracy: ${averageAccuracy.toFixed(2)}%</div>`;
+            const scoreComment = getScoreComment(averageAccuracy);
+            finalResultText += <h3>Final Score</h3>;
+            finalResultText += Average Accuracy: ${averageAccuracy.toFixed(2)}%<br>;
+            finalResultText += Score: ${scoreComment};
+            
             document.getElementById('final-results').innerHTML = finalResultText;
         }
 
