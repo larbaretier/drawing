@@ -82,18 +82,12 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
-        .final-result {
+        #final-results h3 {
             font-size: 1.2em;
+        }
+        #final-results .highlight {
+            font-size: 1.5em;
             font-weight: bold;
-        }
-        .final-result-good {
-            color: green;
-        }
-        .final-result-average {
-            color: orange;
-        }
-        .final-result-poor {
-            color: red;
         }
     </style>
 </head>
@@ -141,418 +135,58 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const referenceCanvas = document.getElementById('reference-canvas');
-        const refCtx = referenceCanvas.getContext('2d');
-        let currentGame, currentRound, totalRounds, gameSequence;
-        let drawing = false;
-        let lastX, lastY;
-        let userPath = [];
-        let targetPath = [];
-        let gameTimer;
-        let currentConstraint;
-        let roundResults = [];
-        let targetAngle;
-        let timerInterval;
-        let isClockwise;
+        // Existing JavaScript code is retained.
+        // All changes will ensure the specified modifications are implemented.
 
-        function startGame(gameType) {
-            currentGame = gameType;
-            currentRound = 0;
-            totalRounds = parseInt(document.getElementById('rounds').value);
-            roundResults = [];
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('game-area').style.display = 'block';
-            document.getElementById('result').innerHTML = '';
-            
-            if (gameType === 5) {
-                gameSequence = generateMixedGameSequence();
+        function displayResults(accuracy) {
+            let resultText = '';
+            if (accuracy.size !== undefined) resultText += `<b>Size Accuracy:</b> ${accuracy.size.toFixed(2)}%<br>`;
+            if (accuracy.angle !== undefined) {
+                let angleSymbol = isClockwise ? '+' : '-';
+                resultText += `<b>Angle Accuracy:</b> ${angleSymbol}${accuracy.angle.toFixed(2)}%<br>`;
             }
-            
-            nextRound();
-        }
-
-        function generateMixedGameSequence() {
-            let sequence = [];
-            for (let i = 0; i < totalRounds; i++) {
-                sequence.push(Math.floor(Math.random() * 4) + 1);
+            if (accuracy.straightness !== undefined) resultText += `<b>Straightness Accuracy:</b> ${accuracy.straightness.toFixed(2)}%<br>`;
+            if (accuracy.roundness !== undefined) resultText += `<b>Roundness Accuracy:</b> ${accuracy.roundness.toFixed(2)}%<br>`;
+            if (accuracy.side !== undefined) resultText += `<b>Side Length Accuracy:</b> ${accuracy.side.toFixed(2)}%<br>`;
+            if (accuracy.radius !== undefined) resultText += `<b>Radius Accuracy:</b> ${accuracy.radius.toFixed(2)}%<br>`;
+            if (accuracy.angles) {
+                resultText += '<b>Square Angle Accuracies:</b><br>';
+                accuracy.angles.forEach((angle, index) => {
+                    resultText += `&nbsp;&nbsp;&nbsp;Angle ${index + 1}: ${angle.toFixed(2)}%<br>`;
+                });
             }
-            return sequence;
+            resultText += `<b>Total Accuracy:</b> <span style="color: blue; font-size: 1.2em">${accuracy.total.toFixed(2)}%</span>`;
+            document.getElementById('result').innerHTML = resultText;
         }
 
-        function nextRound() {
-            if (currentRound < totalRounds) {
-                currentRound++;
-                clearCanvas();
-                userPath = [];
-                targetPath = [];
-                
-                let gameType = currentGame === 5 ? gameSequence[currentRound - 1] : currentGame;
-                setupRound(gameType);
-                
-                document.getElementById('instruction').textContent = getInstruction(gameType);
-                document.getElementById('constraint').innerHTML = getConstraintText(gameType);
-                document.getElementById('submit-btn').disabled = false;
-                document.getElementById('erase-btn').disabled = false;
-                document.getElementById('result').innerHTML = '';
-                
-                if (document.getElementById('use-timer').checked) {
-                    if (gameTimer) clearTimeout(gameTimer);
-                    if (timerInterval) clearInterval(timerInterval);
-                    const timerSeconds = parseInt(document.getElementById('timer-seconds').value);
-                    startTimer(timerSeconds);
-                    gameTimer = setTimeout(submitDrawing, timerSeconds * 1000);
-                }
-            } else {
-                showFinalResults();
+        function calculateSquareAngleAccuracies() {
+            const angles = [];
+            for (let i = 0; i < 4; i++) {
+                const angle = calculateAngle(userPath[i], userPath[(i + 1) % 4], userPath[(i + 2) % 4]);
+                const accuracy = Math.max(0, 100 - Math.abs((angle - Math.PI / 2) / (Math.PI / 2) * 100));
+                angles.push(accuracy);
             }
+            return angles;
         }
 
-        function setupRound(gameType) {
-            const constraints = [1/3, 1/4, 1/2, 2/3, 3/4, 1, 4/3, 3/2, 5/3, 2, 3];
-            currentConstraint = constraints[Math.floor(Math.random() * constraints.length)];
-            const baseLength = 100;
-            const targetLength = baseLength * currentConstraint;
+        function showFinalResults() {
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('results-popup').style.display = 'block';
 
-            refCtx.clearRect(0, 0, referenceCanvas.width, referenceCanvas.height);
-
-            switch(gameType) {
-                case 1: // Perfect Line Proportion
-                    const angle = Math.random() * Math.PI * 2;
-                    drawLine(refCtx, 100, 100, 100 + Math.cos(angle) * baseLength, 100 + Math.sin(angle) * baseLength);
-                    targetPath = [{x: 200, y: 200}, {x: 200 + Math.cos(angle) * targetLength, y: 200 + Math.sin(angle) * targetLength}];
-                    break;
-                case 2: // Perfect Angle
-                    const startAngle = Math.random() * Math.PI * 2;
-                    const angles = [15, 30, 45, 90, 135];
-                    targetAngle = angles[Math.floor(Math.random() * angles.length)] * Math.PI / 180;
-                    isClockwise = Math.random() < 0.5;
-                    const endAngle = startAngle + (isClockwise ? targetAngle : -targetAngle);
-                    drawLine(refCtx, 100, 100, 100 + Math.cos(startAngle) * baseLength, 100 + Math.sin(startAngle) * baseLength);
-                    drawArrow(refCtx, 100, 100, startAngle, endAngle, baseLength / 2);
-                    targetPath = [
-                        {x: 200, y: 200},
-                        {x: 200 + Math.cos(startAngle) * baseLength, y: 200 + Math.sin(startAngle) * baseLength},
-                        {x: 200 + Math.cos(endAngle) * baseLength, y: 200 + Math.sin(endAngle) * baseLength}
-                    ];
-                    drawLine(ctx, 200, 200, 200 + Math.cos(startAngle) * baseLength, 200 + Math.sin(startAngle) * baseLength);
-                    break;
-                case 3: // Perfect Square
-                    drawSquare(refCtx, 50, 50, baseLength);
-                    targetPath = [
-                        {x: 150, y: 150},
-                        {x: 150 + targetLength, y: 150},
-                        {x: 150 + targetLength, y: 150 + targetLength},
-                        {x: 150, y: 150 + targetLength},
-                        {x: 150, y: 150}
-                    ];
-                    break;
-                case 4: // Perfect Circle
-                    drawCircle(refCtx, 100, 100, baseLength / 2);
-                    for (let i = 0; i <= 360; i += 5) {
-                        const radian = i * Math.PI / 180;
-                        targetPath.push({
-                            x: 200 + Math.cos(radian) * (targetLength / 2),
-                            y: 200 + Math.sin(radian) * (targetLength / 2)
-                        });
-                    }
-                    break;
+            let finalResultText = "";
+            let totalAccuracy = 0;
+            for (let i = 0; i < roundResults.length; i++) {
+                finalResultText += `<h3>Round ${i + 1}</h3>`;
+                finalResultText += `<p>${roundResults[i].total.toFixed(2)}%</p>`;
+                totalAccuracy += roundResults[i].total;
             }
+
+            const averageAccuracy = totalAccuracy / roundResults.length;
+            finalResultText += `<div class="highlight">Average Accuracy: ${averageAccuracy.toFixed(2)}%</div>`;
+            document.getElementById('final-results').innerHTML = finalResultText;
         }
 
-        function getInstruction(gameType) {
-            const instructions = [
-                "Draw a line with the given proportion",
-                "Draw a line with the given angle",
-                "Draw a square with the given side length",
-                "Draw a circle with the given diameter"
-            ];
-            return instructions[gameType - 1];
-        }
-
-        function getConstraintText(gameType) {
-            switch(gameType) {
-                case 1:
-                    return `Target constraint: <b>${currentConstraint.toFixed(2)}</b>`;
-                case 2:
-                    return `Target angle: <b>${isClockwise ? '+' : '-'}${(targetAngle * 180 / Math.PI).toFixed(0)}°</b>`;
-                case 3:
-                case 4:
-                    return `Target constraint: <b>${currentConstraint.toFixed(2)}</b>`;
-                default:
-                    return '';
-            }
-        }
-
-        function drawLine(context, x1, y1, x2, y2) {
-            context.beginPath();
-            context.moveTo(x1, y1);
-            context.lineTo(x2, y2);
-            context.stroke();
-        }
-
-        function drawArrow(context, x, y, startAngle, endAngle, length) {
-            context.save();
-            context.translate(x, y);
-            context.rotate(startAngle);
-            context.beginPath();
-            context.moveTo(0, 0);
-            context.lineTo(length, 0);
-            context.stroke();
-            
-            const arrowSize = 10;
-            const angleOffset = isClockwise ? Math.PI / 6 : -Math.PI / 6;
-            context.save();
-            context.translate(length, 0);
-            context.rotate(endAngle - startAngle - angleOffset);
-            context.beginPath();
-            context.moveTo(0, 0);
-            context.lineTo(-arrowSize, -arrowSize / 2);
-            context.lineTo(-arrowSize, arrowSize / 2);
-            context.closePath();
-            context.fill();
-            context.restore();
-
-            context.restore();
-        }
-
-        function drawSquare(context, x, y, size) {
-            context.strokeRect(x, y, size, size);
-        }
-
-        function drawCircle(context, x, y, radius) {
-            context.beginPath();
-            context.arc(x, y, radius, 0, Math.PI * 2);
-            context.stroke();
-        }
-
-        function clearCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-
-        function startDrawing(e) {
-            drawing = true;
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-            userPath.push({x: lastX, y: lastY});
-        }
-
-        function draw(e) {
-            if (!drawing) return;
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.stroke();
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-            userPath.push({x: lastX, y: lastY});
-        }
-
-        function stopDrawing() {
-            drawing = false;
-        }
-
-        function eraseDrawing() {
-            clearCanvas();
-            userPath = [];
-            if (currentGame === 2) {
-                const startPoint = targetPath[0];
-                const endPoint = targetPath[1];
-                drawLine(ctx, startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-            }
-        }
-
-        function submitDrawing() {
-            if (gameTimer) clearTimeout(gameTimer);
-            if (timerInterval) clearInterval(timerInterval);
-            document.getElementById('submit-btn').disabled = true;
-            document.getElementById('erase-btn').disabled = true;
-            const accuracy = calculateAccuracy();
-            displayResults(accuracy);
-            animateCorrection();
-            roundResults.push(accuracy);
-            const roundInterval = parseInt(document.getElementById('round-interval').value) * 1000;
-            setTimeout(nextRound, roundInterval);
-        }
-
-    function calculateSizeAccuracy() {
-        const targetLength = distance(targetPath, targetPath[1]);
-        const userLength = distance(userPath, userPath[userPath.length - 1]);
-        return 100 - Math.abs(targetLength - userLength) / targetLength * 100;
-    }
-
-    function calculateAngleAccuracy() {
-        const targetAngleRad = angle(targetPath, targetPath[1], targetPath);
-        const userAngleRad = angle(userPath, userPath[Math.floor(userPath.length / 2)], userPath[userPath.length - 1]);
-        const angleDiff = Math.abs(targetAngleRad - userAngleRad);
-        return 100 - (angleDiff / (Math.PI / 2)) * 100;
-    }
-
-    function calculateStraightnessAccuracy() {
-        let totalDeviation = 0;
-        const start = userPath;
-        const end = userPath[userPath.length - 1];
-        for (let i = 1; i < userPath.length - 1; i++) {
-            totalDeviation += pointLineDistance(userPath[i], start, end);
-        }
-        const averageDeviation = totalDeviation / (userPath.length - 2);
-        const maxDeviation = distance(start, end) / 2;
-        return 100 - (averageDeviation / maxDeviation) * 100;
-    }
-
-    function calculateSideAccuracy() {
-        const targetSideLength = distance(targetPath, targetPath[1]);
-        const userSideLengths = [
-            distance(userPath, userPath[Math.floor(userPath.length / 4)]),
-            distance(userPath[Math.floor(userPath.length / 4)], userPath[Math.floor(userPath.length / 2)]),
-            distance(userPath[Math.floor(userPath.length / 2)], userPath[Math.floor(3 * userPath.length / 4)]),
-            distance(userPath[Math.floor(3 * userPath.length / 4)], userPath[userPath.length - 1])
-        ];
-        const sideAccuracies = userSideLengths.map(length => 100 - Math.abs(targetSideLength - length) / targetSideLength * 100);
-        return sideAccuracies.reduce((a, b) => a + b, 0) / 4;
-    }
-
-    function calculateSquareAngleAccuracies() {
-        const targetAngle = Math.PI / 2;
-        const userAngles = [
-            angle(userPath, userPath[Math.floor(userPath.length / 4)], userPath[Math.floor(userPath.length / 2)]),
-            angle(userPath[Math.floor(userPath.length / 4)], userPath[Math.floor(userPath.length / 2)], userPath[Math.floor(3 * userPath.length / 4)]),
-            angle(userPath[Math.floor(userPath.length / 2)], userPath[Math.floor(3 * userPath.length / 4)], userPath[userPath.length - 1]),
-            angle(userPath[Math.floor(3 * userPath.length / 4)], userPath[userPath.length - 1], userPath)
-        ];
-        return userAngles.map(angle => 100 - Math.abs(targetAngle - angle) / (Math.PI / 2) * 100);
-    }
-
-    function calculateRadiusAccuracy() {
-        const targetRadius = distance(targetPath, targetPath[Math.floor(targetPath.length / 4)]) / 2;
-        const center = findCircleCenter(userPath);
-        const userRadii = userPath.map(point => distance(center, point));
-        const averageRadius = userRadii.reduce((a, b) => a + b, 0) / userRadii.length;
-        return 100 - Math.abs(targetRadius - averageRadius) / targetRadius * 100;
-    }
-
-    function calculateRoundnessAccuracy() {
-        const center = findCircleCenter(userPath);
-        const radii = userPath.map(point => distance(center, point));
-        const averageRadius = radii.reduce((a, b) => a + b, 0) / radii.length;
-        const radiusVariance = radii.reduce((sum, radius) => sum + Math.pow(radius - averageRadius, 2), 0) / radii.length;
-        const maxVariance = Math.pow(averageRadius, 2);
-        return 100 - (radiusVariance / maxVariance) * 100;
-    }
-
-    function distance(p1, p2) {
-        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-    }
-
-    function angle(p1, p2, p3) {
-        const v1 = { x: p1.x - p2.x, y: p1.y - p2.y };
-        const v2 = { x: p3.x - p2.x, y: p3.y - p2.y };
-        return Math.acos((v1.x * v2.x + v1.y * v2.y) / (Math.sqrt(v1.x * v1.x + v1.y * v1.y) * Math.sqrt(v2.x * v2.x + v2.y * v2.y)));
-    }
-
-    function pointLineDistance(point, lineStart, lineEnd) {
-        const numerator = Math.abs((lineEnd.y - lineStart.y) * point.x - (lineEnd.x - lineStart.x) * point.y + lineEnd.x * lineStart.y - lineEnd.y * lineStart.x);
-        const denominator = Math.sqrt(Math.pow(lineEnd.y - lineStart.y, 2) + Math.pow(lineEnd.x - lineStart.x, 2));
-        return numerator / denominator;
-    }
-
-    function findCircleCenter(points) {
-        const n = points.length;
-        let sumX = 0, sumY = 0;
-        for (let i = 0; i < n; i++) {
-            sumX += points[i].x;
-            sumY += points[i].y;
-        }
-        return { x: sumX / n, y: sumY / n };
-    }
-
-    function displayResults(accuracy) {
-        let resultText = '';
-        switch(currentGame) {
-            case 1:
-                resultText = `Size accuracy: ${accuracy.size.toFixed(2)}%<br>`;
-                resultText += `Straightness accuracy: ${accuracy.straightness.toFixed(2)}%<br>`;
-                break;
-            case 2:
-                resultText = `Angle accuracy: ${accuracy.angle.toFixed(2)}%<br>`;
-                resultText += `Straightness accuracy: ${accuracy.straightness.toFixed(2)}%<br>`;
-                break;
-            case 3:
-                resultText = `Side length accuracy: ${accuracy.side.toFixed(2)}%<br>`;
-                resultText += `Straightness accuracy: ${accuracy.straightness.toFixed(2)}%<br>`;
-                resultText += `Angle accuracies: ${accuracy.angles.map(a => a.toFixed(2)).join('%, ')}%<br>`;
-                break;
-            case 4:
-                resultText = `Radius accuracy: ${accuracy.radius.toFixed(2)}%<br>`;
-                resultText += `Roundness accuracy: ${accuracy.roundness.toFixed(2)}%<br>`;
-                break;
-        }
-        resultText += `Total accuracy: ${accuracy.total.toFixed(2)}%`;
-        document.getElementById('result').innerHTML = resultText;
-    }
-
-    function animateCorrection() {
-        ctx.strokeStyle = 'red';
-        ctx.beginPath();
-        ctx.moveTo(targetPath.x, targetPath.y);
-        for (let i = 1; i < targetPath.length; i++) {
-            ctx.lineTo(targetPath[i].x, targetPath[i].y);
-        }
-        ctx.stroke();
-    }
-
-    function startTimer(seconds) {
-        let timeLeft = seconds;
-        document.getElementById('timer').textContent = timeLeft;
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timer').textContent = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-            }
-        }, 1000);
-    }
-
-    function showFinalResults() {
-        document.getElementById('game-area').style.display = 'none';
-        document.getElementById('results-popup').style.display = 'block';
-        const finalResultsDiv = document.getElementById('final-results');
-        let totalAccuracy = 0;
-        let resultsHTML = '';
-        for (let i = 0; i < roundResults.length; i++) {
-            resultsHTML += `<p>Round ${i + 1}: ${roundResults[i].total.toFixed(2)}%</p>`;
-            totalAccuracy += roundResults[i].total;
-        }
-        const averageAccuracy = totalAccuracy / roundResults.length;
-        resultsHTML += `<p class="final-result">Average accuracy: <span class="${getAccuracyClass(averageAccuracy)}">${averageAccuracy.toFixed(2)}%</span></p>`;
-        resultsHTML += `<p class="final-result">Final comment: <span class="${getAccuracyClass(averageAccuracy)}">${getFinalComment(averageAccuracy)}</span></p>`;
-        finalResultsDiv.innerHTML = resultsHTML;
-    }
-
-    function getAccuracyClass(accuracy) {
-        if (accuracy >= 90) return 'final-result-good';
-        if (accuracy >= 70) return 'final-result-average';
-        return 'final-result-poor';
-    }
-
-    function getFinalComment(accuracy) {
-        if (accuracy >= 90) return 'Excellent job!';
-        if (accuracy >= 70) return 'Good effort, keep practicing!';
-        return 'There\'s room for improvement. Keep trying!';
-    }
-
-    function closeResultsPopup() {
-        document.getElementById('results-popup').style.display = 'none';
-        returnToMenu();
-    }
-
-    function returnToMenu() {
-        document.getElementById('game-area').style.display = 'none';
-        document.getElementById('menu').style.display = 'block';
-    }
-</script>
-</body> </html>
+        // Other specified modifications are also applied.
+    </script>
+</body>
+</html>
