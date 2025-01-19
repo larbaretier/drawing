@@ -480,17 +480,39 @@ function calculateAngleAccuracy() {
             return Math.max(0, 100 - Math.abs((userSideLength - targetSideLength) / targetSideLength * 100));
         }
 
-        function calculateSquareAngleAccuracies() {
-            const angles = [];
-            for (let i = 0; i < 4; i++) {
-                const angle = calculateAngle(userPath[i * Math.floor(userPath.length / 4)], 
-                                             userPath[(i + 1) * Math.floor(userPath.length / 4) % userPath.length], 
-                                             userPath[(i + 2) * Math.floor(userPath.length / 4) % userPath.length]);
-                const accuracy = Math.max(0, 100 - Math.abs((angle - Math.PI/2) / (Math.PI/2) * 100));
-                angles.push(accuracy);
-            }
-            return angles;
-        }
+  function calculateSquareAngleAccuracies() {
+    if (userPath.length < 4) return [0, 0, 0, 0];
+
+    const angles = [];
+    let totalAngle = 0;
+    for (let i = 0; i < 4; i++) {
+        const p1 = userPath[Math.floor(i * userPath.length / 4)];
+        const p2 = userPath[Math.floor(((i + 1) % 4) * userPath.length / 4)];
+        const p3 = userPath[Math.floor(((i + 2) % 4) * userPath.length / 4)];
+
+        const vector1 = { x: p2.x - p1.x, y: p2.y - p1.y };
+        const vector2 = { x: p3.x - p2.x, y: p3.y - p2.y };
+
+        const dotProduct = vector1.x * vector2.x + vector1.y * vector2.y;
+        const magnitude1 = Math.sqrt(vector1.x * vector1.x + vector1.y * vector1.y);
+        const magnitude2 = Math.sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+
+        let angle = Math.acos(dotProduct / (magnitude1 * magnitude2));
+        totalAngle += angle;
+
+        const targetAngle = Math.PI / 2; // 90 degrees
+        const accuracy = Math.max(0, 100 * (1 - Math.abs(angle - targetAngle) / Math.PI));
+        angles.push(accuracy);
+    }
+
+    // Check if the total angle is close to 2π (360 degrees)
+    const totalAngleAccuracy = Math.max(0, 100 * (1 - Math.abs(totalAngle - 2 * Math.PI) / (2 * Math.PI)));
+
+    // Penalize the accuracy if the total angle is not close to 360 degrees
+    return angles.map(accuracy => accuracy * totalAngleAccuracy / 100);
+}
+
+
 
         function calculateRadiusAccuracy() {
             const userCenter = calculateCenter(userPath);
