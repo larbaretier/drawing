@@ -356,7 +356,8 @@ var startAngle = 0;
         function eraseDrawing() {
             clearCanvas();
             userPath = [];
-            if (currentGame === 2) {
+            const gameType = currentGame === 5 ? gameSequence[currentRound - 1] : currentGame
+            if (gameType === 2) {
                 const startPoint = targetPath[0];
                 const endPoint = targetPath[1];
                 drawPoint(ctx, startPoint.x, startPoint.y);
@@ -394,8 +395,8 @@ var startAngle = 0;
             }
 
             let sizeAccuracy, angleAccuracy, straightnessAccuracy, roundnessAccuracy, sideAccuracy, radiusAccuracy, angleAccuracies;
-            
-            switch(currentGame) {
+            const gameType = currentGame === 5 ? gameSequence[currentRound - 1] : currentGame
+            switch(gameType) {
                 case 1: // Perfect Line Proportion
                     sizeAccuracy = calculateSizeAccuracy();
                     straightnessAccuracy = calculateStraightnessAccuracy();
@@ -640,8 +641,8 @@ function calculateAngleAccuracy() {
             ctx.globalAlpha = 0.5;
             ctx.strokeStyle = 'blue';
             ctx.lineWidth = 3;
-
-            switch(currentGame) {
+const gameType = currentGame === 5 ? gameSequence[currentRound - 1] : currentGame
+            switch(gameType) {
                 case 1: // Perfect Line Proportion
                 case 2: // Perfect Angle
                     //drawLine(ctx, 200, 200, 200 + Math.cos(startAngle) * baseLength, 200 + Math.sin(startAngle) * baseLength);
@@ -731,46 +732,72 @@ function calculateAngleAccuracy() {
         }
 
         function showFinalResults() {
-            document.getElementById('game-area').style.display = 'none';
-            document.getElementById('results-popup').style.display = 'block';
-            
-            let finalResultText = "";
-            let totalAccuracy = 0;
-            for (let i = 0; i < roundResults.length; i++) {
-                finalResultText += `<h3>Round ${i + 1}</h3>`;
-                if (roundResults[i].size !== undefined) finalResultText += `Size Accuracy: ${roundResults[i].size.toFixed(2)}%<br>`;
-                if (roundResults[i].angle !== undefined) finalResultText += `Angle Accuracy: ${roundResults[i].angle.toFixed(2)}%<br>`;
-                if (roundResults[i].straightness !== undefined) finalResultText += `Straightness Accuracy: ${roundResults[i].straightness.toFixed(2)}%<br>`;
-                if (roundResults[i].roundness !== undefined) finalResultText += `Roundness Accuracy: ${roundResults[i].roundness.toFixed(2)}%<br>`;
-                if (roundResults[i].side !== undefined) finalResultText += `Side Length Accuracy: ${roundResults[i].side.toFixed(2)}%<br>`;
-                if (roundResults[i].radius !== undefined) finalResultText += `Radius Accuracy: ${roundResults[i].radius.toFixed(2)}%<br>`;
-                if (roundResults[i].angles) {
-                    finalResultText += 'Square Angle Accuracies:<br>';
-                    roundResults[i].angles.forEach((angle, index) => {
-                        finalResultText += `  Angle ${index + 1}: ${angle.toFixed(2)}%<br>`;
-                    });
-                }
-                finalResultText += `Total Accuracy: ${roundResults[i].total.toFixed(2)}%<br><br>`;
-                totalAccuracy += roundResults[i].total;
-            }
-            
-            const averageAccuracy = totalAccuracy / roundResults.length;
-            const scoreComment = getScoreComment(averageAccuracy);
-            finalResultText += `<h3>Final Score</h3>`;
-            finalResultText += `Average Accuracy: ${averageAccuracy.toFixed(2)}%<br>`;
-            finalResultText += `Score: ${scoreComment}`;
-            
-            document.getElementById('final-results').innerHTML = finalResultText;
-        }
+    document.getElementById('game-area').style.display = 'none';
+    document.getElementById('results-popup').style.display = 'block';
+    
+    let finalResultText = "";
+    let totalAccuracy = 0;
 
-              function getScoreComment(score) {
-            if (score >= 95) return "Perfect!";
-            if (score >= 85) return "Very Good!";
-            if (score >= 75) return "Nice!";
-            if (score >= 60) return "Mid";
-            if (score >= 40) return "Bad";
-            return "Horrible";
+    for (let i = 0; i < roundResults.length; i++) {
+        finalResultText += `<h3>Round ${i + 1}</h3>`;
+        if (roundResults[i].size !== undefined) finalResultText += `Size Accuracy: ${roundResults[i].size.toFixed(2)}%<br>`;
+        if (roundResults[i].angle !== undefined) finalResultText += `Angle Accuracy: ${roundResults[i].angle.toFixed(2)}%<br>`;
+        if (roundResults[i].straightness !== undefined) finalResultText += `Straightness Accuracy: ${roundResults[i].straightness.toFixed(2)}%<br>`;
+        if (roundResults[i].roundness !== undefined) finalResultText += `Roundness Accuracy: ${roundResults[i].roundness.toFixed(2)}%<br>`;
+        if (roundResults[i].side !== undefined) finalResultText += `Side Length Accuracy: ${roundResults[i].side.toFixed(2)}%<br>`;
+        if (roundResults[i].radius !== undefined) finalResultText += `Radius Accuracy: ${roundResults[i].radius.toFixed(2)}%<br>`;
+        
+        if (roundResults[i].angles) {
+            finalResultText += 'Square Angle Accuracies:<br>';
+            roundResults[i].angles.forEach((angle, index) => {
+                finalResultText += `  Angle ${index + 1}: ${angle.toFixed(2)}%<br>`;
+            });
         }
+        
+        finalResultText += `Total Accuracy: ${roundResults[i].total.toFixed(2)}%<br><br>`;
+        totalAccuracy += roundResults[i].total;
+    }
+
+    // Calculate average accuracy
+    const averageAccuracy = totalAccuracy / roundResults.length;
+    
+    // Prepare score comment based on average accuracy
+    const scoreComment = getScoreComment(averageAccuracy);
+    
+    // Display final results
+    finalResultText += `<h3>Final Score</h3>`;
+    finalResultText += `Average Accuracy: <span style="font-weight:bold;">${averageAccuracy.toFixed(2)}%</span><br>`;
+    finalResultText += `<span style="color:${scoreComment.color};">${scoreComment.text}</span>`; // Color-coded comment
+
+    document.getElementById('final-results').innerHTML = finalResultText;
+}
+
+// Function to get score comment based on average accuracy
+function getScoreComment(averageAccuracy) {
+    let comment = { text: '', color: '' };
+    
+    if (averageAccuracy >= 90) {
+        comment.text = 'Excellent!';
+        comment.color = 'green'; // Excellent
+    } else if (averageAccuracy >= 80) {
+        comment.text = 'Very Good!';
+        comment.color = 'blue'; // Good
+    } else if (averageAccuracy >= 65) {
+        comment.text = 'Good!';
+        comment.color = 'blue'; // Good
+    } else if (averageAccuracy >= 50) {
+        comment.text = 'Mid!';
+        comment.color = 'orange'; // Fair
+    } else {
+        comment.text = 'Poor!';
+        comment.color = 'red'; // Poor
+    }
+    
+    return comment;
+}
+
+
+
 
         function closeResultsPopup() {
             document.getElementById('results-popup').style.display = 'none';
