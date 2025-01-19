@@ -268,7 +268,7 @@ var startAngle = 0;
                 case 1:
                     return `Target constraint: <b>${currentConstraint.toFixed(2)}</b>`;
                 case 2:
-                    return `Target angle: <b>${(targetAngle * 180 / Math.PI).toFixed(0)}°</b> (${isClockwise ? 'clockwise' : 'counterclockwise'})`;
+                    return `Target angle: <b>${isClockwise ? '+' : '-'} ${(targetAngle * 180 / Math.PI).toFixed(0)}°</b>`;
                 case 3:
                 case 4:
                     return `Target constraint: <b>${currentConstraint.toFixed(2)}</b>`;
@@ -365,6 +365,7 @@ var startAngle = 0;
         }
 
         function submitDrawing() {
+            if (userPath.length !== 0) {
             if (gameTimer) clearTimeout(gameTimer);
             if (timerInterval) clearInterval(timerInterval);
             document.getElementById('submit-btn').disabled = true;
@@ -375,6 +376,7 @@ var startAngle = 0;
             roundResults.push(accuracy);
             const roundInterval = parseInt(document.getElementById('round-interval').value) * 1000;
             setTimeout(nextRound, roundInterval);
+            }
         }
 
                 function calculateAccuracy() {
@@ -412,7 +414,7 @@ var startAngle = 0;
                     };
                 case 3: // Perfect Square
                     sideAccuracy = calculateSideAccuracy();
-                    straightnessAccuracy = calculateStraightnessAccuracy();
+                    straightnessAccuracy = calculateStraightnessAccuracySquare();
                     angleAccuracies = calculateSquareAngleAccuracies();
                     return {
                         side: sideAccuracy,
@@ -436,6 +438,49 @@ var startAngle = 0;
             const targetLength = calculatePathLength(targetPath);
             return Math.max(0, 100 - Math.abs((userLength - targetLength) / targetLength * 100));
         }
+function calculateStraightnessAccuracySquare() {
+    if (userPath.length < 4) return 0;
+
+    const sideAccuracies = [];
+    for (let i = 0; i < 4; i++) {
+        const startIndex = Math.floor(i * userPath.length / 4);
+        const endIndex = Math.floor(((i + 1) % 4) * userPath.length / 4);
+        
+        const startPoint = userPath[startIndex];
+        const endPoint = userPath[endIndex];
+        
+        let maxDeviation = 0;
+        for (let j = startIndex; j <= endIndex; j++) {
+            const point = userPath[j];
+            const deviation = pointLineDistance(point, startPoint, endPoint);
+            maxDeviation = Math.max(maxDeviation, deviation);
+        }
+        
+        const sideLength = Math.sqrt(
+            Math.pow(endPoint.x - startPoint.x, 2) + 
+            Math.pow(endPoint.y - startPoint.y, 2)
+        );
+        const accuracy = Math.max(0, 100 * (1 - maxDeviation / (sideLength / 2)));
+        sideAccuracies.push(accuracy);
+    }
+    
+    return sideAccuracies.reduce((sum, acc) => sum + acc, 0) / 4;
+}
+
+function pointLineDistance(point, lineStart, lineEnd) {
+    const numerator = Math.abs(
+        (lineEnd.y - lineStart.y) * point.x - 
+        (lineEnd.x - lineStart.x) * point.y + 
+        lineEnd.x * lineStart.y - 
+        lineEnd.y * lineStart.x
+    );
+    const denominator = Math.sqrt(
+        Math.pow(lineEnd.y - lineStart.y, 2) + 
+        Math.pow(lineEnd.x - lineStart.x, 2)
+    );
+    return numerator / denominator;
+}
+
 
 function calculateAngleAccuracy() {
     if (userPath.length < 3) return 0;
