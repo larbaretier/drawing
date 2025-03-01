@@ -291,7 +291,7 @@
                     // Check if the pixel is visible
                     if (data[index + 3] !== 0) {
                         // If it is visible and has fewer than 2 visible neighbors
-                        if (countVisibleNeighbors(x, y) < 2) { // Changed to 2 for better isolation
+                        if (countVisibleNeighbors(x, y) < 5) { // Changed to 2 for better isolation
                             newData[index + 3] = 0; // Make it transparent
                         }
                     }
@@ -345,13 +345,7 @@
                         const topTransparent = isTransparent(x, y - 1, originalData);
                         const bottomTransparent = isTransparent(x, y + 1, originalData);
 
-                        if (!leftTransparent && !rightTransparent && topTransparent && bottomTransparent) {
-                            //its a horizontal line we dont want to fill
-                        } else if (leftTransparent && rightTransparent && !topTransparent && !bottomTransparent) {
-                            //its a vertical line we dont want to fill
-                        }
-                        // Count visible neighbors (no diagonals) based on the ORIGINAL image data
-                        else {
+
 
                             let visibleNeighbors = [];
                             if (!isTransparent(x - 1, y, originalData)) visibleNeighbors.push(getPixelColor(x - 1, y, originalData)); // Left
@@ -380,7 +374,7 @@
                                 data[index + 2] = avgB;
                                 data[index + 3] = avgA;
                             }
-                        }
+                        
                     }
                 }
             }
