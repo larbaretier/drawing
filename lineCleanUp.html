@@ -43,6 +43,13 @@
         .checkbox-container label {
             margin-left: 5px;
         }
+
+        /* Visually group the second pass controls */
+        .second-pass-controls {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -93,15 +100,45 @@
         <label for="colorToKeep">Color to Keep:</label>
         <input type="color" id="colorToKeep" value="#000000">
 
-        <div class="checkbox-container">
-            <input type="checkbox" id="removeIsolatedPixels">
-            <label for="removeIsolatedPixels">Remove Isolated Pixels</label>
+
+       <div class="checkbox-container">
+            <input type="checkbox" id="removeIsolatedPixels1" checked>
+            <label for="removeIsolatedPixels1">Remove Isolated Pixels Pass 1</label>
+            <input type="number" id="isolatedPixelThreshold1" min="1" max="10" value="3" style="width: 40px;">
+            <label for="isolatedPixelThreshold1">Threshold</label>
         </div>
 
         <div class="checkbox-container">
-            <input type="checkbox" id="fillGaps">
-            <label for="fillGaps">Fill 1-Pixel Gaps</label>
+            <input type="checkbox" id="fillGaps1" checked>
+            <label for="fillGaps1">Fill 1-Pixel Gaps Pass 1</label>
         </div>
+
+        <div class="second-pass-controls">
+            <div class="checkbox-container">
+                <input type="checkbox" id="removeIsolatedPixels2" checked>
+                <label for="removeIsolatedPixels2">Remove Isolated Pixels Pass 2</label>
+                <input type="number" id="isolatedPixelThreshold2" min="1" max="10" value="4" style="width: 40px;">
+                <label for="isolatedPixelThreshold2">Threshold</label>
+            </div>
+
+            <div class="slider-container">
+                <label for="definitionReduction">Definition Reduction:</label>
+                <input type="range" id="definitionReduction" min="1" max="10" value="2">
+                <input type="number" id="definitionReductionValue" min="1" max="10" value="2">
+            </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="fillGaps2" checked>
+                <label for="fillGaps2">Fill 1-Pixel Gaps Pass 2</label>
+            </div>
+
+           <div class="slider-container">
+                <label for="definitionReduction2">Definition Reduction Pass 2:</label>
+                <input type="range" id="definitionReduction2" min="1" max="10" value="4">
+                <input type="number" id="definitionReductionValue2" min="1" max="10" value="4">
+            </div>
+        </div>
+
     </div>
 
     <button id="downloadButton">Download PNG</button>
@@ -122,11 +159,20 @@
         const whiteThresholdSlider = document.getElementById('whiteThreshold');
         const whiteThresholdValueInput = document.getElementById('whiteThresholdValue');
         const colorToKeepInput = document.getElementById('colorToKeep');
-        const removeIsolatedPixelsCheckbox = document.getElementById('removeIsolatedPixels');
-        const fillGapsCheckbox = document.getElementById('fillGaps');
+        const definitionReductionSlider = document.getElementById('definitionReduction');
+        const definitionReductionValueInput = document.getElementById('definitionReductionValue');
+        const removeIsolatedPixelsCheckbox1 = document.getElementById('removeIsolatedPixels1');
+        const isolatedPixelThresholdInput1 = document.getElementById('isolatedPixelThreshold1');
+        const removeIsolatedPixelsCheckbox2 = document.getElementById('removeIsolatedPixels2');
+        const isolatedPixelThresholdInput2 = document.getElementById('isolatedPixelThreshold2');
+        const fillGapsCheckbox1 = document.getElementById('fillGaps1');
+        const fillGapsCheckbox2 = document.getElementById('fillGaps2');
+
+        const definitionReductionSlider2 = document.getElementById('definitionReduction2');
+        const definitionReductionValueInput2 = document.getElementById('definitionReductionValue2');
+
         const downloadButton = document.getElementById('downloadButton');
         const ctx = imageCanvas.getContext('2d');
-
         let originalImage = null;
 
         imageUpload.addEventListener('change', (e) => {
@@ -158,7 +204,7 @@
 
             // Resize canvas to fit screen width, maintaining aspect ratio
             const aspectRatio = originalImage.width / originalImage.height;
-            imageCanvas.width =originalImage.width; // adjust 0.9 as needed for padding
+            imageCanvas.width = originalImage.width; // adjust 0.9 as needed for padding
             imageCanvas.height = imageCanvas.width / aspectRatio;
 
             ctx.drawImage(originalImage, 0, 0, imageCanvas.width, imageCanvas.height); // Redraw original image scaled
@@ -170,8 +216,6 @@
             const colorThreshold = parseInt(colorThresholdSlider.value);
             const whiteThreshold = parseInt(whiteThresholdSlider.value);
             const colorToKeep = hexToRgb(colorToKeepInput.value);
-            const removeIsolatedPixels = removeIsolatedPixelsCheckbox.checked;
-            const fillGaps = fillGapsCheckbox.checked;
 
             let imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
             let data = imageData.data;
@@ -224,7 +268,6 @@
                 if (distanceToColor <= colorThreshold && !isWhite) {
                     // Calculate intensity
                     const intensity = (r + g + b) / 3;
-
                     // Normalize intensity to 0-255 range
                     const normalizedIntensity = (intensity / maxIntensity) * 255;
 
@@ -241,20 +284,179 @@
 
             imageData.data = data; // Update the ImageData object
 
-            // Remove Isolated Pixels
-            if (removeIsolatedPixels) {
-                imageData = removeIsolated(imageData);
+            // Remove Isolated Pixels - Pass 1
+            if (removeIsolatedPixelsCheckbox1.checked) {
+                const isolatedPixelThreshold1 = parseInt(isolatedPixelThresholdInput1.value);
+                imageData = removeIsolated(imageData, isolatedPixelThreshold1);
             }
 
-            // Fill Gaps
-            if (fillGaps) {
+            // Fill Gaps - Pass 1
+            if (fillGapsCheckbox1.checked) {
                 imageData = fillPixelGaps(imageData);
+            }
+
+            // Remove Isolated Pixels - Pass 2
+            if (removeIsolatedPixelsCheckbox2.checked) {
+                const definitionReductionFactor = parseInt(definitionReductionSlider.value);
+                const isolatedPixelThreshold2 = parseInt(isolatedPixelThresholdInput2.value);
+                imageData = reduceAndRemoveIsolated(imageData, definitionReductionFactor, isolatedPixelThreshold2, imageData);
+            }
+
+             // Fill Gaps - Pass 2 (Reduced Resolution)
+            if (fillGapsCheckbox2.checked) {
+                 const definitionReductionFactor2 = parseInt(definitionReductionSlider2.value); // Get 2nd pass reduction
+                 imageData = reduceAndFillGaps(imageData, definitionReductionFactor2, imageData);
             }
 
             ctx.putImageData(imageData, 0, 0);
         }
 
-        function removeIsolated(imageData) {
+        function reduceAndRemoveIsolated(imageData, definitionReductionFactor, threshold, originalImageData) {
+            const originalWidth = imageData.width;
+            const originalHeight = imageData.height;
+
+            // Calculate the reduced dimensions
+            const reducedWidth = Math.floor(originalWidth / definitionReductionFactor);
+            const reducedHeight = Math.floor(originalHeight / definitionReductionFactor);
+
+            // Create a temporary canvas for the reduced image
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = reducedWidth;
+            tempCanvas.height = reducedHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+
+             // Create a temporary ImageData object
+            const tempImageData = new ImageData(reducedWidth, reducedHeight);
+
+            // Copy the data to the temporary ImageData object
+            for (let y = 0; y < reducedHeight; y++) {
+                for (let x = 0; x < reducedWidth; x++) {
+                    const originalX = Math.floor(x * definitionReductionFactor);
+                    const originalY = Math.floor(y * definitionReductionFactor);
+                    const originalIndex = (originalY * originalWidth + originalX) * 4;
+
+                    const tempIndex = (y * reducedWidth + x) * 4;
+
+                    tempImageData.data[tempIndex] = originalImageData.data[originalIndex];
+                    tempImageData.data[tempIndex + 1] = originalImageData.data[originalIndex + 1];
+                    tempImageData.data[tempIndex + 2] = originalImageData.data[originalIndex + 2];
+                    tempImageData.data[tempIndex + 3] = originalImageData.data[originalIndex + 3];
+                }
+            }
+
+            tempCtx.putImageData(tempImageData, 0, 0);
+
+            // Get the image data from the reduced canvas
+            let reducedImageData = tempCtx.getImageData(0, 0, reducedWidth, reducedHeight);
+
+            // Apply the isolated pixel removal on the reduced image
+            reducedImageData = removeIsolated(reducedImageData, threshold);
+
+            // Create a new ImageData object for the original size
+            const newImageData = new ImageData(originalWidth, originalHeight);
+            const newData = newImageData.data;
+
+             // Iterate through the original image and make pixels transparent based on the reduced image
+            for (let y = 0; y < originalHeight; y++) {
+                for (let x = 0; x < originalWidth; x++) {
+                    const originalIndex = (y * originalWidth + x) * 4;
+
+                     // Calculate the corresponding coordinates in the reduced image
+                    const reducedX = Math.floor(x / definitionReductionFactor);
+                    const reducedY = Math.floor(y / definitionReductionFactor);
+                    const reducedIndex = (reducedY * reducedWidth + reducedX) * 4;
+
+                     // If the corresponding pixel in the reduced image is transparent, make the original pixel transparent
+                    if (reducedImageData.data[reducedIndex + 3] === 0) {
+                        newData[originalIndex + 3] = 0;
+                    } else {
+                         // Otherwise, copy the original pixel data
+                        newData[originalIndex] = imageData.data[originalIndex];
+                        newData[originalIndex + 1] = imageData.data[originalIndex + 1];
+                        newData[originalIndex + 2] = imageData.data[originalIndex + 2];
+                        newData[originalIndex + 3] = imageData.data[originalIndex + 3];
+                    }
+                }
+            }
+
+            return newImageData;
+        }
+
+        function reduceAndFillGaps(imageData, definitionReductionFactor, originalImageData) {
+             const originalWidth = imageData.width;
+            const originalHeight = imageData.height;
+
+            // Calculate the reduced dimensions
+            const reducedWidth = Math.floor(originalWidth / definitionReductionFactor);
+            const reducedHeight = Math.floor(originalHeight / definitionReductionFactor);
+
+            // Create a temporary canvas for the reduced image
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = reducedWidth;
+            tempCanvas.height = reducedHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+
+             // Create a temporary ImageData object
+            const tempImageData = new ImageData(reducedWidth, reducedHeight);
+
+            // Copy the data to the temporary ImageData object
+            for (let y = 0; y < reducedHeight; y++) {
+                for (let x = 0; x < reducedWidth; x++) {
+                    const originalX = Math.floor(x * definitionReductionFactor);
+                    const originalY = Math.floor(y * definitionReductionFactor);
+                    const originalIndex = (originalY * originalWidth + originalX) * 4;
+
+                    const tempIndex = (y * reducedWidth + x) * 4;
+
+                    tempImageData.data[tempIndex] = originalImageData.data[originalIndex];
+                    tempImageData.data[tempIndex + 1] = originalImageData.data[originalIndex + 1];
+                    tempImageData.data[tempIndex + 2] = originalImageData.data[originalIndex + 2];
+                    tempImageData.data[tempIndex + 3] = originalImageData.data[originalIndex + 3];
+                }
+            }
+
+            tempCtx.putImageData(tempImageData, 0, 0);
+
+            // Get the image data from the reduced canvas
+            let reducedImageData = tempCtx.getImageData(0, 0, reducedWidth, reducedHeight);
+
+            // Apply the fillPixelGaps on the reduced image
+            reducedImageData = fillPixelGaps(reducedImageData);
+
+            // Create a new ImageData object for the original size
+            const newImageData = new ImageData(originalWidth, originalHeight);
+            const newData = newImageData.data;
+
+             // Iterate through the original image and fill gaps based on the reduced image
+            for (let y = 0; y < originalHeight; y++) {
+                for (let x = 0; x < originalWidth; x++) {
+                    const originalIndex = (y * originalWidth + x) * 4;
+
+                     // Calculate the corresponding coordinates in the reduced image
+                    const reducedX = Math.floor(x / definitionReductionFactor);
+                    const reducedY = Math.floor(y / definitionReductionFactor);
+                    const reducedIndex = (reducedY * reducedWidth + reducedX) * 4;
+
+                     // If the original pixel is transparent AND the corresponding pixel in the reduced image is NOT transparent, fill the gap in the original image
+                    if (imageData.data[originalIndex + 3] === 0 && reducedImageData.data[reducedIndex + 3] !== 0) {
+                        newData[originalIndex] = reducedImageData.data[reducedIndex];
+                        newData[originalIndex + 1] = reducedImageData.data[reducedIndex + 1];
+                        newData[originalIndex + 2] = reducedImageData.data[reducedIndex + 2];
+                        newData[originalIndex + 3] = reducedImageData.data[reducedIndex + 3];
+                    } else {
+                         // Otherwise, copy the original pixel data
+                        newData[originalIndex] = imageData.data[originalIndex];
+                        newData[originalIndex + 1] = imageData.data[originalIndex + 1];
+                        newData[originalIndex + 2] = imageData.data[originalIndex + 2];
+                        newData[originalIndex + 3] = imageData.data[originalIndex + 3];
+                    }
+                }
+            }
+
+            return newImageData;
+        }
+
+        function removeIsolated(imageData, threshold) {
             const width = imageData.width;
             const height = imageData.height;
             const data = imageData.data;
@@ -290,8 +492,8 @@
 
                     // Check if the pixel is visible
                     if (data[index + 3] !== 0) {
-                        // If it is visible and has fewer than 2 visible neighbors
-                        if (countVisibleNeighbors(x, y) < 5) { // Changed to 2 for better isolation
+                        // If it is visible and has fewer than the threshold of visible neighbors
+                        if (countVisibleNeighbors(x, y) < threshold) {
                             newData[index + 3] = 0; // Make it transparent
                         }
                     }
@@ -345,8 +547,8 @@
                         const topTransparent = isTransparent(x, y - 1, originalData);
                         const bottomTransparent = isTransparent(x, y + 1, originalData);
 
-
-
+                        // If it's a 1-pixel gap
+                        if (true || !leftTransparent && !rightTransparent && topTransparent && bottomTransparent) {
                             let visibleNeighbors = [];
                             if (!isTransparent(x - 1, y, originalData)) visibleNeighbors.push(getPixelColor(x - 1, y, originalData)); // Left
                             if (!isTransparent(x + 1, y, originalData)) visibleNeighbors.push(getPixelColor(x + 1, y, originalData)); // Right
@@ -368,22 +570,29 @@
                                 const avgB = totalB / visibleNeighbors.length;
                                 const avgA = totalA / visibleNeighbors.length;
 
-                                // Set the pixel to the average color
+                                // Fill the gap with the average color
                                 data[index] = avgR;
                                 data[index + 1] = avgG;
                                 data[index + 2] = avgB;
                                 data[index + 3] = avgA;
                             }
-                        
+                        }
                     }
                 }
             }
+
+            imageData.data = data;
             return imageData;
         }
 
-        // Helper function to convert hex color to RGB
         function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? {
                 r: parseInt(result[1], 16),
                 g: parseInt(result[2], 16),
@@ -391,71 +600,95 @@
             } : null;
         }
 
-        // Event listeners for sliders
+        // Update value inputs when sliders change
         sharpnessSlider.addEventListener('input', () => {
             sharpnessValueInput.value = sharpnessSlider.value;
             applyFilter();
         });
-        sharpnessValueInput.addEventListener('input', () => {
+
+        sharpnessValueInput.addEventListener('change', () => {
             sharpnessSlider.value = sharpnessValueInput.value;
             applyFilter();
         });
 
-       despecklingSlider.addEventListener('input', () => {
+        despecklingSlider.addEventListener('input', () => {
             despecklingValueInput.value = despecklingSlider.value;
             applyFilter();
         });
-        despecklingValueInput.addEventListener('input', () => {
+
+        despecklingValueInput.addEventListener('change', () => {
             despecklingSlider.value = despecklingValueInput.value;
-            applyFilter();
         });
 
         brightnessSlider.addEventListener('input', () => {
             brightnessValueInput.value = brightnessSlider.value;
             applyFilter();
         });
-        brightnessValueInput.addEventListener('input', () => {
+
+        brightnessValueInput.addEventListener('change', () => {
             brightnessSlider.value = brightnessValueInput.value;
-            applyFilter();
         });
 
         contrastSlider.addEventListener('input', () => {
             contrastValueInput.value = contrastSlider.value;
             applyFilter();
         });
-        contrastValueInput.addEventListener('input', () => {
+
+        contrastValueInput.addEventListener('change', () => {
             contrastSlider.value = contrastValueInput.value;
-            applyFilter();
         });
 
         colorThresholdSlider.addEventListener('input', () => {
             colorThresholdValueInput.value = colorThresholdSlider.value;
             applyFilter();
         });
-        colorThresholdValueInput.addEventListener('input', () => {
+
+        colorThresholdValueInput.addEventListener('change', () => {
             colorThresholdSlider.value = colorThresholdValueInput.value;
-            applyFilter();
         });
 
         whiteThresholdSlider.addEventListener('input', () => {
             whiteThresholdValueInput.value = whiteThresholdSlider.value;
             applyFilter();
         });
-        whiteThresholdValueInput.addEventListener('input', () => {
+
+        whiteThresholdValueInput.addEventListener('change', () => {
             whiteThresholdSlider.value = whiteThresholdValueInput.value;
-            applyFilter();
         });
 
         colorToKeepInput.addEventListener('input', applyFilter);
-        removeIsolatedPixelsCheckbox.addEventListener('change', applyFilter);
-        fillGapsCheckbox.addEventListener('change', applyFilter);
+
+        removeIsolatedPixelsCheckbox1.addEventListener('change', applyFilter);
+        isolatedPixelThresholdInput1.addEventListener('change', applyFilter);
+        fillGapsCheckbox1.addEventListener('change', applyFilter);
+
+        removeIsolatedPixelsCheckbox2.addEventListener('change', applyFilter);
+        isolatedPixelThresholdInput2.addEventListener('change', applyFilter);
+        definitionReductionSlider.addEventListener('input', () => {
+             definitionReductionValueInput.value = definitionReductionSlider.value;
+             applyFilter();
+        });
+        definitionReductionValueInput.addEventListener('change', () => {
+            definitionReductionSlider.value = definitionReductionValueInput.value;
+            applyFilter();
+        });
+
+        fillGapsCheckbox2.addEventListener('change', applyFilter);
+        definitionReductionSlider2.addEventListener('input', () => {
+            definitionReductionValueInput2.value = definitionReductionSlider2.value;
+            applyFilter();
+        });
+        definitionReductionValueInput2.addEventListener('change', () => {
+            definitionReductionSlider2.value = definitionReductionValueInput2.value;
+            applyFilter();
+        });
 
         downloadButton.addEventListener('click', () => {
-            const dataURL = imageCanvas.toDataURL('image/png');
-            const a = document.createElement('a');
-            a.href = dataURL;
-            a.download = 'filtered_image.png';
-            a.click();
+            const image = imageCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            const link = document.createElement('a');
+            link.download = "image.png";
+            link.href = image;
+            link.click();
         });
     </script>
 </body>
