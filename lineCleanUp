@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Filter</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .controls label, .controls input {
+            margin-bottom: 5px;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            max-width: 100%; /* Make canvas responsive */
+            height: auto;    /* Maintain aspect ratio */
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-container input[type="number"] {
+            width: 50px;
+            margin-left: 5px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .checkbox-container label {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Filter</h1>
+
+    <input type="file" id="imageUpload" accept="image/*">
+    <br>
+    <canvas id="imageCanvas"></canvas>
+
+    <div class="controls">
+
+        <div class="slider-container">
+            <label for="sharpness">Sharpness:</label>
+            <input type="range" id="sharpness" min="0" max="100" value="100">
+            <input type="number" id="sharpnessValue" value="100">
+        </div>
+
+        <div class="slider-container">
+            <label for="despeckling">Despeckling:</label>
+            <input type="range" id="despeckling" min="0" max="10" value="10">
+            <input type="number" id="despecklingValue" value="10">
+        </div>
+
+        <div class="slider-container">
+            <label for="brightness">Brightness:</label>
+            <input type="range" id="brightness" min="-100" max="100" value="-43">
+            <input type="number" id="brightnessValue" value="-43">
+        </div>
+
+        <div class="slider-container">
+            <label for="contrast">Contrast:</label>
+            <input type="range" id="contrast" min="0" max="200" value="200">
+            <input type="number" id="contrastValue" value="200">
+        </div>
+
+        <div class="slider-container">
+            <label for="colorThreshold">Color Threshold:</label>
+            <input type="range" id="colorThreshold" min="0" max="255" value="255">
+            <input type="number" id="colorThresholdValue" value="255">
+        </div>
+
+        <div class="slider-container">
+            <label for="whiteThreshold">White Threshold:</label>
+            <input type="range" id="whiteThreshold" min="0" max="255" value="83">
+            <input type="number" id="whiteThresholdValue" value="83">
+        </div>
+
+        <label for="colorToKeep">Color to Keep:</label>
+        <input type="color" id="colorToKeep" value="#000000">
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="removeIsolatedPixels">
+            <label for="removeIsolatedPixels">Remove Isolated Pixels</label>
+        </div>
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="fillGaps">
+            <label for="fillGaps">Fill 1-Pixel Gaps</label>
+        </div>
+    </div>
+
+    <button id="downloadButton">Download PNG</button>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const sharpnessSlider = document.getElementById('sharpness');
+        const sharpnessValueInput = document.getElementById('sharpnessValue');
+        const despecklingSlider = document.getElementById('despeckling');
+        const despecklingValueInput = document.getElementById('despecklingValue');
+        const brightnessSlider = document.getElementById('brightness');
+        const brightnessValueInput = document.getElementById('brightnessValue');
+        const contrastSlider = document.getElementById('contrast');
+        const contrastValueInput = document.getElementById('contrastValue');
+        const colorThresholdSlider = document.getElementById('colorThreshold');
+        const colorThresholdValueInput = document.getElementById('colorThresholdValue');
+        const whiteThresholdSlider = document.getElementById('whiteThreshold');
+        const whiteThresholdValueInput = document.getElementById('whiteThresholdValue');
+        const colorToKeepInput = document.getElementById('colorToKeep');
+        const removeIsolatedPixelsCheckbox = document.getElementById('removeIsolatedPixels');
+        const fillGapsCheckbox = document.getElementById('fillGaps');
+        const downloadButton = document.getElementById('downloadButton');
+        const ctx = imageCanvas.getContext('2d');
+
+        let originalImage = null;
+
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    imageCanvas.width = img.width;
+                    imageCanvas.height = img.height;
+
+                    // Resize canvas to fit screen width, maintaining aspect ratio
+                    const aspectRatio = img.width / img.height;
+                    imageCanvas.width = Math.min(img.width, window.innerWidth * 0.9); // adjust 0.9 as needed for padding
+                    imageCanvas.height = imageCanvas.width / aspectRatio;
+
+                    ctx.drawImage(img, 0, 0, imageCanvas.width, imageCanvas.height);
+                    originalImage = img; // Store the original image
+                    applyFilter();
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        function applyFilter() {
+            if (!originalImage) return;
+
+            // Resize canvas to fit screen width, maintaining aspect ratio
+            const aspectRatio = originalImage.width / originalImage.height;
+            imageCanvas.width = Math.min(originalImage.width, window.innerWidth * 0.9); // adjust 0.9 as needed for padding
+            imageCanvas.height = imageCanvas.width / aspectRatio;
+
+            ctx.drawImage(originalImage, 0, 0, imageCanvas.width, imageCanvas.height); // Redraw original image scaled
+
+            const sharpness = parseInt(sharpnessSlider.value);
+            const despeckling = parseInt(despecklingSlider.value);
+            const brightness = parseInt(brightnessSlider.value);
+            const contrast = parseInt(contrastSlider.value) - 100;
+            const colorThreshold = parseInt(colorThresholdSlider.value);
+            const whiteThreshold = parseInt(whiteThresholdSlider.value);
+            const colorToKeep = hexToRgb(colorToKeepInput.value);
+            const removeIsolatedPixels = removeIsolatedPixelsCheckbox.checked;
+            const fillGaps = fillGapsCheckbox.checked;
+
+            let imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+            let data = imageData.data;
+
+            // Find the maximum intensity of the lines we want to keep
+            let maxIntensity = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                const distanceToColor = Math.sqrt(
+                    Math.pow(r - colorToKeep.r, 2) +
+                    Math.pow(g - colorToKeep.g, 2) +
+                    Math.pow(b - colorToKeep.b, 2)
+                );
+
+                const isWhite = r > (255 - whiteThreshold) && g > (255 - whiteThreshold) && b > (255 - whiteThreshold);
+
+                if (distanceToColor <= colorThreshold && !isWhite) {
+                    // Calculate intensity (you can use different methods, e.g., average, luminance)
+                    const intensity = (r + g + b) / 3;
+                    maxIntensity = Math.max(maxIntensity, intensity);
+                }
+            }
+
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+
+                // Brightness
+                r += brightness;
+                g += brightness;
+                b += brightness;
+
+                // Contrast
+                r = (r - 128) * (contrast / 100) + 128;
+                g = (g - 128) * (contrast / 100) + 128;
+                b = (b - 128) * (contrast / 100) + 128;
+
+                const distanceToColor = Math.sqrt(
+                    Math.pow(r - colorToKeep.r, 2) +
+                    Math.pow(g - colorToKeep.g, 2) +
+                    Math.pow(b - colorToKeep.b, 2)
+                );
+
+                const isWhite = r > (255 - whiteThreshold) && g > (255 - whiteThreshold) && b > (255 - whiteThreshold);
+
+                if (distanceToColor <= colorThreshold && !isWhite) {
+                    // Calculate intensity
+                    const intensity = (r + g + b) / 3;
+
+                    // Normalize intensity to 0-255 range
+                    const normalizedIntensity = (intensity / maxIntensity) * 255;
+
+                    // Apply the selected color with the normalized intensity as alpha
+                    data[i] = colorToKeep.r;
+                    data[i + 1] = colorToKeep.g;
+                    data[i + 2] = colorToKeep.b;
+                    data[i + 3] = normalizedIntensity; // Set alpha based on intensity
+
+                } else {
+                    data[i + 3] = 0; // Make pixel transparent
+                }
+            }
+
+            imageData.data = data; // Update the ImageData object
+
+            // Remove Isolated Pixels
+            if (removeIsolatedPixels) {
+                imageData = removeIsolated(imageData);
+            }
+
+            // Fill Gaps
+            if (fillGaps) {
+                imageData = fillPixelGaps(imageData);
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function removeIsolated(imageData) {
+            const width = imageData.width;
+            const height = imageData.height;
+            const data = imageData.data;
+
+            // Helper function to check if a pixel is transparent
+            function isTransparent(x, y) {
+                if (x < 0 || x >= width || y < 0 || y >= height) return true; // Treat out-of-bounds as transparent
+                const index = (y * width + x) * 4;
+                return data[index + 3] === 0;
+            }
+
+            // Helper function to count visible neighbors (including diagonals)
+            function countVisibleNeighbors(x, y) {
+                let count = 0;
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        if (i === 0 && j === 0) continue; // Skip the pixel itself
+                        if (!isTransparent(x + i, y + j)) {
+                            count++;
+                        }
+                    }
+                }
+                return count;
+            }
+
+            // Create a copy of the image data to store changes
+            const newData = new Uint8ClampedArray(data);
+
+            // Iterate through the image data
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const index = (y * width + x) * 4;
+
+                    // Check if the pixel is visible
+                    if (data[index + 3] !== 0) {
+                        // If it is visible and has fewer than 2 visible neighbors
+                        if (countVisibleNeighbors(x, y) < 2) { // Changed to 2 for better isolation
+                            newData[index + 3] = 0; // Make it transparent
+                        }
+                    }
+                }
+            }
+
+            // Update the image data with the changes
+            imageData.data.set(newData);
+            return imageData;
+        }
+
+        function fillPixelGaps(imageData) {
+            const width = imageData.width;
+            const height = imageData.height;
+            const data = imageData.data;
+
+            // Helper function to check if a pixel is transparent
+            function isTransparent(x, y, data) {
+                if (x < 0 || x >= width || y < 0 || y >= height) return true; // Treat out-of-bounds as transparent
+                const index = (y * width + x) * 4;
+                return data[index + 3] === 0;
+            }
+
+            // Helper function to get the color of a pixel
+            function getPixelColor(x, y, data) {
+                if (x < 0 || x >= width || y < 0 || y >= height) return null;
+                const index = (y * width + x) * 4;
+                return {
+                    r: data[index],
+                    g: data[index + 1],
+                    b: data[index + 2],
+                    a: data[index + 3]
+                };
+            }
+
+            // Create a copy of the image data to work with
+            const originalImageData = new ImageData(new Uint8ClampedArray(data), width, height);
+            const originalData = originalImageData.data;
+
+            // Iterate through the image data
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const index = (y * width + x) * 4;
+
+                    // Check if the pixel is transparent
+                    if (data[index + 3] === 0) {
+
+                        // Check the four immediate neighbors (no diagonals) and make sure they are true 1-pixel gaps
+                        const leftTransparent = isTransparent(x - 1, y, originalData);
+                        const rightTransparent = isTransparent(x + 1, y, originalData);
+                        const topTransparent = isTransparent(x, y - 1, originalData);
+                        const bottomTransparent = isTransparent(x, y + 1, originalData);
+
+                        if (!leftTransparent && !rightTransparent && topTransparent && bottomTransparent) {
+                            //its a horizontal line we dont want to fill
+                        } else if (leftTransparent && rightTransparent && !topTransparent && !bottomTransparent) {
+                            //its a vertical line we dont want to fill
+                        }
+                        // Count visible neighbors (no diagonals) based on the ORIGINAL image data
+                        else {
+
+                            let visibleNeighbors = [];
+                            if (!isTransparent(x - 1, y, originalData)) visibleNeighbors.push(getPixelColor(x - 1, y, originalData)); // Left
+                            if (!isTransparent(x + 1, y, originalData)) visibleNeighbors.push(getPixelColor(x + 1, y, originalData)); // Right
+                            if (!isTransparent(x, y - 1, originalData)) visibleNeighbors.push(getPixelColor(x, y - 1, originalData)); // Top
+                            if (!isTransparent(x, y + 1, originalData)) visibleNeighbors.push(getPixelColor(x, y + 1, originalData)); // Bottom
+
+                            // If at least 2 neighbors are visible, calculate the average color
+                            if (visibleNeighbors.length >= 2) {
+                                let totalR = 0, totalG = 0, totalB = 0, totalA = 0;
+                                visibleNeighbors.forEach(neighbor => {
+                                    totalR += neighbor.r;
+                                    totalG += neighbor.g;
+                                    totalB += neighbor.b;
+                                    totalA += neighbor.a;
+                                });
+
+                                const avgR = totalR / visibleNeighbors.length;
+                                const avgG = totalG / visibleNeighbors.length;
+                                const avgB = totalB / visibleNeighbors.length;
+                                const avgA = totalA / visibleNeighbors.length;
+
+                                // Set the pixel to the average color
+                                data[index] = avgR;
+                                data[index + 1] = avgG;
+                                data[index + 2] = avgB;
+                                data[index + 3] = avgA;
+                            }
+                        }
+                    }
+                }
+            }
+            return imageData;
+        }
+
+        // Helper function to convert hex color to RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Event listeners for sliders
+        sharpnessSlider.addEventListener('input', () => {
+            sharpnessValueInput.value = sharpnessSlider.value;
+            applyFilter();
+        });
+        sharpnessValueInput.addEventListener('input', () => {
+            sharpnessSlider.value = sharpnessValueInput.value;
+            applyFilter();
+        });
+
+       despecklingSlider.addEventListener('input', () => {
+            despecklingValueInput.value = despecklingSlider.value;
+            applyFilter();
+        });
+        despecklingValueInput.addEventListener('input', () => {
+            despecklingSlider.value = despecklingValueInput.value;
+            applyFilter();
+        });
+
+        brightnessSlider.addEventListener('input', () => {
+            brightnessValueInput.value = brightnessSlider.value;
+            applyFilter();
+        });
+        brightnessValueInput.addEventListener('input', () => {
+            brightnessSlider.value = brightnessValueInput.value;
+            applyFilter();
+        });
+
+        contrastSlider.addEventListener('input', () => {
+            contrastValueInput.value = contrastSlider.value;
+            applyFilter();
+        });
+        contrastValueInput.addEventListener('input', () => {
+            contrastSlider.value = contrastValueInput.value;
+            applyFilter();
+        });
+
+        colorThresholdSlider.addEventListener('input', () => {
+            colorThresholdValueInput.value = colorThresholdSlider.value;
+            applyFilter();
+        });
+        colorThresholdValueInput.addEventListener('input', () => {
+            colorThresholdSlider.value = colorThresholdValueInput.value;
+            applyFilter();
+        });
+
+        whiteThresholdSlider.addEventListener('input', () => {
+            whiteThresholdValueInput.value = whiteThresholdSlider.value;
+            applyFilter();
+        });
+        whiteThresholdValueInput.addEventListener('input', () => {
+            whiteThresholdSlider.value = whiteThresholdValueInput.value;
+            applyFilter();
+        });
+
+        colorToKeepInput.addEventListener('input', applyFilter);
+        removeIsolatedPixelsCheckbox.addEventListener('change', applyFilter);
+        fillGapsCheckbox.addEventListener('change', applyFilter);
+
+        downloadButton.addEventListener('click', () => {
+            const dataURL = imageCanvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'filtered_image.png';
+            a.click();
+        });
+    </script>
+</body>
+</html>
