@@ -141,7 +141,7 @@
 
                     // Resize canvas to fit screen width, maintaining aspect ratio
                     const aspectRatio = img.width / img.height;
-                    imageCanvas.width = Math.min(img.width, window.innerWidth * 0.9); // adjust 0.9 as needed for padding
+                    imageCanvas.width = img.width; // adjust 0.9 as needed for padding
                     imageCanvas.height = imageCanvas.width / aspectRatio;
 
                     ctx.drawImage(img, 0, 0, imageCanvas.width, imageCanvas.height);
@@ -158,7 +158,7 @@
 
             // Resize canvas to fit screen width, maintaining aspect ratio
             const aspectRatio = originalImage.width / originalImage.height;
-            imageCanvas.width = Math.min(originalImage.width, window.innerWidth * 0.9); // adjust 0.9 as needed for padding
+            imageCanvas.width =originalImage.width; // adjust 0.9 as needed for padding
             imageCanvas.height = imageCanvas.width / aspectRatio;
 
             ctx.drawImage(originalImage, 0, 0, imageCanvas.width, imageCanvas.height); // Redraw original image scaled
