@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Rounded Border Image Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        #imageCanvas {
+            border: 1px solid #ccc;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        input {
+            margin: 5px;
+            padding: 5px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="imageCanvas" width="1900" height="3900"></canvas>
+        <div class="controls">
+            <input type="number" id="width" value="1900" placeholder="Width">
+            <input type="number" id="height" value="3900" placeholder="Height">
+            <input type="number" id="borderWidth" value="110" placeholder="Border Width">
+            <input type="number" id="outerRadius" value="200" placeholder="Outer Radius (R2)">
+            <input type="color" id="borderColor" value="#5c5c94">
+            <button onclick="generateImage()">Generate Image</button>
+            <button onclick="downloadImage()">Download Image</button>
+        </div>
+    </div>
+
+    <script>
+        function generateImage() {
+            const canvas = document.getElementById('imageCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Get user inputs
+            const width = parseInt(document.getElementById('width').value);
+            const height = parseInt(document.getElementById('height').value);
+            const borderWidth = parseInt(document.getElementById('borderWidth').value);
+            const outerRadius = parseInt(document.getElementById('outerRadius').value);
+            const borderColor = document.getElementById('borderColor').value;
+
+            // Calculate inner radius
+            const innerRadius = Math.max(0, outerRadius - borderWidth);
+
+            // Set canvas size
+            canvas.width = width;
+            canvas.height = height;
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw outer rounded rectangle
+            ctx.beginPath();
+            ctx.moveTo(outerRadius, 0);
+            ctx.lineTo(width - outerRadius, 0);
+            ctx.arcTo(width, 0, width, outerRadius, outerRadius);
+            ctx.lineTo(width, height - outerRadius);
+            ctx.arcTo(width, height, width - outerRadius, height, outerRadius);
+            ctx.lineTo(outerRadius, height);
+            ctx.arcTo(0, height, 0, height - outerRadius, outerRadius);
+            ctx.lineTo(0, outerRadius);
+            ctx.arcTo(0, 0, outerRadius, 0, outerRadius);
+            
+            // Cut out the inner rounded rectangle (the "hole")
+            ctx.moveTo(borderWidth + innerRadius, borderWidth); // Start at top-left of inner rectangle
+            ctx.lineTo(width - borderWidth - innerRadius, borderWidth); // Top side
+            ctx.arcTo(width - borderWidth, borderWidth, width - borderWidth, borderWidth + innerRadius, innerRadius); // Top-right corner
+            ctx.lineTo(width - borderWidth, height - borderWidth - innerRadius); // Right side
+            ctx.arcTo(width - borderWidth, height - borderWidth, width - borderWidth - innerRadius, height - borderWidth, innerRadius); // Bottom-right corner
+            ctx.lineTo(borderWidth + innerRadius, height - borderWidth); // Bottom side
+            ctx.arcTo(borderWidth, height - borderWidth, borderWidth, height - borderWidth - innerRadius, innerRadius); // Bottom-left corner
+            ctx.lineTo(borderWidth, borderWidth + innerRadius); // Left side
+            ctx.arcTo(borderWidth, borderWidth, borderWidth + innerRadius, borderWidth, innerRadius); // Top-left corner
+
+            // Fill the path (only the "donut" area)
+            ctx.fillStyle = borderColor;
+            ctx.fill('evenodd');
+        }
+
+        function downloadImage() {
+            const canvas = document.getElementById('imageCanvas');
+            
+			// Create a download link and trigger download
+			const link = document.createElement('a');
+			link.download = 'custom_rounded_border_image.png';
+			link.href = canvas.toDataURL();
+			link.click();
+		}
+
+		// Generate the default image on page load
+		generateImage();
+	</script>
+</body>
+</html>
