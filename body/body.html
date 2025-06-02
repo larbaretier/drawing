@@ -125,25 +125,23 @@
   </div>
 </div>
 <script>
-/** --- CONFIGURATION --- **/
 const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/larbaretier/drawing/main/body/";
 const BODY_JSON_URL = GITHUB_RAW_BASE + "body.json";
+const IMAGE_PATHS_JSON_URL = GITHUB_RAW_BASE + "image_paths.json";
 const ORIGINAL_IMAGES_FOLDER = GITHUB_RAW_BASE + "original_images/";
-const IMAGES_FOLDER = GITHUB_RAW_BASE + "image/";
 const SUBFOLDERS = ['cartoon', 'realist', 'photo'];
-const IMAGE_EXTS = ['.png', '.jpg', '.jpeg', '.webp'];
-/** --- STATE --- **/
+
 let bodyList = [];
 let nameToElement = {};
-let quizOptions = {
-  numQuestions: 10,
-  timerEnabled: false,
-  timerSeconds: 30
-};
+let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30 };
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
-let allImagesByElement = {}; // { nom: { cartoon: [], realist: [], photo: [] } }
-/** --- UTILS --- **/
+let imageManifest = [];
+let imagesByElement = {}; // { nom: { cartoon: [imgObj], realist: [imgObj], photo: [imgObj] } }
+
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -151,92 +149,67 @@ function shuffle(arr) {
   }
   return arr;
 }
-function escapeHTML(str) {
-  return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function debounce(fn, delay) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
-/** --- IMAGE HANDLING --- **/
 function getOriginalImagePath(imgFile) {
   // imgFile: mermaid_pintneck.png => mermaid.png
   const base = imgFile.split('_')[0];
   const ext = imgFile.slice(imgFile.lastIndexOf('.'));
   return `${ORIGINAL_IMAGES_FOLDER}${base}${ext}`;
 }
-function getImageUrl(nom, sub, file) {
-  return `${IMAGES_FOLDER}${encodeURIComponent(nom)}/${sub}/${file}`;
+function getRawUrlFromManifestPath(path) {
+  // path: image\amorce_du_cou\cartoon\mermaid_pintneck.png
+  // --> https://raw.githubusercontent.com/larbaretier/drawing/main/body/image/amorce_du_cou/cartoon/mermaid_pintneck.png
+  return GITHUB_RAW_BASE + path.replace(/\\/g, '/');
 }
-function getAllPossibleImageNames(nom, sub) {
-  // Try to guess image files by convention: [anyname]_[anything].[ext]
-  // We'll try a set of common names for demo, but in real use, you'd want a manifest.
-  // We'll try: [nom]_[suffix].[ext], for a list of suffixes and up to 5
-  const suffixes = ['pintneck', 'blibli', 'variant', '1', '2', '3', '4', '5'];
-  let files = [];
-  for (let suf of suffixes) {
-    for (let ext of IMAGE_EXTS) {
-      files.push(`${nom}_${suf}${ext}`);
+function parseManifest() {
+  // Build imagesByElement: { nom: { cartoon: [imgObj], ... } }
+  imagesByElement = {};
+  for (const path of imageManifest) {
+    const parts = path.split(/[/\\]/);
+    // path: image\nom\subfolder\filename
+    if (parts.length < 4) continue;
+    const nom = parts[1];
+    const sub = parts[2];
+    const file = parts[3];
+    if (!imagesByElement[nom]) imagesByElement[nom] = { cartoon: [], realist: [], photo: [] };
+    if (SUBFOLDERS.includes(sub)) {
+      imagesByElement[nom][sub].push({
+        file,
+        url: getRawUrlFromManifestPath(path)
+      });
     }
   }
-  return files;
 }
-async function probeImagesForElement(nom) {
-  const res = { cartoon: [], realist: [], photo: [] };
-  for (let sub of SUBFOLDERS) {
-    let files = getAllPossibleImageNames(nom, sub);
-    for (let file of files) {
-      let url = getImageUrl(nom, sub, file);
-      // Probe existence by trying to load the image (HEAD is not allowed on raw.githubusercontent.com, so use Image)
-      if (await imageExists(url)) {
-        res[sub].push({ file, url });
-      }
-    }
-  }
-  return res;
-}
-function imageExists(url) {
-  // Try to load image, resolve true if ok, false otherwise
-  return new Promise(resolve => {
-    const img = new window.Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url;
-  });
-}
-/** --- MAIN --- **/
+
 window.addEventListener('DOMContentLoaded', async () => {
+  showLoading("Loading data...");
   await loadBodyJson();
-  await loadAllImages();
+  await loadImageManifest();
+  parseManifest();
   setupNav();
   setupQuiz();
   setupOptions();
   setupEncyclopedia();
+  hideLoading();
   showSection('quiz');
 });
-/** --- LOAD JSON --- **/
+
 async function loadBodyJson() {
   const resp = await fetch(BODY_JSON_URL);
   bodyList = await resp.json();
   nameToElement = {};
   for (const elem of bodyList) nameToElement[elem.nom] = elem;
 }
-async function loadAllImages() {
-  // For each element, probe for images in all subfolders
-  allImagesByElement = {};
-  for (const elem of bodyList) {
-    allImagesByElement[elem.nom] = await probeImagesForElement(elem.nom);
-  }
+async function loadImageManifest() {
+  const resp = await fetch(IMAGE_PATHS_JSON_URL);
+  imageManifest = await resp.json();
 }
-/** --- NAVIGATION --- **/
+
 function setupNav() {
   document.getElementById('nav-quiz').onclick = () => showSection('quiz');
   document.getElementById('nav-options').onclick = () => showSection('options');
   document.getElementById('nav-encyclopedia').onclick = () => showSection('encyclopedia');
 }
+
 function showSection(section) {
   document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
   document.getElementById('nav-' + section).classList.add('active');
@@ -247,6 +220,24 @@ function showSection(section) {
   if (section === 'quiz') startQuiz();
   if (section === 'encyclopedia') renderEncyclopediaTable();
 }
+
+/** --- LOADING INDICATOR --- **/
+function showLoading(msg) {
+  let el = document.getElementById('loading-indicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'loading-indicator';
+    el.style = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:#fff9f9ee;z-index:9999;display:flex;align-items:center;justify-content:center;font-size:2rem;";
+    document.body.appendChild(el);
+  }
+  el.textContent = msg || "Loading...";
+  el.style.display = 'flex';
+}
+function hideLoading() {
+  let el = document.getElementById('loading-indicator');
+  if (el) el.style.display = 'none';
+}
+
 /** --- QUIZ --- **/
 function setupQuiz() {
   document.getElementById('quiz-submit-btn').onclick = () => submitQuizAnswer();
@@ -257,27 +248,27 @@ function setupQuiz() {
   });
 }
 function startQuiz() {
+  // Only use elements with at least one image (where imagesByElement has a non-empty array)
+  let candidates = bodyList.filter(el => {
+    const imgs = imagesByElement[el.nom];
+    return imgs && (imgs.cartoon.length || imgs.realist.length || imgs.photo.length);
+  });
+  if (candidates.length === 0) {
+    document.getElementById('quiz-image-container').innerHTML = "<b>No elements with images found.</b>";
+    document.querySelector('.quiz-input-area').style.display = "none";
+    return;
+  }
+  shuffle(candidates);
   quizState = {
-    questions: [],
+    questions: candidates.slice(0, quizOptions.numQuestions),
     current: 0,
     score: 0,
     answers: [],
     timer: null,
     timerLeft: 0
   };
-  // Select random elements with at least one image
-  const candidates = bodyList.filter(el => hasAnyImage(el.nom));
-  shuffle(candidates);
-  quizState.questions = candidates.slice(0, quizOptions.numQuestions);
-  quizState.current = 0;
-  quizState.score = 0;
-  quizState.answers = [];
+  document.querySelector('.quiz-input-area').style.display = "";
   renderQuizQuestion();
-}
-function hasAnyImage(nom) {
-  // Check if any images exist for this element
-  const imgs = allImagesByElement[nom];
-  return imgs && (imgs.cartoon.length || imgs.realist.length || imgs.photo.length);
 }
 function renderQuizQuestion() {
   const qIdx = quizState.current;
@@ -289,7 +280,7 @@ function renderQuizQuestion() {
   // Pick a random image from any subfolder
   const imgs = [];
   for (const sub of SUBFOLDERS) {
-    imgs.push(...(allImagesByElement[elem.nom][sub] || []).map(img => ({...img, sub})));
+    imgs.push(...(imagesByElement[elem.nom]?.[sub] || []).map(img => ({...img, sub})));
   }
   if (!imgs.length) {
     // Should not happen, fallback
@@ -330,30 +321,8 @@ function renderQuizQuestion() {
   input.focus();
   document.getElementById('quiz-feedback').textContent = '';
   hideAutocomplete();
-  // Timer
-  if (quizOptions.timerEnabled) {
-    quizState.timerLeft = quizOptions.timerSeconds;
-    document.getElementById('quiz-timer').classList.remove('hidden');
-    updateQuizTimer();
-    if (quizState.timer) clearInterval(quizState.timer);
-    quizState.timer = setInterval(() => {
-      quizState.timerLeft--;
-      updateQuizTimer();
-      if (quizState.timerLeft <= 0) {
-        clearInterval(quizState.timer);
-        quizState.timer = null;
-        submitQuizAnswer(true);
-      }
-    }, 1000);
-  } else {
-    document.getElementById('quiz-timer').classList.add('hidden');
-    if (quizState.timer) clearInterval(quizState.timer);
-    quizState.timer = null;
-  }
 }
-function updateQuizTimer() {
-  document.getElementById('quiz-timer').textContent = `Time left: ${quizState.timerLeft}s`;
-}
+
 function submitQuizAnswer(timeout=false) {
   const input = document.getElementById('quiz-answer');
   const answer = input.value.trim();
@@ -367,8 +336,6 @@ function submitQuizAnswer(timeout=false) {
     img: quizState.currentImg
   });
   if (isCorrect) quizState.score++;
-  if (quizState.timer) clearInterval(quizState.timer);
-  // Feedback
   const fb = document.getElementById('quiz-feedback');
   if (isCorrect) {
     fb.innerHTML = `<span style="color:#2c8c2c;font-weight:bold;">Correct!</span>`;
@@ -388,7 +355,6 @@ function showAutocomplete() {
   if (val) filtered = filtered.filter(n => n.toLowerCase().includes(val));
   list.innerHTML = filtered.map(n => `<div class="autocomplete-item">${escapeHTML(n)}</div>`).join('');
   list.classList.toggle('hidden', filtered.length === 0);
-  // Click handler
   list.querySelectorAll('.autocomplete-item').forEach(item => {
     item.onclick = () => {
       input.value = item.textContent;
@@ -402,7 +368,6 @@ function hideAutocomplete() {
 function showQuizResults() {
   document.getElementById('section-quiz').classList.add('hidden');
   document.getElementById('section-results').classList.remove('hidden');
-  // Summary
   const score = quizState.score;
   const total = quizState.questions.length;
   let comment = '';
@@ -411,7 +376,6 @@ function showQuizResults() {
   else if (score >= total * 0.5) comment = 'Not bad!';
   else comment = 'Oh no!';
   document.getElementById('results-summary').innerHTML = `Score: <b>${score}/${total}</b><br>${comment}`;
-  // List
   const list = document.getElementById('results-list');
   list.innerHTML = quizState.answers.map((ans, i) => `
     <div class="result-item" data-idx="${i}">
@@ -423,7 +387,6 @@ function showQuizResults() {
       </div>
     </div>
   `).join('');
-  // Click to enlarge
   list.querySelectorAll('.result-item').forEach(item => {
     item.onclick = () => {
       const idx = item.getAttribute('data-idx');
@@ -435,14 +398,7 @@ function showQuizResults() {
     showSection('quiz');
   };
 }
-/** --- MODAL --- **/
-function showModal(imgUrl) {
-  document.getElementById('modal-img').src = imgUrl;
-  document.getElementById('modal-bg').classList.remove('hidden');
-}
-function closeModal() {
-  document.getElementById('modal-bg').classList.add('hidden');
-}
+
 /** --- OPTIONS --- **/
 function setupOptions() {
   const form = document.getElementById('options-form');
@@ -462,6 +418,7 @@ function setupOptions() {
     showSection('quiz');
   };
 }
+
 /** --- ENCYCLOPEDIA --- **/
 function setupEncyclopedia() {
   document.getElementById('sort-name').onclick = () => {
@@ -510,7 +467,7 @@ function showEncyclopediaInfo(nom) {
   info.classList.remove('hidden');
 }
 function renderGallerySection(el, sub) {
-  const images = allImagesByElement[el.nom][sub] || [];
+  const images = imagesByElement[el.nom]?.[sub] || [];
   if (!images.length) return '';
   return `
     <div class="gallery-title">${sub.charAt(0).toUpperCase()+sub.slice(1)}</div>
@@ -534,9 +491,26 @@ function switchGalleryImg(btn, variant, original) {
     btn.textContent = 'Show Original';
   }
 }
+function showModal(imgUrl) {
+  document.getElementById('modal-img').src = imgUrl;
+  document.getElementById('modal-bg').classList.remove('hidden');
+}
+function closeModal() {
+  document.getElementById('modal-bg').classList.add('hidden');
+}
 window.closeModal = closeModal;
 window.showModal = showModal;
 window.switchGalleryImg = switchGalleryImg;
+
+/* Debounce function for autocomplete */
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
 </script>
+<div id="loading-indicator" style="display:none"></div>
 </body>
 </html>
