@@ -1,0 +1,373 @@
+[
+    {
+      "nom": "abdominaux",
+      "categories": ["torse_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "adducteurs",
+      "categories": ["inf_face", "inf_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "amorce du cou",
+      "categories": ["torse_face"],
+      "type": "région"
+    },
+    {
+      "nom": "anconé",
+      "categories": ["sup_dos"],
+      "type": "muscle"
+    },
+    {
+      "nom": "angle thoracique",
+      "categories": ["torse_face"],
+      "type": "os"
+    },
+    {
+      "nom": "aréoles",
+      "categories": ["torse_face"],
+      "type": "peau"
+    },
+    {
+      "nom": "arcade zygomatique",
+      "categories": ["crane"],
+      "type": "os"
+    },
+    {
+      "nom": "biceps",
+      "categories": ["inf_dos", "sup_face", "sup_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "bord interne omoplate",
+      "categories": ["torse_dos"],
+      "type": "os"
+    },
+    {
+      "nom": "brachial",
+      "categories": ["sup_face", "sup_dos"],
+      "type": "muscle"
+    },
+    {
+      "nom": "calcanéum",
+      "categories": ["pied"],
+      "type": "os"
+    },
+    {
+      "nom": "cage thoracique",
+      "categories": ["torse_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "clavicules",
+      "categories": ["torse_face"],
+      "type": "os"
+    },
+    {
+      "nom": "coude",
+      "categories": ["sup_dos", "sup_profil"],
+      "type": "articulation"
+    },
+    {
+      "nom": "couturier",
+      "categories": ["inf_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "crête iliaque",
+      "categories": ["torse_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "câbles arrières genou",
+      "categories": ["inf_dos"],
+      "type": "tendon"
+    },
+    {
+      "nom": "deltoïde",
+      "categories": ["sup_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "échancrure thoracique",
+      "categories": ["torse_face"],
+      "type": "os"
+    },
+    {
+      "nom": "épine dorsale",
+      "categories": ["torse_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "épine iliaque",
+      "categories": ["torse_face", "torse_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "épine postérieure",
+      "categories": ["torse_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "épines osseuses postérieures du bassin",
+      "categories": ["torse_dos"],
+      "type": "os"
+    },
+    {
+      "nom": "épitrochlée",
+      "categories": ["sup_face"],
+      "type": "os"
+    },
+    {
+      "nom": "extenseur",
+      "categories": ["sup_face", "sup_dos"],
+      "type": "muscle"
+    },
+    {
+      "nom": "extrémité claviculaire",
+      "categories": ["torse_dos"],
+      "type": "os"
+    },
+    {
+      "nom": "extrémités du cubitus",
+      "categories": ["sup_dos"],
+      "type": "os"
+    },
+    {
+      "nom": "fascia",
+      "categories": ["inf_dos", "inf_profil"],
+      "type": "fascia"
+    },
+    {
+      "nom": "fascia lata",
+      "categories": ["inf_profil"],
+      "type": "fascia"
+    },
+    {
+      "nom": "fléchisseur",
+      "categories": ["sup_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "grand dentelé",
+      "categories": ["torse_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "grand dorsal",
+      "categories": ["torse_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "grand fessier",
+      "categories": ["inf_dos"],
+      "type": "muscle"
+    },
+    {
+      "nom": "grand rond",
+      "categories": ["torse_face", "torse_dos", "torse_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "grand trochanter",
+      "categories": ["inf_face", "inf_dos", "inf_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "hsr",
+      "categories": ["sup_face", "sup_dos"],
+      "type": "muscle"
+    },
+    {
+      "nom": "jumeaux",
+      "categories": ["inf_dos", "inf_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "malléole externe",
+      "categories": ["inf_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "malléole interne",
+      "categories": ["inf_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "mandibule",
+      "categories": ["crane"],
+      "type": "os"
+    },
+    {
+      "nom": "masséter",
+      "categories": ["crane"],
+      "type": "muscle"
+    },
+    {
+      "nom": "maxillaire",
+      "categories": ["crane"],
+      "type": "os"
+    },
+    {
+      "nom": "oblique",
+      "categories": ["torse_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "nombril",
+      "categories": ["torse_face"],
+      "type": "peau"
+    },
+    {
+      "nom": "omoplate",
+      "categories": ["torse_profil", "torse_dos"],
+      "type": "os"
+    },
+    {
+      "nom": "os du talon",
+      "categories": ["inf_dos"],
+      "type": "os"
+    },
+    {
+      "nom": "pectoral",
+      "categories": ["torse_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "pectoraux",
+      "categories": ["torse_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "pédieux",
+      "categories": ["pied"],
+      "type": "muscle"
+    },
+    {
+      "nom": "pisiforme",
+      "categories": ["main"],
+      "type": "os"
+    },
+    {
+      "nom": "plaques tendineuses trapèze",
+      "categories": ["torse_dos"],
+      "type": "tendon"
+    },
+    {
+      "nom": "pli de flexion",
+      "categories": ["torse_face"],
+      "type": "peau"
+    },
+    {
+      "nom": "pli de l’aine",
+      "categories": ["torse_face"],
+      "type": "peau"
+    },
+    {
+      "nom": "pommettes",
+      "categories": ["crane"],
+      "type": "os"
+    },
+    {
+      "nom": "pubis",
+      "categories": ["torse_face"],
+      "type": "os"
+    },
+    {
+      "nom": "péroné",
+      "categories": ["pied"],
+      "type": "os"
+    },
+    {
+      "nom": "rotule",
+      "categories": ["inf_face", "inf_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "sillon cervical",
+      "categories": ["torse_dos"],
+      "type": "région"
+    },
+    {
+      "nom": "sillon inter fessier",
+      "categories": ["torse_dos"],
+      "type": "peau"
+    },
+    {
+      "nom": "soléaire",
+      "categories": ["inf_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "soléaires",
+      "categories": ["inf_dos", "inf_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "sternocléidomastoïdien",
+      "categories": ["cou"],
+      "type": "muscle"
+    },
+    {
+      "nom": "sternum",
+      "categories": ["torse_face"],
+      "type": "os"
+    },
+    {
+      "nom": "talon de la main",
+      "categories": ["main"],
+      "type": "région"
+    },
+    {
+      "nom": "temporal",
+      "categories": ["crane"],
+      "type": "muscle"
+    },
+    {
+      "nom": "tenseur fascia lata",
+      "categories": ["inf_dos", "inf_profil"],
+      "type": "muscle"
+    },
+    {
+      "nom": "tendon d’Achille",
+      "categories": ["inf_dos", "pied"],
+      "type": "tendon"
+    },
+    {
+      "nom": "tendon du jambier",
+      "categories": ["inf_profil"],
+      "type": "tendon"
+    },
+    {
+      "nom": "tendon externe biceps cuisse",
+      "categories": ["inf_profil"],
+      "type": "tendon"
+    },
+    {
+      "nom": "têtes des métacarpes",
+      "categories": ["main"],
+      "type": "os"
+    },
+    {
+      "nom": "tibia (épine)",
+      "categories": ["inf_face", "inf_profil"],
+      "type": "os"
+    },
+    {
+      "nom": "trapèze",
+      "categories": ["torse_dos"],
+      "type": "muscle"
+    },
+    {
+      "nom": "triceps",
+      "categories": ["inf_face", "sup_face"],
+      "type": "muscle"
+    },
+    {
+      "nom": "volume thoracique",
+      "categories": ["torse_face"],
+      "type": "région"
+    }
+  ]
+  
