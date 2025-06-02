@@ -4,293 +4,52 @@
   <meta charset="UTF-8">
   <title>Body Encyclopedia & Quiz</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      background: #f6f7fb;
-      color: #222;
-    }
-    header {
-      background: #2d3a4b;
-      color: #fff;
-      padding: 1.2rem 2rem;
-      text-align: center;
-      font-size: 2rem;
-      letter-spacing: 2px;
-      box-shadow: 0 2px 8px #0001;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin: 2rem 0 1rem 0;
-    }
-    nav button {
-      background: #fff;
-      border: 2px solid #2d3a4b;
-      color: #2d3a4b;
-      padding: 0.7rem 2.2rem;
-      font-size: 1.2rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    nav button.active, nav button:hover {
-      background: #2d3a4b;
-      color: #fff;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 16px #0002;
-      padding: 2rem;
-      min-height: 400px;
-    }
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f6f7fb; color: #222; }
+    header { background: #2d3a4b; color: #fff; padding: 1.2rem 2rem; text-align: center; font-size: 2rem; letter-spacing: 2px; box-shadow: 0 2px 8px #0001; }
+    nav { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0 1rem 0; }
+    nav button { background: #fff; border: 2px solid #2d3a4b; color: #2d3a4b; padding: 0.7rem 2.2rem; font-size: 1.2rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+    nav button.active, nav button:hover { background: #2d3a4b; color: #fff; }
+    .container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px #0002; padding: 2rem; min-height: 400px; }
     .hidden { display: none !important; }
-    /* Quiz styles */
-    .quiz-image-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    .quiz-image {
-      width: 320px;
-      height: 220px;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px #0002;
-      background: #f0f0f0;
-      margin-bottom: 0.5rem;
-      transition: box-shadow 0.2s;
-    }
-    .switch-img-btn {
-      background: #e0e4ea;
-      border: none;
-      color: #2d3a4b;
-      padding: 0.3rem 1.2rem;
-      border-radius: 12px;
-      cursor: pointer;
-      margin-bottom: 1rem;
-      margin-top: 0.2rem;
-      font-size: 1rem;
-      transition: background 0.2s;
-    }
+    .quiz-image-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; }
+    .quiz-image { width: 320px; height: 220px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px #0002; background: #f0f0f0; margin-bottom: 0.5rem; transition: box-shadow 0.2s; }
+    .switch-img-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.3rem 1.2rem; border-radius: 12px; cursor: pointer; margin-bottom: 1rem; margin-top: 0.2rem; font-size: 1rem; transition: background 0.2s; }
     .switch-img-btn:hover { background: #c2c7d2; }
-    .quiz-input-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .autocomplete-list {
-      border: 1px solid #bbb;
-      background: #fff;
-      border-radius: 8px;
-      max-height: 180px;
-      overflow-y: auto;
-      position: absolute;
-      width: 90%;
-      z-index: 10;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 2px 8px #0002;
-    }
-    .autocomplete-item {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-    }
-    .autocomplete-item:hover, .autocomplete-item.selected {
-      background: #e0e4ea;
-    }
-    .quiz-feedback {
-      font-size: 1.2rem;
-      margin: 1rem 0;
-      min-height: 1.5em;
-    }
-    .quiz-timer {
-      font-size: 1.3rem;
-      color: #d13a3a;
-      margin-bottom: 1rem;
-      font-weight: bold;
-    }
-    /* Results */
-    .results-summary {
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-    .results-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-    }
-    .result-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: #f6f7fb;
-      border-radius: 10px;
-      padding: 0.7rem 1rem;
-      box-shadow: 0 1px 4px #0001;
-      cursor: pointer;
-      position: relative;
-    }
-    .result-img-thumb {
-      width: 60px;
-      height: 40px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #bbb;
-      background: #eee;
-    }
-    .result-details {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
+    .quiz-input-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .autocomplete-list { border: 1px solid #bbb; background: #fff; border-radius: 8px; max-height: 180px; overflow-y: auto; position: absolute; width: 90%; z-index: 10; left: 50%; transform: translateX(-50%); box-shadow: 0 2px 8px #0002; }
+    .autocomplete-item { padding: 0.5rem 1rem; cursor: pointer; }
+    .autocomplete-item:hover, .autocomplete-item.selected { background: #e0e4ea; }
+    .quiz-feedback { font-size: 1.2rem; margin: 1rem 0; min-height: 1.5em; }
+    .quiz-timer { font-size: 1.3rem; color: #d13a3a; margin-bottom: 1rem; font-weight: bold; }
+    .results-summary { font-size: 1.4rem; margin-bottom: 1.5rem; text-align: center; }
+    .results-list { display: flex; flex-direction: column; gap: 1.2rem; }
+    .result-item { display: flex; align-items: center; gap: 1rem; background: #f6f7fb; border-radius: 10px; padding: 0.7rem 1rem; box-shadow: 0 1px 4px #0001; cursor: pointer; position: relative; }
+    .result-img-thumb { width: 60px; height: 40px; object-fit: cover; border-radius: 8px; border: 1px solid #bbb; background: #eee; }
+    .result-details { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
     .result-correct { color: #2c8c2c; font-weight: bold; }
     .result-wrong { color: #d13a3a; font-weight: bold; }
-    .modal-bg {
-      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-      background: #0006; z-index: 1000; display: flex; align-items: center; justify-content: center;
-    }
-    .modal-img {
-      background: #fff;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 24px #0003;
-      max-width: 80vw;
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .modal-img img {
-      max-width: 70vw;
-      max-height: 60vh;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      background: #eee;
-    }
-    .close-modal-btn {
-      background: #2d3a4b;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 0.5rem 1.2rem;
-      font-size: 1.1rem;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    /* Options */
-    .options-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      max-width: 440px;
-      margin: 0 auto;
-      padding-top: 2rem;
-    }
-    .options-form label {
-      font-size: 1.1rem;
-      margin-bottom: 0.3rem;
-      display: block;
-    }
-    .options-form input[type="number"] {
-      width: 80px;
-      padding: 0.4rem;
-      font-size: 1.1rem;
-      border-radius: 8px;
-      border: 1px solid #bbb;
-    }
-    .options-form input[type="checkbox"] {
-      margin-right: 0.6rem;
-    }
-    .options-form button {
-      background: #2d3a4b;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 0.7rem 1.6rem;
-      font-size: 1.1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-    /* Encyclopedia */
-    .encyclopedia-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 2rem;
-    }
-    .encyclopedia-table th, .encyclopedia-table td {
-      border: 1px solid #e0e4ea;
-      padding: 0.7rem 0.5rem;
-      text-align: left;
-      background: #f6f7fb;
-    }
-    .encyclopedia-table th {
-      background: #2d3a4b;
-      color: #fff;
-      cursor: pointer;
-      user-select: none;
-    }
+    .modal-bg { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; background: #0006; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .modal-img { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 24px #0003; max-width: 80vw; max-height: 80vh; display: flex; flex-direction: column; align-items: center; }
+    .modal-img img { max-width: 70vw; max-height: 60vh; border-radius: 12px; margin-bottom: 1rem; background: #eee; }
+    .close-modal-btn { background: #2d3a4b; color: #fff; border: none; border-radius: 10px; padding: 0.5rem 1.2rem; font-size: 1.1rem; cursor: pointer; margin-top: 0.5rem; }
+    .options-form { display: flex; flex-direction: column; gap: 1.5rem; max-width: 440px; margin: 0 auto; padding-top: 2rem; }
+    .options-form label { font-size: 1.1rem; margin-bottom: 0.3rem; display: block; }
+    .options-form input[type="number"] { width: 80px; padding: 0.4rem; font-size: 1.1rem; border-radius: 8px; border: 1px solid #bbb; }
+    .options-form input[type="checkbox"] { margin-right: 0.6rem; }
+    .options-form button { background: #2d3a4b; color: #fff; border: none; border-radius: 12px; padding: 0.7rem 1.6rem; font-size: 1.1rem; cursor: pointer; margin-top: 1rem; }
+    .encyclopedia-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+    .encyclopedia-table th, .encyclopedia-table td { border: 1px solid #e0e4ea; padding: 0.7rem 0.5rem; text-align: left; background: #f6f7fb; }
+    .encyclopedia-table th { background: #2d3a4b; color: #fff; cursor: pointer; user-select: none; }
     .encyclopedia-table th.sorted-asc::after { content: " ▲"; }
     .encyclopedia-table th.sorted-desc::after { content: " ▼"; }
     .encyclopedia-table tr:hover { background: #e0e4ea; }
-    .encyclopedia-info {
-      margin-top: 2rem;
-      background: #f6f7fb;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 1px 8px #0001;
-    }
-    .gallery-section {
-      margin-top: 1.5rem;
-    }
-    .gallery-title {
-      font-weight: bold;
-      margin-bottom: 0.7rem;
-      font-size: 1.1rem;
-    }
-    .gallery-images {
-      display: flex;
-      gap: 1.2rem;
-      flex-wrap: wrap;
-    }
-    .gallery-img-container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .gallery-img {
-      width: 120px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #bbb;
-      background: #eee;
-      margin-bottom: 0.2rem;
-      cursor: pointer;
-      transition: box-shadow 0.2s;
-    }
-    .gallery-switch-btn {
-      background: #e0e4ea;
-      border: none;
-      color: #2d3a4b;
-      padding: 0.2rem 0.7rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      margin-bottom: 0.2rem;
-      margin-top: 0.1rem;
-    }
+    .encyclopedia-info { margin-top: 2rem; background: #f6f7fb; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 8px #0001; }
+    .gallery-section { margin-top: 1.5rem; }
+    .gallery-title { font-weight: bold; margin-bottom: 0.7rem; font-size: 1.1rem; }
+    .gallery-images { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+    .gallery-img-container { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem; }
+    .gallery-img { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #bbb; background: #eee; margin-bottom: 0.2rem; cursor: pointer; transition: box-shadow 0.2s; }
+    .gallery-switch-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.2rem 0.7rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin-bottom: 0.2rem; margin-top: 0.1rem; }
     .gallery-switch-btn:hover { background: #c2c7d2; }
     @media (max-width: 600px) {
       .container { padding: 0.5rem; }
@@ -367,9 +126,10 @@
 </div>
 <script>
 /** --- CONFIGURATION --- **/
-const BODY_JSON_URL = 'body.json'; // must be in the same directory or adapt path
-const ORIGINAL_IMAGES_FOLDER = 'original_images/';
-const IMAGES_FOLDER = 'image/';
+const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/larbaretier/drawing/main/body/";
+const BODY_JSON_URL = GITHUB_RAW_BASE + "body.json";
+const ORIGINAL_IMAGES_FOLDER = GITHUB_RAW_BASE + "original_images/";
+const IMAGES_FOLDER = GITHUB_RAW_BASE + "image/";
 const SUBFOLDERS = ['cartoon', 'realist', 'photo'];
 const IMAGE_EXTS = ['.png', '.jpg', '.jpeg', '.webp'];
 /** --- STATE --- **/
@@ -382,6 +142,7 @@ let quizOptions = {
 };
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
+let allImagesByElement = {}; // { nom: { cartoon: [], realist: [], photo: [] } }
 /** --- UTILS --- **/
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -401,54 +162,55 @@ function debounce(fn, delay) {
   };
 }
 /** --- IMAGE HANDLING --- **/
-async function getImagesForElement(elem) {
-  // For each subfolder, list images (simulate via fetch to folder, or assume a naming convention)
-  // Here, we must try to find images; since no backend, we try all exts and build list
-  const images = {};
-  for (const sub of SUBFOLDERS) {
-    images[sub] = [];
-    // In real app, you'd fetch the folder content. Here, we try to guess possible images.
-    // We'll try up to 10 images per subfolder per element, named as blabla_blibli.ext
-    // We'll check for existence by trying to load them and seeing if they succeed.
-    for (let idx = 1; idx <= 10; idx++) {
-      for (const ext of IMAGE_EXTS) {
-        // Try: image/abdominaux/cartoon/abdominaux_1.png, etc.
-        const imgName = `${elem.nom}_${idx}${ext}`;
-        const imgPath = `${IMAGES_FOLDER}${elem.nom}/${sub}/${imgName}`;
-        if (await imageExists(imgPath)) {
-          images[sub].push({file: imgName, path: imgPath});
-        }
-      }
+function getOriginalImagePath(imgFile) {
+  // imgFile: mermaid_pintneck.png => mermaid.png
+  const base = imgFile.split('_')[0];
+  const ext = imgFile.slice(imgFile.lastIndexOf('.'));
+  return `${ORIGINAL_IMAGES_FOLDER}${base}${ext}`;
+}
+function getImageUrl(nom, sub, file) {
+  return `${IMAGES_FOLDER}${encodeURIComponent(nom)}/${sub}/${file}`;
+}
+function getAllPossibleImageNames(nom, sub) {
+  // Try to guess image files by convention: [anyname]_[anything].[ext]
+  // We'll try a set of common names for demo, but in real use, you'd want a manifest.
+  // We'll try: [nom]_[suffix].[ext], for a list of suffixes and up to 5
+  const suffixes = ['pintneck', 'blibli', 'variant', '1', '2', '3', '4', '5'];
+  let files = [];
+  for (let suf of suffixes) {
+    for (let ext of IMAGE_EXTS) {
+      files.push(`${nom}_${suf}${ext}`);
     }
-    // Also try just one image with no number: abdominaux_blibli.png
-    for (const ext of IMAGE_EXTS) {
-      const imgName = `${elem.nom}_blibli${ext}`;
-      const imgPath = `${IMAGES_FOLDER}${elem.nom}/${sub}/${imgName}`;
-      if (await imageExists(imgPath)) {
-        images[sub].push({file: imgName, path: imgPath});
+  }
+  return files;
+}
+async function probeImagesForElement(nom) {
+  const res = { cartoon: [], realist: [], photo: [] };
+  for (let sub of SUBFOLDERS) {
+    let files = getAllPossibleImageNames(nom, sub);
+    for (let file of files) {
+      let url = getImageUrl(nom, sub, file);
+      // Probe existence by trying to load the image (HEAD is not allowed on raw.githubusercontent.com, so use Image)
+      if (await imageExists(url)) {
+        res[sub].push({ file, url });
       }
     }
   }
-  return images;
+  return res;
 }
 function imageExists(url) {
   // Try to load image, resolve true if ok, false otherwise
   return new Promise(resolve => {
-    const img = new Image();
+    const img = new window.Image();
     img.onload = () => resolve(true);
     img.onerror = () => resolve(false);
     img.src = url;
   });
 }
-function getOriginalImagePath(imgFile) {
-  // imgFile: blabla_blibli.png => blabla.png
-  const base = imgFile.split('_')[0];
-  const ext = imgFile.slice(imgFile.lastIndexOf('.'));
-  return `${ORIGINAL_IMAGES_FOLDER}${base}${ext}`;
-}
 /** --- MAIN --- **/
 window.addEventListener('DOMContentLoaded', async () => {
   await loadBodyJson();
+  await loadAllImages();
   setupNav();
   setupQuiz();
   setupOptions();
@@ -461,6 +223,13 @@ async function loadBodyJson() {
   bodyList = await resp.json();
   nameToElement = {};
   for (const elem of bodyList) nameToElement[elem.nom] = elem;
+}
+async function loadAllImages() {
+  // For each element, probe for images in all subfolders
+  allImagesByElement = {};
+  for (const elem of bodyList) {
+    allImagesByElement[elem.nom] = await probeImagesForElement(elem.nom);
+  }
 }
 /** --- NAVIGATION --- **/
 function setupNav() {
@@ -506,8 +275,9 @@ function startQuiz() {
   renderQuizQuestion();
 }
 function hasAnyImage(nom) {
-  // In real app, check folder; here, assume at least one image exists for demonstration
-  return true;
+  // Check if any images exist for this element
+  const imgs = allImagesByElement[nom];
+  return imgs && (imgs.cartoon.length || imgs.realist.length || imgs.photo.length);
 }
 function renderQuizQuestion() {
   const qIdx = quizState.current;
@@ -516,15 +286,29 @@ function renderQuizQuestion() {
     return;
   }
   const elem = quizState.questions[qIdx];
-  // For demo, pick a random subfolder and generate a fake image path
-  const sub = SUBFOLDERS[Math.floor(Math.random()*SUBFOLDERS.length)];
-  const imgFile = `${elem.nom}_1.png`;
-  const imgPath = `${IMAGES_FOLDER}${elem.nom}/${sub}/${imgFile}`;
-  quizState.currentImg = {path: imgPath, file: imgFile, sub, nom: elem.nom, original: getOriginalImagePath(imgFile)};
+  // Pick a random image from any subfolder
+  const imgs = [];
+  for (const sub of SUBFOLDERS) {
+    imgs.push(...(allImagesByElement[elem.nom][sub] || []).map(img => ({...img, sub})));
+  }
+  if (!imgs.length) {
+    // Should not happen, fallback
+    quizState.current++;
+    renderQuizQuestion();
+    return;
+  }
+  const imgObj = imgs[Math.floor(Math.random() * imgs.length)];
+  quizState.currentImg = {
+    path: imgObj.url,
+    file: imgObj.file,
+    sub: imgObj.sub,
+    nom: elem.nom,
+    original: getOriginalImagePath(imgObj.file)
+  };
   // Render image
   const imgCont = document.getElementById('quiz-image-container');
   imgCont.innerHTML = `
-    <img src="${imgPath}" class="quiz-image" id="quiz-main-img" alt="Quiz Image">
+    <img src="${quizState.currentImg.path}" class="quiz-image" id="quiz-main-img" alt="Quiz Image">
     <button class="switch-img-btn" id="quiz-switch-img-btn">Show Original</button>
   `;
   let showingOriginal = false;
@@ -726,20 +510,15 @@ function showEncyclopediaInfo(nom) {
   info.classList.remove('hidden');
 }
 function renderGallerySection(el, sub) {
-  // For demo, just show 2 images per subfolder if they exist
-  const images = [];
-  for (let i=1; i<=2; i++) {
-    const imgFile = `${el.nom}_${i}.png`;
-    const imgPath = `${IMAGES_FOLDER}${el.nom}/${sub}/${imgFile}`;
-    images.push({file: imgFile, path: imgPath});
-  }
+  const images = allImagesByElement[el.nom][sub] || [];
+  if (!images.length) return '';
   return `
     <div class="gallery-title">${sub.charAt(0).toUpperCase()+sub.slice(1)}</div>
     <div class="gallery-images">
       ${images.map(img => `
         <div class="gallery-img-container">
-          <img src="${img.path}" class="gallery-img" alt="" onclick="showModal('${img.path}')">
-          <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.path}','${getOriginalImagePath(img.file)}')">Show Original</button>
+          <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}')">
+          <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.url}','${getOriginalImagePath(img.file)}')">Show Original</button>
         </div>
       `).join('')}
     </div>
@@ -747,7 +526,7 @@ function renderGallerySection(el, sub) {
 }
 function switchGalleryImg(btn, variant, original) {
   const img = btn.parentNode.querySelector('.gallery-img');
-  if (img.src.endsWith(variant)) {
+  if (img.src === variant) {
     img.src = original;
     btn.textContent = 'Show Variant';
   } else {
