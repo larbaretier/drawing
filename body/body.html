@@ -43,9 +43,9 @@
     .result-wrong { color: #d13a3a; font-weight: bold; }
     .modal-bg, .encyclo-modal-bg {
       position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-      background: #0006; z-index: 2000; display: flex; align-items: center; justify-content: center;
+      background: #0006; z-index: 3000; display: flex; align-items: center; justify-content: center;
     }
-    .modal-bg { z-index: 3000; }
+    .modal-bg { z-index: 4000; }
     .modal-img {
       background: #fff;
       border-radius: 16px;
@@ -64,6 +64,7 @@
       border-radius: 12px;
       margin-bottom: 1rem;
       background: #eee;
+      cursor: pointer;
     }
     .close-modal-btn, .close-encyclo-modal-btn {
       background: #2d3a4b;
@@ -79,11 +80,16 @@
       right: 1rem;
       z-index: 2;
     }
+    .modal-img .modal-img-tip {
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 0.5rem;
+    }
     .encyclo-modal-bg {
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
+      z-index: 3000;
     }
     .encyclo-modal {
       background: #fff;
@@ -99,7 +105,7 @@
       position: relative;
       overflow: hidden;
       padding: 0;
-      z-index: 2100;
+      z-index: 3100;
     }
     .encyclo-modal-content-scroll {
       overflow-y: auto;
@@ -202,6 +208,7 @@
 <!-- Modal for large images -->
 <div id="modal-bg" class="modal-bg hidden">
   <div class="modal-img">
+    <div class="modal-img-tip">Click the image to switch between variant and original</div>
     <img id="modal-img" src="" alt="Large view">
     <button class="close-modal-btn" onclick="closeModal()">Close</button>
   </div>
@@ -230,6 +237,11 @@ let imagesByElement = {}; // { nom: { cartoon: [imgObj], realist: [], photo: [] 
 let quizTimerInterval = null;
 let encycloModalOpen = false;
 
+// For modal image toggling
+let modalImgVariant = null;
+let modalImgOriginal = null;
+let modalImgIsVariant = true;
+
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
@@ -241,7 +253,6 @@ function shuffle(arr) {
   return arr;
 }
 function normalizeName(str) {
-  // Lowercase, replace spaces with underscores, remove accents
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_").toLowerCase();
 }
 function getOriginalImagePath(imgFile) {
@@ -432,7 +443,7 @@ function renderQuizQuestion() {
     }
   };
   document.getElementById('quiz-main-img').onclick = () => {
-    showModal(quizState.currentImg.path, true);
+    showModal(quizState.currentImg.path, getOriginalImagePath(quizState.currentImg.file));
   };
   // Timer
   if (quizOptions.timerEnabled) {
@@ -532,7 +543,8 @@ function showQuizResults() {
   list.querySelectorAll('.result-item').forEach(item => {
     item.onclick = () => {
       const idx = item.getAttribute('data-idx');
-      showModal(quizState.answers[idx].img.path, true);
+      const ans = quizState.answers[idx];
+      showModal(ans.img.path, getOriginalImagePath(ans.img.file));
     };
   });
   document.getElementById('results-restart-btn').onclick = () => {
@@ -620,7 +632,7 @@ function renderGallerySectionModal(el, sub) {
     <div class="gallery-images">
       ${images.map((img, idx) => `
         <div class="gallery-img-container">
-          <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}', false)">
+          <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}','${getOriginalImagePath(img.file)}')">
           <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.url}','${getOriginalImagePath(img.file)}')">Show Original</button>
         </div>
       `).join('')}
@@ -641,12 +653,25 @@ function switchGalleryImg(btn, variant, original) {
     btn.textContent = 'Show Original';
   }
 }
-function showModal(imgUrl, fromQuizOrResults) {
+function showModal(variantUrl, originalUrl) {
   // If encyclopedia modal is open, hide it temporarily
   if (encycloModalOpen) {
     document.getElementById('encyclo-modal-bg').style.display = 'none';
   }
-  document.getElementById('modal-img').src = imgUrl;
+  modalImgVariant = variantUrl;
+  modalImgOriginal = originalUrl;
+  modalImgIsVariant = true;
+  const modalImg = document.getElementById('modal-img');
+  modalImg.src = modalImgVariant;
+  modalImg.onclick = () => {
+    if (modalImgIsVariant) {
+      modalImg.src = modalImgOriginal;
+      modalImgIsVariant = false;
+    } else {
+      modalImg.src = modalImgVariant;
+      modalImgIsVariant = true;
+    }
+  };
   document.getElementById('modal-bg').classList.remove('hidden');
 }
 function closeModal() {
