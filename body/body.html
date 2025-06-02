@@ -12,11 +12,24 @@
     .container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px #0002; padding: 2rem; min-height: 400px; }
     .hidden { display: none !important; }
     .quiz-image-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; }
-    .quiz-image { width: 320px; height: 220px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px #0002; background: #f0f0f0; margin-bottom: 0.5rem; transition: box-shadow 0.2s; }
+    .quiz-image { width: 320px; height: 220px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px #0002; background: #f0f0f0; margin-bottom: 0.5rem; transition: box-shadow 0.2s; cursor: pointer; }
     .switch-img-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.3rem 1.2rem; border-radius: 12px; cursor: pointer; margin-bottom: 1rem; margin-top: 0.2rem; font-size: 1rem; transition: background 0.2s; }
     .switch-img-btn:hover { background: #c2c7d2; }
-    .quiz-input-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-    .autocomplete-list { border: 1px solid #bbb; background: #fff; border-radius: 8px; max-height: 180px; overflow-y: auto; position: absolute; width: 90%; z-index: 10; left: 50%; transform: translateX(-50%); box-shadow: 0 2px 8px #0002; }
+    .quiz-input-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; position: relative; }
+    .autocomplete-list {
+      border: 1px solid #bbb;
+      background: #fff;
+      border-radius: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      position: absolute;
+      width: 90%;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 2.8em;
+      z-index: 30;
+      box-shadow: 0 2px 8px #0002;
+    }
     .autocomplete-item { padding: 0.5rem 1rem; cursor: pointer; }
     .autocomplete-item:hover, .autocomplete-item.selected { background: #e0e4ea; }
     .quiz-feedback { font-size: 1.2rem; margin: 1rem 0; min-height: 1.5em; }
@@ -28,10 +41,80 @@
     .result-details { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
     .result-correct { color: #2c8c2c; font-weight: bold; }
     .result-wrong { color: #d13a3a; font-weight: bold; }
-    .modal-bg { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; background: #0006; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-    .modal-img { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 24px #0003; max-width: 80vw; max-height: 80vh; display: flex; flex-direction: column; align-items: center; }
-    .modal-img img { max-width: 70vw; max-height: 60vh; border-radius: 12px; margin-bottom: 1rem; background: #eee; }
-    .close-modal-btn { background: #2d3a4b; color: #fff; border: none; border-radius: 10px; padding: 0.5rem 1.2rem; font-size: 1.1rem; cursor: pointer; margin-top: 0.5rem; }
+    .modal-bg, .encyclo-modal-bg {
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+      background: #0006; z-index: 2000; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-bg { z-index: 3000; }
+    .modal-img {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 24px #0003;
+      max-width: 80vw;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .modal-img img {
+      max-width: 70vw;
+      max-height: 60vh;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      background: #eee;
+    }
+    .close-modal-btn, .close-encyclo-modal-btn {
+      background: #2d3a4b;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.5rem 1.2rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 2;
+    }
+    .encyclo-modal-bg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .encyclo-modal {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 24px #0003;
+      width: 520px;
+      max-width: 96vw;
+      height: 600px;
+      max-height: 96vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      z-index: 2100;
+    }
+    .encyclo-modal-content-scroll {
+      overflow-y: auto;
+      padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+      flex: 1 1 auto;
+    }
+    .encyclo-modal .close-encyclo-modal-btn {
+      z-index: 2;
+      margin-top: 0;
+      margin-right: 0;
+      padding: 0.4rem 1.1rem;
+      font-size: 1.1rem;
+      top: 0.7rem;
+      right: 0.7rem;
+    }
     .options-form { display: flex; flex-direction: column; gap: 1.5rem; max-width: 440px; margin: 0 auto; padding-top: 2rem; }
     .options-form label { font-size: 1.1rem; margin-bottom: 0.3rem; display: block; }
     .options-form input[type="number"] { width: 80px; padding: 0.4rem; font-size: 1.1rem; border-radius: 8px; border: 1px solid #bbb; }
@@ -43,7 +126,6 @@
     .encyclopedia-table th.sorted-asc::after { content: " ▲"; }
     .encyclopedia-table th.sorted-desc::after { content: " ▼"; }
     .encyclopedia-table tr:hover { background: #e0e4ea; }
-    .encyclopedia-info { margin-top: 2rem; background: #f6f7fb; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 8px #0001; }
     .gallery-section { margin-top: 1.5rem; }
     .gallery-title { font-weight: bold; margin-bottom: 0.7rem; font-size: 1.1rem; }
     .gallery-images { display: flex; gap: 1.2rem; flex-wrap: wrap; }
@@ -55,6 +137,7 @@
       .container { padding: 0.5rem; }
       .quiz-image { width: 98vw; height: auto; }
       .gallery-img { width: 80px; height: 60px; }
+      .encyclo-modal { width: 98vw; height: 98vh; }
     }
   </style>
 </head>
@@ -114,7 +197,6 @@
       </thead>
       <tbody id="encyclopedia-list"></tbody>
     </table>
-    <div id="encyclopedia-info" class="encyclopedia-info hidden"></div>
   </section>
 </div>
 <!-- Modal for large images -->
@@ -122,6 +204,13 @@
   <div class="modal-img">
     <img id="modal-img" src="" alt="Large view">
     <button class="close-modal-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+<!-- Modal for encyclopedia info -->
+<div id="encyclo-modal-bg" class="encyclo-modal-bg hidden">
+  <div class="encyclo-modal">
+    <button class="close-encyclo-modal-btn" onclick="closeEncycloModal()">Close</button>
+    <div class="encyclo-modal-content-scroll" id="encyclo-modal-content"></div>
   </div>
 </div>
 <script>
@@ -137,7 +226,9 @@ let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30 };
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
 let imageManifest = [];
-let imagesByElement = {}; // { nom: { cartoon: [imgObj], realist: [imgObj], photo: [imgObj] } }
+let imagesByElement = {}; // { nom: { cartoon: [imgObj], realist: [], photo: [] } }
+let quizTimerInterval = null;
+let encycloModalOpen = false;
 
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -149,25 +240,24 @@ function shuffle(arr) {
   }
   return arr;
 }
+function normalizeName(str) {
+  // Lowercase, replace spaces with underscores, remove accents
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_").toLowerCase();
+}
 function getOriginalImagePath(imgFile) {
-  // imgFile: mermaid_pintneck.png => mermaid.png
   const base = imgFile.split('_')[0];
   const ext = imgFile.slice(imgFile.lastIndexOf('.'));
   return `${ORIGINAL_IMAGES_FOLDER}${base}${ext}`;
 }
 function getRawUrlFromManifestPath(path) {
-  // path: image\amorce_du_cou\cartoon\mermaid_pintneck.png
-  // --> https://raw.githubusercontent.com/larbaretier/drawing/main/body/image/amorce_du_cou/cartoon/mermaid_pintneck.png
   return GITHUB_RAW_BASE + path.replace(/\\/g, '/');
 }
 function parseManifest() {
-  // Build imagesByElement: { nom: { cartoon: [imgObj], ... } }
   imagesByElement = {};
   for (const path of imageManifest) {
     const parts = path.split(/[/\\]/);
-    // path: image\nom\subfolder\filename
     if (parts.length < 4) continue;
-    const nom = parts[1];
+    const nom = normalizeName(parts[1]);
     const sub = parts[2];
     const file = parts[3];
     if (!imagesByElement[nom]) imagesByElement[nom] = { cartoon: [], realist: [], photo: [] };
@@ -248,19 +338,56 @@ function setupQuiz() {
   });
 }
 function startQuiz() {
-  // Only use elements with at least one image (where imagesByElement has a non-empty array)
-  let candidates = bodyList.filter(el => {
-    const imgs = imagesByElement[el.nom];
-    return imgs && (imgs.cartoon.length || imgs.realist.length || imgs.photo.length);
+  // Build all possible (element, image) pairs
+  let candidates = [];
+  let elementImages = {}; // {nom: [imgObj,...]}
+  bodyList.forEach(el => {
+    const nomNorm = normalizeName(el.nom);
+    const imgs = [];
+    for (const sub of SUBFOLDERS) {
+      imgs.push(...((imagesByElement[nomNorm]?.[sub]) || []).map(img => ({...img, sub})));
+    }
+    if (imgs.length) elementImages[nomNorm] = imgs;
   });
-  if (candidates.length === 0) {
+  const elementNames = Object.keys(elementImages);
+  if (elementNames.length === 0) {
     document.getElementById('quiz-image-container').innerHTML = "<b>No elements with images found.</b>";
     document.querySelector('.quiz-input-area').style.display = "none";
     return;
   }
-  shuffle(candidates);
+  // Build the quiz questions list
+  const numQuestions = quizOptions.numQuestions;
+  const questions = [];
+  const usedImages = {}; // {nom: Set(imgUrl)}
+  // 1. First, pick as many unique elements as possible
+  let availableElements = shuffle([...elementNames]);
+  for (let i = 0; i < Math.min(numQuestions, availableElements.length); i++) {
+    const nom = availableElements[i];
+    const imgs = shuffle([...elementImages[nom]]);
+    const img = imgs[0];
+    const el = bodyList.find(e => normalizeName(e.nom) === nom);
+    questions.push({ element: el, img });
+    usedImages[nom] = new Set([img.url]);
+  }
+  // 2. If more questions needed, allow repeats, but prefer unused images for each element
+  while (questions.length < numQuestions) {
+    const nom = shuffle([...elementNames])[0];
+    const imgs = elementImages[nom];
+    let img = null;
+    const usedSet = usedImages[nom] || new Set();
+    const unusedImgs = imgs.filter(im => !usedSet.has(im.url));
+    if (unusedImgs.length) {
+      img = shuffle([...unusedImgs])[0];
+    } else {
+      img = shuffle([...imgs])[0];
+    }
+    const el = bodyList.find(e => normalizeName(e.nom) === nom);
+    questions.push({ element: el, img });
+    if (!usedImages[nom]) usedImages[nom] = new Set();
+    usedImages[nom].add(img.url);
+  }
   quizState = {
-    questions: candidates.slice(0, quizOptions.numQuestions),
+    questions,
     current: 0,
     score: 0,
     answers: [],
@@ -271,35 +398,24 @@ function startQuiz() {
   renderQuizQuestion();
 }
 function renderQuizQuestion() {
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
   const qIdx = quizState.current;
   if (qIdx >= quizState.questions.length) {
     showQuizResults();
     return;
   }
-  const elem = quizState.questions[qIdx];
-  // Pick a random image from any subfolder
-  const imgs = [];
-  for (const sub of SUBFOLDERS) {
-    imgs.push(...(imagesByElement[elem.nom]?.[sub] || []).map(img => ({...img, sub})));
-  }
-  if (!imgs.length) {
-    // Should not happen, fallback
-    quizState.current++;
-    renderQuizQuestion();
-    return;
-  }
-  const imgObj = imgs[Math.floor(Math.random() * imgs.length)];
+  const {element, img} = quizState.questions[qIdx];
   quizState.currentImg = {
-    path: imgObj.url,
-    file: imgObj.file,
-    sub: imgObj.sub,
-    nom: elem.nom,
-    original: getOriginalImagePath(imgObj.file)
+    path: img.url,
+    file: img.file,
+    sub: img.sub,
+    nom: element.nom,
+    original: getOriginalImagePath(img.file)
   };
   // Render image
   const imgCont = document.getElementById('quiz-image-container');
   imgCont.innerHTML = `
-    <img src="${quizState.currentImg.path}" class="quiz-image" id="quiz-main-img" alt="Quiz Image">
+    <img src="${quizState.currentImg.path}" class="quiz-image" id="quiz-main-img" alt="Quiz Image" title="Click to enlarge">
     <button class="switch-img-btn" id="quiz-switch-img-btn">Show Original</button>
   `;
   let showingOriginal = false;
@@ -315,6 +431,26 @@ function renderQuizQuestion() {
       showingOriginal = false;
     }
   };
+  document.getElementById('quiz-main-img').onclick = () => {
+    showModal(quizState.currentImg.path, true);
+  };
+  // Timer
+  if (quizOptions.timerEnabled) {
+    quizState.timerLeft = quizOptions.timerSeconds;
+    document.getElementById('quiz-timer').classList.remove('hidden');
+    updateQuizTimer();
+    quizTimerInterval = setInterval(() => {
+      quizState.timerLeft--;
+      updateQuizTimer();
+      if (quizState.timerLeft <= 0) {
+        clearInterval(quizTimerInterval);
+        submitQuizAnswer(true);
+      }
+    }, 1000);
+  } else {
+    document.getElementById('quiz-timer').classList.add('hidden');
+    if (quizTimerInterval) clearInterval(quizTimerInterval);
+  }
   // Reset input
   const input = document.getElementById('quiz-answer');
   input.value = '';
@@ -322,11 +458,14 @@ function renderQuizQuestion() {
   document.getElementById('quiz-feedback').textContent = '';
   hideAutocomplete();
 }
-
+function updateQuizTimer() {
+  document.getElementById('quiz-timer').textContent = `⏳ ${quizState.timerLeft}s`;
+}
 function submitQuizAnswer(timeout=false) {
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
   const input = document.getElementById('quiz-answer');
   const answer = input.value.trim();
-  const correct = quizState.questions[quizState.current].nom;
+  const correct = quizState.questions[quizState.current].element.nom;
   let isCorrect = (answer.toLowerCase() === correct.toLowerCase());
   if (timeout) isCorrect = false;
   quizState.answers.push({
@@ -354,11 +493,13 @@ function showAutocomplete() {
   let filtered = bodyList.map(e=>e.nom);
   if (val) filtered = filtered.filter(n => n.toLowerCase().includes(val));
   list.innerHTML = filtered.map(n => `<div class="autocomplete-item">${escapeHTML(n)}</div>`).join('');
-  list.classList.toggle('hidden', filtered.length === 0);
+  if (filtered.length === 0) list.classList.add('hidden');
+  else list.classList.remove('hidden');
   list.querySelectorAll('.autocomplete-item').forEach(item => {
     item.onclick = () => {
       input.value = item.textContent;
       hideAutocomplete();
+      input.focus();
     };
   });
 }
@@ -366,6 +507,7 @@ function hideAutocomplete() {
   document.getElementById('autocomplete-list').classList.add('hidden');
 }
 function showQuizResults() {
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
   document.getElementById('section-quiz').classList.add('hidden');
   document.getElementById('section-results').classList.remove('hidden');
   const score = quizState.score;
@@ -390,7 +532,7 @@ function showQuizResults() {
   list.querySelectorAll('.result-item').forEach(item => {
     item.onclick = () => {
       const idx = item.getAttribute('data-idx');
-      showModal(quizState.answers[idx].img.path);
+      showModal(quizState.answers[idx].img.path, true);
     };
   });
   document.getElementById('results-restart-btn').onclick = () => {
@@ -449,37 +591,45 @@ function renderEncyclopediaTable() {
     </tr>
   `).join('');
   tbody.querySelectorAll('.encyclopedia-row').forEach(row => {
-    row.onclick = () => showEncyclopediaInfo(row.getAttribute('data-nom'));
+    row.onclick = () => showEncyclopediaInfoModal(row.getAttribute('data-nom'));
   });
-  document.getElementById('encyclopedia-info').classList.add('hidden');
 }
-function showEncyclopediaInfo(nom) {
+function showEncyclopediaInfoModal(nom) {
+  encycloModalOpen = true;
   const el = nameToElement[nom];
-  const info = document.getElementById('encyclopedia-info');
-  info.innerHTML = `
-    <div><b>Name:</b> ${escapeHTML(el.nom)}</div>
-    <div><b>Type:</b> ${escapeHTML(el.type||'')}</div>
-    <div><b>Categories:</b> ${el.categories.map(escapeHTML).join(', ')}</div>
-    <div class="gallery-section">
-      ${SUBFOLDERS.map(sub => renderGallerySection(el, sub)).join('')}
+  const modalContent = document.getElementById('encyclo-modal-content');
+  let html = `
+    <div style="margin-bottom:1rem;">
+      <div><b>Name:</b> ${escapeHTML(el.nom)}</div>
+      <div><b>Type:</b> ${escapeHTML(el.type||'')}</div>
+      <div><b>Categories:</b> ${el.categories.map(escapeHTML).join(', ')}</div>
+    </div>
+    <div class="gallery-section" style="width:100%;">
+      ${SUBFOLDERS.map(sub => renderGallerySectionModal(el, sub)).join('')}
     </div>
   `;
-  info.classList.remove('hidden');
+  modalContent.innerHTML = html;
+  document.getElementById('encyclo-modal-bg').classList.remove('hidden');
 }
-function renderGallerySection(el, sub) {
-  const images = imagesByElement[el.nom]?.[sub] || [];
+function renderGallerySectionModal(el, sub) {
+  const nomNorm = normalizeName(el.nom);
+  const images = imagesByElement[nomNorm]?.[sub] || [];
   if (!images.length) return '';
   return `
     <div class="gallery-title">${sub.charAt(0).toUpperCase()+sub.slice(1)}</div>
     <div class="gallery-images">
-      ${images.map(img => `
+      ${images.map((img, idx) => `
         <div class="gallery-img-container">
-          <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}')">
+          <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}', false)">
           <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.url}','${getOriginalImagePath(img.file)}')">Show Original</button>
         </div>
       `).join('')}
     </div>
   `;
+}
+function closeEncycloModal() {
+  encycloModalOpen = false;
+  document.getElementById('encyclo-modal-bg').classList.add('hidden');
 }
 function switchGalleryImg(btn, variant, original) {
   const img = btn.parentNode.querySelector('.gallery-img');
@@ -491,16 +641,25 @@ function switchGalleryImg(btn, variant, original) {
     btn.textContent = 'Show Original';
   }
 }
-function showModal(imgUrl) {
+function showModal(imgUrl, fromQuizOrResults) {
+  // If encyclopedia modal is open, hide it temporarily
+  if (encycloModalOpen) {
+    document.getElementById('encyclo-modal-bg').style.display = 'none';
+  }
   document.getElementById('modal-img').src = imgUrl;
   document.getElementById('modal-bg').classList.remove('hidden');
 }
 function closeModal() {
   document.getElementById('modal-bg').classList.add('hidden');
+  // Restore encyclopedia modal if it was open
+  if (encycloModalOpen) {
+    document.getElementById('encyclo-modal-bg').style.display = '';
+  }
 }
 window.closeModal = closeModal;
 window.showModal = showModal;
 window.switchGalleryImg = switchGalleryImg;
+window.closeEncycloModal = closeEncycloModal;
 
 /* Debounce function for autocomplete */
 function debounce(fn, delay) {
