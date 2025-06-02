@@ -139,6 +139,10 @@
     .gallery-img { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #bbb; background: #eee; margin-bottom: 0.2rem; cursor: pointer; transition: box-shadow 0.2s; }
     .gallery-switch-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.2rem 0.7rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin-bottom: 0.2rem; margin-top: 0.1rem; }
     .gallery-switch-btn:hover { background: #c2c7d2; }
+    .lang-both { margin-top: 0.4em; }
+    .lang-label { color: #666; font-size: 0.98em; }
+    .lang-name { margin-left: 0.3em; }
+    .lang-selected { font-weight: bold; color: #1a1a1a; }
     @media (max-width: 600px) {
       .container { padding: 0.5rem; }
       .quiz-image { width: 98vw; height: auto; }
@@ -632,10 +636,12 @@ function showEncyclopediaInfoModal(nom) {
   const modalContent = document.getElementById('encyclo-modal-content');
   let html = `
     <div style="margin-bottom:1rem;">
-      <div><b>${currentLang==="FR"?"Nom":"Name"}:</b> <span style="font-weight:bold;">${escapeHTML(getDisplayName(el))}</span></div>
-      <div style="margin-top:0.3em;">
-        <span style="color:#666;">FR:</span> <span style="font-weight:${currentLang==="FR"?"bold":"normal"}">${escapeHTML(el.FR||el.nom)}</span>
-        <span style="margin-left:1.2em;color:#666;">EN:</span> <span style="font-weight:${currentLang==="EN"?"bold":"normal"}">${escapeHTML(el.EN||el.nom)}</span>
+      <div><b>${currentLang==="FR"?"Nom":"Name"}:</b> <span class="lang-name lang-selected">${escapeHTML(getDisplayName(el))}</span></div>
+      <div class="lang-both">
+        <span class="lang-label">FR:</span> <span class="lang-name${currentLang==="FR"?" lang-selected":""}">${escapeHTML(el.FR||el.nom)}</span>
+      </div>
+      <div class="lang-both">
+        <span class="lang-label">EN:</span> <span class="lang-name${currentLang==="EN"?" lang-selected":""}">${escapeHTML(el.EN||el.nom)}</span>
       </div>
       <div style="margin-top:0.3em;"><b>${currentLang==="FR"?"Type":"Type"}:</b> ${escapeHTML(el.type||'')}</div>
       <div><b>${currentLang==="FR"?"Catégories":"Categories"}:</b> ${el.categories.map(escapeHTML).join(', ')}</div>
