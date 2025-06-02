@@ -105,13 +105,8 @@
       "type": "os"
     },
     {
-      "nom": "épine postérieure",
-      "categories": ["torse_profil"],
-      "type": "os"
-    },
-    {
       "nom": "épines osseuses postérieures du bassin",
-      "categories": ["torse_dos"],
+      "categories": ["torse_dos", "torse_profil"],
       "type": "os"
     },
     {
@@ -135,13 +130,8 @@
       "type": "os"
     },
     {
-      "nom": "fascia",
-      "categories": ["inf_dos", "inf_profil"],
-      "type": "fascia"
-    },
-    {
       "nom": "fascia lata",
-      "categories": ["inf_profil"],
+      "categories": ["inf_dos", "inf_profil"],
       "type": "fascia"
     },
     {
@@ -231,11 +221,6 @@
     },
     {
       "nom": "pectoral",
-      "categories": ["torse_face"],
-      "type": "muscle"
-    },
-    {
-      "nom": "pectoraux",
       "categories": ["torse_face"],
       "type": "muscle"
     },
@@ -363,11 +348,6 @@
       "nom": "triceps",
       "categories": ["inf_face", "sup_face"],
       "type": "muscle"
-    },
-    {
-      "nom": "volume thoracique",
-      "categories": ["torse_face"],
-      "type": "région"
     }
   ]
   
