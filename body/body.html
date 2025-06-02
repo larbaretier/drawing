@@ -5,7 +5,7 @@
   <title>Body Encyclopedia & Quiz</title>
   <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f6f7fb; color: #222; }
-    header { background: #2d3a4b; color: #fff; padding: 1.2rem 2rem; text-align: center; font-size: 2rem; letter-spacing: 2px; box-shadow: 0 2px 8px #0001; }
+    header { background: #2d3a4b; color: #fff; padding: 1.2rem 2rem 0.5rem 2rem; text-align: center; font-size: 2rem; letter-spacing: 2px; box-shadow: 0 2px 8px #0001; position:relative; }
     nav { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0 1rem 0; }
     nav button { background: #fff; border: 2px solid #2d3a4b; color: #2d3a4b; padding: 0.7rem 2.2rem; font-size: 1.2rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
     nav button.active, nav button:hover { background: #2d3a4b; color: #fff; }
@@ -123,7 +123,7 @@
     }
     .options-form { display: flex; flex-direction: column; gap: 1.5rem; max-width: 440px; margin: 0 auto; padding-top: 2rem; }
     .options-form label { font-size: 1.1rem; margin-bottom: 0.3rem; display: block; }
-    .options-form input[type="number"] { width: 80px; padding: 0.4rem; font-size: 1.1rem; border-radius: 8px; border: 1px solid #bbb; }
+    .options-form input[type="number"], .options-form select { width: 120px; padding: 0.4rem; font-size: 1.1rem; border-radius: 8px; border: 1px solid #bbb; }
     .options-form input[type="checkbox"] { margin-right: 0.6rem; }
     .options-form button { background: #2d3a4b; color: #fff; border: none; border-radius: 12px; padding: 0.7rem 1.6rem; font-size: 1.1rem; cursor: pointer; margin-top: 1rem; }
     .encyclopedia-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
@@ -148,7 +148,9 @@
   </style>
 </head>
 <body>
-<header>Body Encyclopedia & Quiz</header>
+<header>
+  Body Encyclopedia & Quiz
+</header>
 <nav>
   <button id="nav-quiz" class="active">Quiz</button>
   <button id="nav-options">Options</button>
@@ -188,6 +190,13 @@
           <label for="opt-timer-seconds">Time per question (seconds):</label>
           <input type="number" id="opt-timer-seconds" min="5" max="120" value="30">
         </div>
+      </div>
+      <div>
+        <label for="opt-lang">Language:</label>
+        <select id="opt-lang">
+          <option value="FR">Français</option>
+          <option value="EN">English</option>
+        </select>
       </div>
       <button type="submit">Save Options</button>
     </form>
@@ -233,9 +242,10 @@ let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30 };
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
 let imageManifest = [];
-let imagesByElement = {}; // { nom: { cartoon: [imgObj], realist: [], photo: [] } }
+let imagesByElement = {};
 let quizTimerInterval = null;
 let encycloModalOpen = false;
+let currentLang = "FR";
 
 // For modal image toggling
 let modalImgVariant = null;
@@ -292,7 +302,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   setupEncyclopedia();
   hideLoading();
   showSection('quiz');
+  document.getElementById('opt-lang').value = currentLang;
 });
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.getElementById('opt-lang').value = lang;
+  showSection(document.querySelector('nav button.active').id.replace('nav-',''));
+}
 
 async function loadBodyJson() {
   const resp = await fetch(BODY_JSON_URL);
@@ -322,7 +339,6 @@ function showSection(section) {
   if (section === 'encyclopedia') renderEncyclopediaTable();
 }
 
-/** --- LOADING INDICATOR --- **/
 function showLoading(msg) {
   let el = document.getElementById('loading-indicator');
   if (!el) {
@@ -339,7 +355,6 @@ function hideLoading() {
   if (el) el.style.display = 'none';
 }
 
-/** --- QUIZ --- **/
 function setupQuiz() {
   document.getElementById('quiz-submit-btn').onclick = () => submitQuizAnswer();
   document.getElementById('quiz-answer').addEventListener('input', debounce(showAutocomplete, 100));
@@ -349,9 +364,8 @@ function setupQuiz() {
   });
 }
 function startQuiz() {
-  // Build all possible (element, image) pairs
   let candidates = [];
-  let elementImages = {}; // {nom: [imgObj,...]}
+  let elementImages = {};
   bodyList.forEach(el => {
     const nomNorm = normalizeName(el.nom);
     const imgs = [];
@@ -366,11 +380,9 @@ function startQuiz() {
     document.querySelector('.quiz-input-area').style.display = "none";
     return;
   }
-  // Build the quiz questions list
   const numQuestions = quizOptions.numQuestions;
   const questions = [];
-  const usedImages = {}; // {nom: Set(imgUrl)}
-  // 1. First, pick as many unique elements as possible
+  const usedImages = {};
   let availableElements = shuffle([...elementNames]);
   for (let i = 0; i < Math.min(numQuestions, availableElements.length); i++) {
     const nom = availableElements[i];
@@ -380,7 +392,6 @@ function startQuiz() {
     questions.push({ element: el, img });
     usedImages[nom] = new Set([img.url]);
   }
-  // 2. If more questions needed, allow repeats, but prefer unused images for each element
   while (questions.length < numQuestions) {
     const nom = shuffle([...elementNames])[0];
     const imgs = elementImages[nom];
@@ -408,6 +419,12 @@ function startQuiz() {
   document.querySelector('.quiz-input-area').style.display = "";
   renderQuizQuestion();
 }
+function getDisplayName(el) {
+  if (!el) return "";
+  if (currentLang === "FR") return el.FR || el.nom;
+  if (currentLang === "EN") return el.EN || el.nom;
+  return el.nom;
+}
 function renderQuizQuestion() {
   if (quizTimerInterval) clearInterval(quizTimerInterval);
   const qIdx = quizState.current;
@@ -423,7 +440,6 @@ function renderQuizQuestion() {
     nom: element.nom,
     original: getOriginalImagePath(img.file)
   };
-  // Render image
   const imgCont = document.getElementById('quiz-image-container');
   imgCont.innerHTML = `
     <img src="${quizState.currentImg.path}" class="quiz-image" id="quiz-main-img" alt="Quiz Image" title="Click to enlarge">
@@ -445,7 +461,6 @@ function renderQuizQuestion() {
   document.getElementById('quiz-main-img').onclick = () => {
     showModal(quizState.currentImg.path, getOriginalImagePath(quizState.currentImg.file));
   };
-  // Timer
   if (quizOptions.timerEnabled) {
     quizState.timerLeft = quizOptions.timerSeconds;
     document.getElementById('quiz-timer').classList.remove('hidden');
@@ -462,7 +477,6 @@ function renderQuizQuestion() {
     document.getElementById('quiz-timer').classList.add('hidden');
     if (quizTimerInterval) clearInterval(quizTimerInterval);
   }
-  // Reset input
   const input = document.getElementById('quiz-answer');
   input.value = '';
   input.focus();
@@ -476,7 +490,8 @@ function submitQuizAnswer(timeout=false) {
   if (quizTimerInterval) clearInterval(quizTimerInterval);
   const input = document.getElementById('quiz-answer');
   const answer = input.value.trim();
-  const correct = quizState.questions[quizState.current].element.nom;
+  const correctEl = quizState.questions[quizState.current].element;
+  const correct = getDisplayName(correctEl);
   let isCorrect = (answer.toLowerCase() === correct.toLowerCase());
   if (timeout) isCorrect = false;
   quizState.answers.push({
@@ -488,9 +503,9 @@ function submitQuizAnswer(timeout=false) {
   if (isCorrect) quizState.score++;
   const fb = document.getElementById('quiz-feedback');
   if (isCorrect) {
-    fb.innerHTML = `<span style="color:#2c8c2c;font-weight:bold;">Correct!</span>`;
+    fb.innerHTML = `<span style="color:#2c8c2c;font-weight:bold;">${currentLang==="FR"?"Correct!":"Correct!"}</span>`;
   } else {
-    fb.innerHTML = `<span style="color:#d13a3a;font-weight:bold;">Wrong.</span> The correct answer was <b>${escapeHTML(correct)}</b>.`;
+    fb.innerHTML = `<span style="color:#d13a3a;font-weight:bold;">${currentLang==="FR"?"Faux.":"Wrong."}</span> ${currentLang==="FR"?"La bonne réponse était":"The correct answer was"} <b>${escapeHTML(correct)}</b>.`;
   }
   setTimeout(() => {
     quizState.current++;
@@ -500,10 +515,12 @@ function submitQuizAnswer(timeout=false) {
 function showAutocomplete() {
   const input = document.getElementById('quiz-answer');
   const val = input.value.trim().toLowerCase();
+  let filtered = bodyList.filter(e => {
+    const name = getDisplayName(e);
+    return name && (!val || name.toLowerCase().includes(val));
+  });
   const list = document.getElementById('autocomplete-list');
-  let filtered = bodyList.map(e=>e.nom);
-  if (val) filtered = filtered.filter(n => n.toLowerCase().includes(val));
-  list.innerHTML = filtered.map(n => `<div class="autocomplete-item">${escapeHTML(n)}</div>`).join('');
+  list.innerHTML = filtered.map(e => `<div class="autocomplete-item">${escapeHTML(getDisplayName(e))}</div>`).join('');
   if (filtered.length === 0) list.classList.add('hidden');
   else list.classList.remove('hidden');
   list.querySelectorAll('.autocomplete-item').forEach(item => {
@@ -524,19 +541,19 @@ function showQuizResults() {
   const score = quizState.score;
   const total = quizState.questions.length;
   let comment = '';
-  if (score === total) comment = 'Perfect!';
-  else if (score >= total * 0.8) comment = 'Great!';
-  else if (score >= total * 0.5) comment = 'Not bad!';
-  else comment = 'Oh no!';
-  document.getElementById('results-summary').innerHTML = `Score: <b>${score}/${total}</b><br>${comment}`;
+  if (score === total) comment = currentLang==="FR"?"Parfait !":"Perfect!";
+  else if (score >= total * 0.8) comment = currentLang==="FR"?"Super !":"Great!";
+  else if (score >= total * 0.5) comment = currentLang==="FR"?"Pas mal !":"Not bad!";
+  else comment = currentLang==="FR"?"Oh non !":"Oh no!";
+  document.getElementById('results-summary').innerHTML = `${currentLang==="FR"?"Score":"Score"}: <b>${score}/${total}</b><br>${comment}`;
   const list = document.getElementById('results-list');
   list.innerHTML = quizState.answers.map((ans, i) => `
     <div class="result-item" data-idx="${i}">
       <img src="${ans.img.path}" class="result-img-thumb" alt="">
       <div class="result-details">
         <div><b>Q${i+1}:</b> ${escapeHTML(ans.correct)}</div>
-        <div>Your answer: <b>${escapeHTML(ans.answer||'(none)')}</b></div>
-        <div class="${ans.isCorrect?'result-correct':'result-wrong'}">${ans.isCorrect?'Correct':'Wrong'}</div>
+        <div>${currentLang==="FR"?"Votre réponse":"Your answer"}: <b>${escapeHTML(ans.answer||'(none)')}</b></div>
+        <div class="${ans.isCorrect?'result-correct':'result-wrong'}">${ans.isCorrect?(currentLang==="FR"?"Correct":"Correct"):(currentLang==="FR"?"Faux":"Wrong")}</div>
       </div>
     </div>
   `).join('');
@@ -553,27 +570,30 @@ function showQuizResults() {
   };
 }
 
-/** --- OPTIONS --- **/
 function setupOptions() {
   const form = document.getElementById('options-form');
   const numQ = document.getElementById('opt-num-questions');
   const timerEn = document.getElementById('opt-timer-enabled');
   const timerSet = document.getElementById('timer-settings');
   const timerSec = document.getElementById('opt-timer-seconds');
+  const langSel = document.getElementById('opt-lang');
   timerEn.onchange = () => {
     timerSet.classList.toggle('hidden', !timerEn.checked);
+  };
+  langSel.onchange = () => {
+    setLanguage(langSel.value);
   };
   form.onsubmit = e => {
     e.preventDefault();
     quizOptions.numQuestions = Math.max(1, Math.min(30, +numQ.value));
     quizOptions.timerEnabled = timerEn.checked;
     quizOptions.timerSeconds = Math.max(5, Math.min(120, +timerSec.value));
-    alert('Options saved!');
+    setLanguage(langSel.value);
+    alert(currentLang==="FR"?"Options sauvegardées !":"Options saved!");
     showSection('quiz');
   };
 }
 
-/** --- ENCYCLOPEDIA --- **/
 function setupEncyclopedia() {
   document.getElementById('sort-name').onclick = () => {
     encyclopediaSort.by = 'name';
@@ -590,7 +610,7 @@ function renderEncyclopediaTable() {
   const tbody = document.getElementById('encyclopedia-list');
   let sorted = [...bodyList];
   if (encyclopediaSort.by === 'name') {
-    sorted.sort((a,b) => encyclopediaSort.asc ? a.nom.localeCompare(b.nom) : b.nom.localeCompare(a.nom));
+    sorted.sort((a,b) => encyclopediaSort.asc ? getDisplayName(a).localeCompare(getDisplayName(b)) : getDisplayName(b).localeCompare(getDisplayName(a)));
   } else {
     sorted.sort((a,b) => encyclopediaSort.asc ? (a.type||'').localeCompare(b.type||'') : (b.type||'').localeCompare(a.type||''));
   }
@@ -598,7 +618,7 @@ function renderEncyclopediaTable() {
   document.getElementById('sort-type').className = encyclopediaSort.by==='type'?(encyclopediaSort.asc?'sorted-asc':'sorted-desc'):'';
   tbody.innerHTML = sorted.map(el => `
     <tr class="encyclopedia-row" data-nom="${escapeHTML(el.nom)}">
-      <td>${escapeHTML(el.nom)}</td>
+      <td>${escapeHTML(getDisplayName(el))}</td>
       <td>${escapeHTML(el.type||'')}</td>
     </tr>
   `).join('');
@@ -612,9 +632,13 @@ function showEncyclopediaInfoModal(nom) {
   const modalContent = document.getElementById('encyclo-modal-content');
   let html = `
     <div style="margin-bottom:1rem;">
-      <div><b>Name:</b> ${escapeHTML(el.nom)}</div>
-      <div><b>Type:</b> ${escapeHTML(el.type||'')}</div>
-      <div><b>Categories:</b> ${el.categories.map(escapeHTML).join(', ')}</div>
+      <div><b>${currentLang==="FR"?"Nom":"Name"}:</b> <span style="font-weight:bold;">${escapeHTML(getDisplayName(el))}</span></div>
+      <div style="margin-top:0.3em;">
+        <span style="color:#666;">FR:</span> <span style="font-weight:${currentLang==="FR"?"bold":"normal"}">${escapeHTML(el.FR||el.nom)}</span>
+        <span style="margin-left:1.2em;color:#666;">EN:</span> <span style="font-weight:${currentLang==="EN"?"bold":"normal"}">${escapeHTML(el.EN||el.nom)}</span>
+      </div>
+      <div style="margin-top:0.3em;"><b>${currentLang==="FR"?"Type":"Type"}:</b> ${escapeHTML(el.type||'')}</div>
+      <div><b>${currentLang==="FR"?"Catégories":"Categories"}:</b> ${el.categories.map(escapeHTML).join(', ')}</div>
     </div>
     <div class="gallery-section" style="width:100%;">
       ${SUBFOLDERS.map(sub => renderGallerySectionModal(el, sub)).join('')}
@@ -633,7 +657,7 @@ function renderGallerySectionModal(el, sub) {
       ${images.map((img, idx) => `
         <div class="gallery-img-container">
           <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}','${getOriginalImagePath(img.file)}')">
-          <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.url}','${getOriginalImagePath(img.file)}')">Show Original</button>
+          <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.url}','${getOriginalImagePath(img.file)}')">${currentLang==="FR"?"Voir l'original":"Show Original"}</button>
         </div>
       `).join('')}
     </div>
@@ -647,14 +671,13 @@ function switchGalleryImg(btn, variant, original) {
   const img = btn.parentNode.querySelector('.gallery-img');
   if (img.src === variant) {
     img.src = original;
-    btn.textContent = 'Show Variant';
+    btn.textContent = (currentLang==="FR"?"Voir la variante":"Show Variant");
   } else {
     img.src = variant;
-    btn.textContent = 'Show Original';
+    btn.textContent = (currentLang==="FR"?"Voir l'original":"Show Original");
   }
 }
 function showModal(variantUrl, originalUrl) {
-  // If encyclopedia modal is open, hide it temporarily
   if (encycloModalOpen) {
     document.getElementById('encyclo-modal-bg').style.display = 'none';
   }
@@ -676,7 +699,6 @@ function showModal(variantUrl, originalUrl) {
 }
 function closeModal() {
   document.getElementById('modal-bg').classList.add('hidden');
-  // Restore encyclopedia modal if it was open
   if (encycloModalOpen) {
     document.getElementById('encyclo-modal-bg').style.display = '';
   }
@@ -686,7 +708,6 @@ window.showModal = showModal;
 window.switchGalleryImg = switchGalleryImg;
 window.closeEncycloModal = closeEncycloModal;
 
-/* Debounce function for autocomplete */
 function debounce(fn, delay) {
   let timer;
   return (...args) => {
