@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Body Encyclopedia & Quiz</title>
-  <style>
+  <title>Body Landmarks Encyclopedia & Quiz</title>
+  <style id="main-style">
     body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f6f7fb; color: #222; }
     header { background: #2d3a4b; color: #fff; padding: 1.2rem 2rem 0.5rem 2rem; text-align: center; font-size: 2rem; letter-spacing: 2px; box-shadow: 0 2px 8px #0001; position:relative; }
     nav { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0 1rem 0; }
@@ -134,8 +134,8 @@
     .encyclopedia-table tr:hover { background: #e0e4ea; }
     .gallery-section { margin-top: 1.5rem; }
     .gallery-title { font-weight: bold; margin-bottom: 0.7rem; font-size: 1.1rem; }
-    .gallery-images { display: flex; gap: 1.2rem; flex-wrap: wrap; }
-    .gallery-img-container { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem; }
+    .gallery-images { display: flex; flex-wrap: wrap; gap: 1.2rem; }
+    .gallery-img-container { position: relative; display: flex; flex-direction: column; align-items: center; }
     .gallery-img { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #bbb; background: #eee; margin-bottom: 0.2rem; cursor: pointer; transition: box-shadow 0.2s; }
     .gallery-switch-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.2rem 0.7rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin-bottom: 0.2rem; margin-top: 0.1rem; }
     .gallery-switch-btn:hover { background: #c2c7d2; }
@@ -150,10 +150,25 @@
       .encyclo-modal { width: 98vw; height: 98vh; }
     }
   </style>
+  <style id="dark-mode-style" disabled>
+    body { background: #181818 !important; color: #f6f7fb !important; }
+    .container { background: #232323 !important; color: #f6f7fb !important; }
+    header { background: #121a22 !important; color: #fff !important; }
+    nav button { background: #232323 !important; border: 2px solid #f6f7fb !important; color: #f6f7fb !important; }
+    nav button.active, nav button:hover { background: #f6f7fb !important; color: #232323 !important; }
+    .quiz-image, .result-img-thumb, .gallery-img { background: #333 !important; }
+    .modal-img, .encyclo-modal { background: #232323 !important; color: #f6f7fb !important; }
+    .autocomplete-list { background: #232323 !important; color: #f6f7fb !important; }
+    .autocomplete-item.selected, .autocomplete-item:hover { background: #353535 !important; }
+    .options-form button, .close-modal-btn, .close-encyclo-modal-btn { background: #f6f7fb !important; color: #232323 !important; }
+    .encyclopedia-table th, .encyclopedia-table td { background: #232323 !important; color: #f6f7fb !important; border-color: #353535 !important; }
+    .encyclopedia-table tr:hover { background: #353535 !important; }
+    .switch-img-btn, .gallery-switch-btn { background: #353535 !important; color: #f6f7fb !important; }
+  </style>
 </head>
 <body>
 <header>
-  Body Encyclopedia & Quiz
+  Body Landmarks
 </header>
 <nav>
   <button id="nav-quiz" class="active">Quiz</button>
@@ -164,6 +179,7 @@
   <!-- Quiz Section -->
   <section id="section-quiz">
     <div id="quiz-timer" class="quiz-timer hidden"></div>
+    <div id="quiz-counter" style="text-align:center; margin-bottom:1rem; font-size:1.2rem;"></div>
     <div id="quiz-image-container" class="quiz-image-container"></div>
     <div class="quiz-input-area">
       <input id="quiz-answer" type="text" placeholder="Type or select the name..." autocomplete="off" style="font-size:1.1rem; padding:0.5rem; width:90%; border-radius:8px; border:1px solid #bbb;">
@@ -171,6 +187,7 @@
       <button id="quiz-submit-btn" style="margin-top:0.5rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;">Confirm</button>
     </div>
     <div id="quiz-feedback" class="quiz-feedback"></div>
+    <button id="quiz-next-btn" class="hidden" style="margin-top:1rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;">Next</button>
   </section>
   <!-- Results Section -->
   <section id="section-results" class="hidden">
@@ -182,27 +199,37 @@
   <section id="section-options" class="hidden">
     <form id="options-form" class="options-form">
       <div>
-        <label for="opt-num-questions">Number of questions:</label>
+        <label for="opt-num-questions" id="lbl-num-questions">Number of questions:</label>
         <input type="number" id="opt-num-questions" min="1" max="30" value="10">
       </div>
       <div>
         <label>
           <input type="checkbox" id="opt-timer-enabled">
-          Enable timer per question
+          <span id="lbl-timer-enabled">Enable timer per question</span>
         </label>
         <div id="timer-settings" class="hidden" style="margin-left:2rem;">
-          <label for="opt-timer-seconds">Time per question (seconds):</label>
+          <label for="opt-timer-seconds" id="lbl-timer-seconds">Time per question (seconds):</label>
           <input type="number" id="opt-timer-seconds" min="5" max="120" value="30">
         </div>
       </div>
       <div>
-        <label for="opt-lang">Language:</label>
+        <label for="opt-feedback-seconds" id="lbl-feedback-seconds">Time to show result (seconds):</label>
+        <input type="number" id="opt-feedback-seconds" min="1" max="30" value="3">
+      </div>
+      <div>
+        <label for="opt-lang" id="lbl-lang">Language:</label>
         <select id="opt-lang">
           <option value="FR">Français</option>
           <option value="EN">English</option>
         </select>
       </div>
-      <button type="submit">Save Options</button>
+      <div>
+        <label>
+          <input type="checkbox" id="opt-darkmode">
+          <span id="lbl-darkmode">Dark mode</span>
+        </label>
+      </div>
+      <button type="submit" id="btn-save-options">Save Options</button>
     </form>
   </section>
   <!-- Encyclopedia Section -->
@@ -212,6 +239,7 @@
         <tr>
           <th id="sort-name" class="sorted-asc">Name</th>
           <th id="sort-type">Type</th>
+          <th id="sort-images">Images</th>
         </tr>
       </thead>
       <tbody id="encyclopedia-list"></tbody>
@@ -221,15 +249,15 @@
 <!-- Modal for large images -->
 <div id="modal-bg" class="modal-bg hidden">
   <div class="modal-img">
-    <div class="modal-img-tip">Click the image to switch between variant and original</div>
+    <div class="modal-img-tip" id="modal-img-tip">Click the image to switch between variant and original</div>
     <img id="modal-img" src="" alt="Large view">
-    <button class="close-modal-btn" onclick="closeModal()">Close</button>
+    <button class="close-modal-btn" onclick="closeModal()" id="btn-close-modal">Close</button>
   </div>
 </div>
 <!-- Modal for encyclopedia info -->
 <div id="encyclo-modal-bg" class="encyclo-modal-bg hidden">
   <div class="encyclo-modal">
-    <button class="close-encyclo-modal-btn" onclick="closeEncycloModal()">Close</button>
+    <button class="close-encyclo-modal-btn" onclick="closeEncycloModal()" id="btn-close-encyclo-modal">Close</button>
     <div class="encyclo-modal-content-scroll" id="encyclo-modal-content"></div>
   </div>
 </div>
@@ -242,19 +270,92 @@ const SUBFOLDERS = ['cartoon', 'realist', 'photo'];
 
 let bodyList = [];
 let nameToElement = {};
-let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30 };
+let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30, feedbackSeconds: 3, darkMode: false, lang: "FR" };
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
 let imageManifest = [];
 let imagesByElement = {};
 let quizTimerInterval = null;
+let feedbackTimer = null;
 let encycloModalOpen = false;
 let currentLang = "FR";
+let darkMode = false;
 
 // For modal image toggling
 let modalImgVariant = null;
 let modalImgOriginal = null;
 let modalImgIsVariant = true;
+
+// i18n
+const translations = {
+  EN: {
+    confirm: "Confirm",
+    typeOrSelect: "Type or select the name...",
+    showOriginal: "Show original",
+    showVariant: "Show variant",
+    saveOptions: "Save Options",
+    close: "Close",
+    numQuestions: "Number of questions:",
+    enableTimer: 'Enable timer per question',
+    timePerQuestion: "Time per question (seconds):",
+    feedbackSeconds: "Time to show result (seconds):",
+    language: "Language:",
+    darkMode: "Dark mode",
+    images: "Images",
+    name: "Name",
+    type: "Type",
+    quiz: "Quiz",
+    options: "Options",
+    encyclopedia: "Encyclopedia",
+    clickToSwitch: "Click the image to switch between variant and original",
+    restartQuiz: "Restart Quiz",
+    correct: "Correct!",
+    wrong: "Wrong!",
+    next: "Next",
+    quizOver: "Quiz over!",
+    score: "Score",
+    of: "of",
+    noImages: "No images available.",
+    nameFR: "French name",
+    nameEN: "English name",
+    questionCounter: "Question"
+  },
+  FR: {
+    confirm: "Confirmer",
+    typeOrSelect: "Tapez ou sélectionnez le nom...",
+    showOriginal: "Voir original",
+    showVariant: "Voir variante",
+    saveOptions: "Enregistrer les options",
+    close: "Fermer",
+    numQuestions: "Nombre de questions :",
+    enableTimer: 'Activer le minuteur par question',
+    timePerQuestion: "Temps par question (secondes) :",
+    feedbackSeconds: "Temps d'affichage du résultat (secondes) :",
+    language: "Langue :",
+    darkMode: "Mode sombre",
+    images: "Images",
+    name: "Nom",
+    type: "Type",
+    quiz: "Quiz",
+    options: "Options",
+    encyclopedia: "Encyclopédie",
+    clickToSwitch: "Cliquez sur l'image pour alterner entre variante et originale",
+    restartQuiz: "Recommencer le quiz",
+    correct: "Bonne réponse !",
+    wrong: "Mauvaise réponse !",
+    next: "Suivant",
+    quizOver: "Quiz terminé !",
+    score: "Score",
+    of: "sur",
+    noImages: "Aucune image disponible.",
+    nameFR: "Nom français",
+    nameEN: "Nom anglais",
+    questionCounter: "Question"
+  }
+};
+function t(key) {
+  return translations[currentLang][key] || key;
+}
 
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -294,9 +395,8 @@ function parseManifest() {
     }
   }
 }
-
 window.addEventListener('DOMContentLoaded', async () => {
-  showLoading("Loading data...");
+  showLoading("Chargement...");
   await loadBodyJson();
   await loadImageManifest();
   parseManifest();
@@ -307,12 +407,44 @@ window.addEventListener('DOMContentLoaded', async () => {
   hideLoading();
   showSection('quiz');
   document.getElementById('opt-lang').value = currentLang;
+  applyLanguage();
+  applyDarkMode();
 });
 
 function setLanguage(lang) {
   currentLang = lang;
+  quizOptions.lang = lang;
   document.getElementById('opt-lang').value = lang;
+  applyLanguage();
   showSection(document.querySelector('nav button.active').id.replace('nav-',''));
+}
+
+function applyLanguage() {
+  // Nav
+  document.getElementById('nav-quiz').textContent = t('quiz');
+  document.getElementById('nav-options').textContent = t('options');
+  document.getElementById('nav-encyclopedia').textContent = t('encyclopedia');
+  // Quiz
+  document.getElementById('quiz-submit-btn').textContent = t('confirm');
+  document.getElementById('quiz-answer').placeholder = t('typeOrSelect');
+  // Options
+  document.getElementById('lbl-num-questions').textContent = t('numQuestions');
+  document.getElementById('lbl-timer-enabled').textContent = t('enableTimer');
+  document.getElementById('lbl-timer-seconds').textContent = t('timePerQuestion');
+  document.getElementById('lbl-feedback-seconds').textContent = t('feedbackSeconds');
+  document.getElementById('lbl-lang').textContent = t('language');
+  document.getElementById('lbl-darkmode').textContent = t('darkMode');
+  document.getElementById('btn-save-options').textContent = t('saveOptions');
+  // Encyclopedia Table
+  document.getElementById('sort-name').textContent = t('name');
+  document.getElementById('sort-type').textContent = t('type');
+  document.getElementById('sort-images').textContent = t('images');
+  // Modal
+  document.getElementById('btn-close-modal').textContent = t('close');
+  document.getElementById('btn-close-encyclo-modal').textContent = t('close');
+  document.getElementById('modal-img-tip').textContent = t('clickToSwitch');
+  // Results
+  document.getElementById('results-restart-btn').textContent = t('restartQuiz');
 }
 
 async function loadBodyJson() {
@@ -359,369 +491,472 @@ function hideLoading() {
   if (el) el.style.display = 'none';
 }
 
+// --- Quiz logic ---
 function setupQuiz() {
   document.getElementById('quiz-submit-btn').onclick = () => submitQuizAnswer();
   document.getElementById('quiz-answer').addEventListener('input', debounce(showAutocomplete, 100));
   document.getElementById('quiz-answer').addEventListener('focus', showAutocomplete);
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.quiz-input-area')) hideAutocomplete();
+  document.getElementById('quiz-answer').addEventListener('keydown', (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitQuizAnswer();
+    }
   });
 }
+
 function startQuiz() {
-  let candidates = [];
-  let elementImages = {};
-  bodyList.forEach(el => {
-    const nomNorm = normalizeName(el.nom);
-    const imgs = [];
-    for (const sub of SUBFOLDERS) {
-      imgs.push(...((imagesByElement[nomNorm]?.[sub]) || []).map(img => ({...img, sub})));
-    }
-    if (imgs.length) elementImages[nomNorm] = imgs;
-  });
-  const elementNames = Object.keys(elementImages);
-  if (elementNames.length === 0) {
-    document.getElementById('quiz-image-container').innerHTML = "<b>No elements with images found.</b>";
-    document.querySelector('.quiz-input-area').style.display = "none";
-    return;
-  }
-  const numQuestions = quizOptions.numQuestions;
-  const questions = [];
-  const usedImages = {};
-  let availableElements = shuffle([...elementNames]);
-  for (let i = 0; i < Math.min(numQuestions, availableElements.length); i++) {
-    const nom = availableElements[i];
-    const imgs = shuffle([...elementImages[nom]]);
-    const img = imgs[0];
-    const el = bodyList.find(e => normalizeName(e.nom) === nom);
-    questions.push({ element: el, img });
-    usedImages[nom] = new Set([img.url]);
-  }
-  while (questions.length < numQuestions) {
-    const nom = shuffle([...elementNames])[0];
-    const imgs = elementImages[nom];
-    let img = null;
-    const usedSet = usedImages[nom] || new Set();
-    const unusedImgs = imgs.filter(im => !usedSet.has(im.url));
-    if (unusedImgs.length) {
-      img = shuffle([...unusedImgs])[0];
-    } else {
-      img = shuffle([...imgs])[0];
-    }
-    const el = bodyList.find(e => normalizeName(e.nom) === nom);
-    questions.push({ element: el, img });
-    if (!usedImages[nom]) usedImages[nom] = new Set();
-    usedImages[nom].add(img.url);
-  }
   quizState = {
-    questions,
+    questions: generateQuizQuestions(),
     current: 0,
-    score: 0,
     answers: [],
-    timer: null,
-    timerLeft: 0
+    timer: quizOptions.timerEnabled ? quizOptions.timerSeconds : null,
+    timerRunning: false,
+    feedbackTimer: null
   };
-  document.querySelector('.quiz-input-area').style.display = "";
-  renderQuizQuestion();
+  document.getElementById('section-results').classList.add('hidden');
+  showQuizQuestion();
 }
-function getDisplayName(el) {
-  if (!el) return "";
-  if (currentLang === "FR") return el.FR || el.nom;
-  if (currentLang === "EN") return el.EN || el.nom;
-  return el.nom;
+
+function generateQuizQuestions() {
+  // Only pick elements with at least 1 image
+  let eligible = bodyList.filter(e => getImagesCount(e) > 0);
+  eligible = shuffle([...eligible]);
+  let n = Math.min(quizOptions.numQuestions, eligible.length);
+  return eligible.slice(0, n).map(e => ({
+    element: e,
+    image: pickRandomImage(e)
+  }));
 }
-function renderQuizQuestion() {
-  if (quizTimerInterval) clearInterval(quizTimerInterval);
-  const qIdx = quizState.current;
-  if (qIdx >= quizState.questions.length) {
-    showQuizResults();
-    return;
+function pickRandomImage(element) {
+  const norm = normalizeName(element.nom);
+  if (!imagesByElement[norm]) return null;
+  let allImgs = [];
+  for (const sub of SUBFOLDERS) allImgs = allImgs.concat(imagesByElement[norm][sub]);
+  if (allImgs.length === 0) return null;
+  return allImgs[Math.floor(Math.random() * allImgs.length)];
+}
+
+let quizCurrentImageIsVariant = true;
+let quizCurrentImageVariantUrl = "";
+let quizCurrentImageOriginalUrl = "";
+
+function showQuizQuestion() {
+  if (feedbackTimer) { clearTimeout(feedbackTimer); feedbackTimer = null; }
+  const q = quizState.questions[quizState.current];
+  const elem = q.element;
+  const img = q.image;
+
+  // Update question counter
+  document.getElementById('quiz-counter').textContent = `${t('questionCounter')} ${quizState.current + 1}/${quizState.questions.length}`;
+
+  // Hide next button initially
+  document.getElementById('quiz-next-btn').classList.add('hidden');
+
+  // Image
+  const imgDiv = document.getElementById('quiz-image-container');
+  imgDiv.innerHTML = '';
+  quizCurrentImageIsVariant = true;
+  if (img) {
+    quizCurrentImageVariantUrl = img.url;
+    quizCurrentImageOriginalUrl = getOriginalImagePath(img.file);
+    const imageEl = document.createElement('img');
+    imageEl.className = 'quiz-image';
+    imageEl.src = quizCurrentImageVariantUrl;
+    imageEl.alt = elem.nom;
+    imageEl.onclick = () => showModalImage(quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl, quizCurrentImageIsVariant ? quizCurrentImageOriginalUrl : quizCurrentImageVariantUrl);
+    imgDiv.appendChild(imageEl);
+
+    // Show original/variant toggle button
+    const btn = document.createElement('button');
+    btn.className = 'switch-img-btn';
+    btn.textContent = t('showOriginal');
+    btn.onclick = (e) => {
+      e.preventDefault();
+      quizCurrentImageIsVariant = !quizCurrentImageIsVariant;
+      imageEl.src = quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl;
+      btn.textContent = quizCurrentImageIsVariant ? t('showOriginal') : t('showVariant');
+    };
+    imgDiv.appendChild(btn);
   }
-  const {element, img} = quizState.questions[qIdx];
-  quizState.currentImg = {
-    path: img.url,
-    file: img.file,
-    sub: img.sub,
-    nom: element.nom,
-    original: getOriginalImagePath(img.file)
-  };
-  const imgCont = document.getElementById('quiz-image-container');
-  imgCont.innerHTML = `
-    <img src="${quizState.currentImg.path}" class="quiz-image" id="quiz-main-img" alt="Quiz Image" title="Click to enlarge">
-    <button class="switch-img-btn" id="quiz-switch-img-btn">Show Original</button>
-  `;
-  let showingOriginal = false;
-  document.getElementById('quiz-switch-img-btn').onclick = () => {
-    const img = document.getElementById('quiz-main-img');
-    if (!showingOriginal) {
-      img.src = quizState.currentImg.original;
-      document.getElementById('quiz-switch-img-btn').textContent = 'Show Variant';
-      showingOriginal = true;
-    } else {
-      img.src = quizState.currentImg.path;
-      document.getElementById('quiz-switch-img-btn').textContent = 'Show Original';
-      showingOriginal = false;
-    }
-  };
-  document.getElementById('quiz-main-img').onclick = () => {
-    showModal(quizState.currentImg.path, getOriginalImagePath(quizState.currentImg.file));
-  };
+  // Answer input
+  document.getElementById('quiz-answer').value = '';
+  document.getElementById('quiz-answer').focus();
+  document.getElementById('quiz-feedback').textContent = '';
+  // Timer
   if (quizOptions.timerEnabled) {
-    quizState.timerLeft = quizOptions.timerSeconds;
     document.getElementById('quiz-timer').classList.remove('hidden');
-    updateQuizTimer();
+    quizState.timer = quizOptions.timerSeconds;
+    document.getElementById('quiz-timer').textContent = quizState.timer + 's';
+    if (quizTimerInterval) clearInterval(quizTimerInterval);
     quizTimerInterval = setInterval(() => {
-      quizState.timerLeft--;
-      updateQuizTimer();
-      if (quizState.timerLeft <= 0) {
+      quizState.timer--;
+      document.getElementById('quiz-timer').textContent = quizState.timer + 's';
+      if (quizState.timer <= 0) {
         clearInterval(quizTimerInterval);
+        quizTimerInterval = null;
         submitQuizAnswer(true);
       }
     }, 1000);
   } else {
     document.getElementById('quiz-timer').classList.add('hidden');
-    if (quizTimerInterval) clearInterval(quizTimerInterval);
+    if (quizTimerInterval) { clearInterval(quizTimerInterval); quizTimerInterval = null; }
   }
-  const input = document.getElementById('quiz-answer');
-  input.value = '';
-  input.focus();
-  document.getElementById('quiz-feedback').textContent = '';
-  hideAutocomplete();
 }
-function updateQuizTimer() {
-  document.getElementById('quiz-timer').textContent = `⏳ ${quizState.timerLeft}s`;
-}
-function submitQuizAnswer(timeout=false) {
-  if (quizTimerInterval) clearInterval(quizTimerInterval);
-  const input = document.getElementById('quiz-answer');
-  const answer = input.value.trim();
-  const correctEl = quizState.questions[quizState.current].element;
-  const correct = getDisplayName(correctEl);
-  let isCorrect = (answer.toLowerCase() === correct.toLowerCase());
-  if (timeout) isCorrect = false;
+
+function submitQuizAnswer(timeout = false) {
+  const q = quizState.questions[quizState.current];
+  const elem = q.element;
+  const answer = document.getElementById('quiz-answer').value.trim();
+  const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
+  let correct = false;
+  if (!timeout) {
+    correct = answer.localeCompare(correctName, undefined, { sensitivity: 'accent' }) === 0;
+  }
   quizState.answers.push({
+    element: elem,
+    image: q.image,
     answer,
     correct,
-    isCorrect,
-    img: quizState.currentImg
+    timeout
   });
-  if (isCorrect) quizState.score++;
-  const fb = document.getElementById('quiz-feedback');
-  if (isCorrect) {
-    fb.innerHTML = `<span style="color:#2c8c2c;font-weight:bold;">${currentLang==="FR"?"Correct!":"Correct!"}</span>`;
+  if (quizTimerInterval) { clearInterval(quizTimerInterval); quizTimerInterval = null; }
+  showQuizFeedback(correct, correctName, q.image);
+}
+
+function showQuizFeedback(correct, correctName, img) {
+  const feedbackDiv = document.getElementById('quiz-feedback');
+  feedbackDiv.innerHTML = '';
+  if (correct) {
+    feedbackDiv.innerHTML = `<span class="result-correct">${t('correct')}</span>`;
   } else {
-    fb.innerHTML = `<span style="color:#d13a3a;font-weight:bold;">${currentLang==="FR"?"Faux.":"Wrong."}</span> ${currentLang==="FR"?"La bonne réponse était":"The correct answer was"} <b>${escapeHTML(correct)}</b>.`;
+    feedbackDiv.innerHTML = `<span class="result-wrong">${t('wrong')}</span><br>${escapeHTML(correctName)}`;
   }
-  setTimeout(() => {
+
+  // Show next button
+  const nextBtn = document.getElementById('quiz-next-btn');
+  nextBtn.textContent = t('next');
+  nextBtn.classList.remove('hidden');
+  nextBtn.onclick = () => {
+    clearInterval(feedbackTimer);
+    feedbackTimer = null;
     quizState.current++;
-    renderQuizQuestion();
-  }, 1200);
+    if (quizState.current < quizState.questions.length) {
+      showQuizQuestion();
+    } else {
+      showQuizResults();
+    }
+  };
+
+  // Timer for feedback
+  let seconds = quizOptions.feedbackSeconds || 3;
+  let timerSpan = document.createElement('span');
+  timerSpan.style.marginLeft = "1em";
+  timerSpan.style.fontWeight = "bold";
+  timerSpan.textContent = ` (${seconds}s)`;
+  feedbackDiv.appendChild(timerSpan);
+
+  let countdown = seconds;
+  feedbackTimer = setInterval(() => {
+    countdown--;
+    timerSpan.textContent = ` (${countdown}s)`;
+    if (countdown <= 0) {
+      clearInterval(feedbackTimer);
+      feedbackTimer = null;
+      quizState.current++;
+      if (quizState.current < quizState.questions.length) {
+        showQuizQuestion();
+      } else {
+        showQuizResults();
+      }
+    }
+  }, 1000);
 }
-function showAutocomplete() {
-  const input = document.getElementById('quiz-answer');
-  const val = input.value.trim().toLowerCase();
-  let filtered = bodyList.filter(e => {
-    const name = getDisplayName(e);
-    return name && (!val || name.toLowerCase().includes(val));
-  });
-  const list = document.getElementById('autocomplete-list');
-  list.innerHTML = filtered.map(e => `<div class="autocomplete-item">${escapeHTML(getDisplayName(e))}</div>`).join('');
-  if (filtered.length === 0) list.classList.add('hidden');
-  else list.classList.remove('hidden');
-  list.querySelectorAll('.autocomplete-item').forEach(item => {
-    item.onclick = () => {
-      input.value = item.textContent;
-      hideAutocomplete();
-      input.focus();
-    };
-  });
-}
-function hideAutocomplete() {
-  document.getElementById('autocomplete-list').classList.add('hidden');
-}
+
 function showQuizResults() {
-  if (quizTimerInterval) clearInterval(quizTimerInterval);
+  if (feedbackTimer) { clearTimeout(feedbackTimer); feedbackTimer = null; }
   document.getElementById('section-quiz').classList.add('hidden');
   document.getElementById('section-results').classList.remove('hidden');
-  const score = quizState.score;
-  const total = quizState.questions.length;
-  let comment = '';
-  if (score === total) comment = currentLang==="FR"?"Parfait !":"Perfect!";
-  else if (score >= total * 0.8) comment = currentLang==="FR"?"Super !":"Great!";
-  else if (score >= total * 0.5) comment = currentLang==="FR"?"Pas mal !":"Not bad!";
-  else comment = currentLang==="FR"?"Oh non !":"Oh no!";
-  document.getElementById('results-summary').innerHTML = `${currentLang==="FR"?"Score":"Score"}: <b>${score}/${total}</b><br>${comment}`;
+  // Score
+  const total = quizState.answers.length;
+  const correct = quizState.answers.filter(a => a.correct).length;
+  document.getElementById('results-summary').textContent = `${t('score')}: ${correct} ${t('of')} ${total}`;
+  // List
   const list = document.getElementById('results-list');
-  list.innerHTML = quizState.answers.map((ans, i) => `
-    <div class="result-item" data-idx="${i}">
-      <img src="${ans.img.path}" class="result-img-thumb" alt="">
-      <div class="result-details">
-        <div><b>Q${i+1}:</b> ${escapeHTML(ans.correct)}</div>
-        <div>${currentLang==="FR"?"Votre réponse":"Your answer"}: <b>${escapeHTML(ans.answer||'(none)')}</b></div>
-        <div class="${ans.isCorrect?'result-correct':'result-wrong'}">${ans.isCorrect?(currentLang==="FR"?"Correct":"Correct"):(currentLang==="FR"?"Faux":"Wrong")}</div>
-      </div>
-    </div>
-  `).join('');
-  list.querySelectorAll('.result-item').forEach(item => {
-    item.onclick = () => {
-      const idx = item.getAttribute('data-idx');
-      const ans = quizState.answers[idx];
-      showModal(ans.img.path, getOriginalImagePath(ans.img.file));
-    };
+  list.innerHTML = '';
+  quizState.answers.forEach((a, idx) => {
+    const div = document.createElement('div');
+    div.className = 'result-item';
+    if (a.image) {
+      const img = document.createElement('img');
+      img.className = 'result-img-thumb';
+      img.src = a.image.url;
+      img.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
+      img.onclick = () => showModalImage(a.image.url, getOriginalImagePath(a.image.file));
+      div.appendChild(img);
+    }
+    const details = document.createElement('div');
+    details.className = 'result-details';
+    const displayName = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
+    details.innerHTML = `<strong>${escapeHTML(displayName)}</strong><br>
+      <span class="${a.correct ? 'result-correct' : 'result-wrong'}">${a.correct ? t('correct') : t('wrong')}</span>`;
+    if (!a.correct && a.answer) {
+      details.innerHTML += `<br><span style="color:#888">${escapeHTML(a.answer)}</span>`;
+    }
+    div.appendChild(details);
+    list.appendChild(div);
   });
   document.getElementById('results-restart-btn').onclick = () => {
     document.getElementById('section-results').classList.add('hidden');
-    showSection('quiz');
+    document.getElementById('section-quiz').classList.remove('hidden');
+    startQuiz();
   };
 }
 
+// --- Autocomplete ---
+function showAutocomplete() {
+  const input = document.getElementById('quiz-answer');
+  const val = input.value.trim().toLowerCase();
+  const list = document.getElementById('autocomplete-list');
+  if (!val) {
+    list.classList.add('hidden');
+    list.innerHTML = '';
+    return;
+  }
+  const suggestions = bodyList
+    .filter(e => {
+      const name = currentLang === 'FR' ? (e.FR || e.nom) : (e.EN || e.nom);
+      return name.toLowerCase().includes(val);
+    })
+    .slice(0, 10);
+  if (suggestions.length === 0) {
+    list.classList.add('hidden');
+    list.innerHTML = '';
+    return;
+  }
+  list.innerHTML = '';
+  suggestions.forEach((e, idx) => {
+    const item = document.createElement('div');
+    item.className = 'autocomplete-item';
+    item.textContent = currentLang === 'FR' ? (e.FR || e.nom) : (e.EN || e.nom);
+    item.onclick = () => {
+      input.value = currentLang === 'FR' ? (e.FR || e.nom) : (e.EN || e.nom);
+      list.classList.add('hidden');
+      list.innerHTML = '';
+    };
+    list.appendChild(item);
+  });
+  list.classList.remove('hidden');
+}
+
+// --- Options logic ---
 function setupOptions() {
-  const form = document.getElementById('options-form');
-  const numQ = document.getElementById('opt-num-questions');
-  const timerEn = document.getElementById('opt-timer-enabled');
-  const timerSet = document.getElementById('timer-settings');
-  const timerSec = document.getElementById('opt-timer-seconds');
-  const langSel = document.getElementById('opt-lang');
-  timerEn.onchange = () => {
-    timerSet.classList.toggle('hidden', !timerEn.checked);
+  document.getElementById('opt-lang').onchange = (e) => setLanguage(e.target.value);
+  document.getElementById('opt-timer-enabled').onchange = (e) => {
+    document.getElementById('timer-settings').classList.toggle('hidden', !e.target.checked);
   };
-  langSel.onchange = () => {
-    setLanguage(langSel.value);
+  document.getElementById('opt-darkmode').onchange = (e) => {
+    darkMode = e.target.checked;
+    quizOptions.darkMode = darkMode;
+    applyDarkMode();
   };
-  form.onsubmit = e => {
+  document.getElementById('options-form').onsubmit = (e) => {
     e.preventDefault();
-    quizOptions.numQuestions = Math.max(1, Math.min(30, +numQ.value));
-    quizOptions.timerEnabled = timerEn.checked;
-    quizOptions.timerSeconds = Math.max(5, Math.min(120, +timerSec.value));
-    setLanguage(langSel.value);
-    alert(currentLang==="FR"?"Options sauvegardées !":"Options saved!");
+    quizOptions.numQuestions = parseInt(document.getElementById('opt-num-questions').value, 10);
+    quizOptions.timerEnabled = document.getElementById('opt-timer-enabled').checked;
+    quizOptions.timerSeconds = parseInt(document.getElementById('opt-timer-seconds').value, 10);
+    quizOptions.feedbackSeconds = parseInt(document.getElementById('opt-feedback-seconds').value, 10);
+    quizOptions.lang = document.getElementById('opt-lang').value;
+    quizOptions.darkMode = document.getElementById('opt-darkmode').checked;
+    setLanguage(quizOptions.lang);
+    applyDarkMode();
     showSection('quiz');
   };
+  // Set initial values
+  document.getElementById('opt-num-questions').value = quizOptions.numQuestions;
+  document.getElementById('opt-timer-enabled').checked = quizOptions.timerEnabled;
+  document.getElementById('opt-timer-seconds').value = quizOptions.timerSeconds;
+  document.getElementById('opt-feedback-seconds').value = quizOptions.feedbackSeconds;
+  document.getElementById('opt-darkmode').checked = quizOptions.darkMode;
+  document.getElementById('timer-settings').classList.toggle('hidden', !quizOptions.timerEnabled);
 }
 
-function setupEncyclopedia() {
-  document.getElementById('sort-name').onclick = () => {
-    encyclopediaSort.by = 'name';
-    encyclopediaSort.asc = !encyclopediaSort.asc;
-    renderEncyclopediaTable();
-  };
-  document.getElementById('sort-type').onclick = () => {
-    encyclopediaSort.by = 'type';
-    encyclopediaSort.asc = !encyclopediaSort.asc;
-    renderEncyclopediaTable();
-  };
+function applyDarkMode() {
+  darkMode = quizOptions.darkMode;
+  document.getElementById('dark-mode-style').disabled = !darkMode;
 }
+
+// --- Encyclopedia logic ---
+function setupEncyclopedia() {
+  document.getElementById('sort-name').onclick = () => { encyclopediaSort.by = 'name'; encyclopediaSort.asc = !encyclopediaSort.asc; renderEncyclopediaTable(); };
+  document.getElementById('sort-type').onclick = () => { encyclopediaSort.by = 'type'; encyclopediaSort.asc = !encyclopediaSort.asc; renderEncyclopediaTable(); };
+  document.getElementById('sort-images').onclick = () => { encyclopediaSort.by = 'images'; encyclopediaSort.asc = !encyclopediaSort.asc; renderEncyclopediaTable(); };
+}
+
 function renderEncyclopediaTable() {
   const tbody = document.getElementById('encyclopedia-list');
+  tbody.innerHTML = '';
+  // Sort
   let sorted = [...bodyList];
-  if (encyclopediaSort.by === 'name') {
-    sorted.sort((a,b) => encyclopediaSort.asc ? getDisplayName(a).localeCompare(getDisplayName(b)) : getDisplayName(b).localeCompare(getDisplayName(a)));
-  } else {
-    sorted.sort((a,b) => encyclopediaSort.asc ? (a.type||'').localeCompare(b.type||'') : (b.type||'').localeCompare(a.type||''));
-  }
-  document.getElementById('sort-name').className = encyclopediaSort.by==='name'?(encyclopediaSort.asc?'sorted-asc':'sorted-desc'):'';
-  document.getElementById('sort-type').className = encyclopediaSort.by==='type'?(encyclopediaSort.asc?'sorted-asc':'sorted-desc'):'';
-  tbody.innerHTML = sorted.map(el => `
-    <tr class="encyclopedia-row" data-nom="${escapeHTML(el.nom)}">
-      <td>${escapeHTML(getDisplayName(el))}</td>
-      <td>${escapeHTML(el.type||'')}</td>
-    </tr>
-  `).join('');
-  tbody.querySelectorAll('.encyclopedia-row').forEach(row => {
-    row.onclick = () => showEncyclopediaInfoModal(row.getAttribute('data-nom'));
+  sorted.sort((a, b) => {
+    let valA, valB;
+    if (encyclopediaSort.by === 'name') {
+      valA = a.nom.toLowerCase();
+      valB = b.nom.toLowerCase();
+    } else if (encyclopediaSort.by === 'type') {
+      valA = a.type.toLowerCase();
+      valB = b.type.toLowerCase();
+    } else if (encyclopediaSort.by === 'images') {
+      valA = getImagesCount(a);
+      valB = getImagesCount(b);
+    }
+    if (valA < valB) return encyclopediaSort.asc ? -1 : 1;
+    if (valA > valB) return encyclopediaSort.asc ? 1 : -1;
+    return 0;
   });
+  for (const elem of sorted) {
+    const tr = document.createElement('tr');
+    const displayName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
+    tr.innerHTML = `<td>${escapeHTML(displayName)}</td>
+      <td>${escapeHTML(elem.type)}</td>
+      <td style="text-align:center">${getImagesCount(elem)}</td>`;
+    tr.style.cursor = 'pointer';
+    tr.onclick = () => showEncyclopediaModal(elem);
+    tbody.appendChild(tr);
+  }
 }
-function showEncyclopediaInfoModal(nom) {
-  encycloModalOpen = true;
-  const el = nameToElement[nom];
-  const modalContent = document.getElementById('encyclo-modal-content');
-  let html = `
-    <div style="margin-bottom:1rem;">
-      <div><b>${currentLang==="FR"?"Nom":"Name"}:</b> <span class="lang-name lang-selected">${escapeHTML(getDisplayName(el))}</span></div>
-      <div class="lang-both">
-        <span class="lang-label"><b>FR:</b></span> <span class="lang-name${currentLang==="FR"?" lang-selected":""}">${escapeHTML(el.FR||el.nom)}</span>
-      </div>
-      <div class="lang-both">
-        <span class="lang-label"><b>EN:</b></span> <span class="lang-name${currentLang==="EN"?" lang-selected":""}">${escapeHTML(el.EN||el.nom)}</span>
-      </div>
-      <div style="margin-top:0.3em;"><b>${currentLang==="FR"?"Type":"Type"}:</b> ${escapeHTML(el.type||'')}</div>
-      <div><b>${currentLang==="FR"?"Catégories":"Categories"}:</b> ${el.categories.map(escapeHTML).join(', ')}</div>
-    </div>
-    <div class="gallery-section" style="width:100%;">
-      ${SUBFOLDERS.map(sub => renderGallerySectionModal(el, sub)).join('')}
-    </div>
-  `;
-  modalContent.innerHTML = html;
+function getImagesCount(elem) {
+  const norm = normalizeName(elem.nom);
+  if (!imagesByElement[norm]) return 0;
+  return (imagesByElement[norm].cartoon.length + imagesByElement[norm].realist.length + imagesByElement[norm].photo.length);
+}
+
+function showEncyclopediaModal(elem) {
+  const content = document.getElementById('encyclo-modal-content');
+  content.innerHTML = ''; // Clear content first
+  
+  // Create header content
+  const header = document.createElement('div');
+  header.innerHTML = `<h2>${escapeHTML(elem.nom)}</h2>
+    <p><strong>${t('nameEN')}:</strong> ${escapeHTML(elem.EN || elem.nom)}</p>
+    <p><strong>${t('nameFR')}:</strong> ${escapeHTML(elem.FR || elem.nom)}</p>
+    <p><strong>${t('type')}:</strong> ${escapeHTML(elem.type)}</p>`;
+  content.appendChild(header);
+
+  // Images by category
+  const norm = normalizeName(elem.nom);
+  if (imagesByElement[norm]) {
+    let hasAnyImages = false;
+    for (const sub of SUBFOLDERS) {
+      const imgs = imagesByElement[norm][sub];
+      if (imgs.length > 0) {
+        hasAnyImages = true;
+        
+        // Create section
+        const section = document.createElement('div');
+        section.className = 'gallery-section';
+        
+        // Add title
+        const title = document.createElement('div');
+        title.className = 'gallery-title';
+        title.textContent = sub.charAt(0).toUpperCase() + sub.slice(1);
+        section.appendChild(title);
+        
+        // Create image container
+        const imgDiv = document.createElement('div');
+        imgDiv.style.display = 'flex';
+        imgDiv.style.flexWrap = 'wrap';
+        imgDiv.style.gap = '10px';
+        
+        imgs.forEach(img => {
+          const container = document.createElement('div');
+          container.style.display = 'flex';
+          container.style.flexDirection = 'column';
+          container.style.alignItems = 'center';
+          
+          const im = document.createElement('img');
+          im.src = img.url;
+          im.alt = elem.nom;
+          im.style.width = '100px';
+          im.style.height = '70px';
+          im.style.objectFit = 'cover';
+          im.style.borderRadius = '6px';
+          im.style.cursor = 'pointer';
+          im.onclick = () => {
+            modalImgVariant = img.url;
+            modalImgOriginal = getOriginalImagePath(img.file);
+            modalImgIsVariant = true;
+            const modal = document.getElementById('modal-bg');
+            const modalImg = document.getElementById('modal-img');
+            modalImg.src = modalImgVariant;
+            modalImg.onclick = () => {
+              modalImgIsVariant = !modalImgIsVariant;
+              modalImg.src = modalImgIsVariant ? modalImgVariant : modalImgOriginal;
+            };
+            modal.classList.remove('hidden');
+          };
+          
+          const btn = document.createElement('button');
+          btn.className = 'gallery-switch-btn';
+          btn.textContent = t('showOriginal');
+          let isOriginal = false;
+          btn.onclick = () => {
+            isOriginal = !isOriginal;
+            im.src = isOriginal ? getOriginalImagePath(img.file) : img.url;
+            btn.textContent = isOriginal ? t('showVariant') : t('showOriginal');
+          };
+          
+          container.appendChild(im);
+          container.appendChild(btn);
+          imgDiv.appendChild(container);
+        });
+        
+        section.appendChild(imgDiv);
+        content.appendChild(section);
+      }
+    }
+    if (!hasAnyImages) {
+      const noImages = document.createElement('div');
+      noImages.innerHTML = `<em>${t('noImages')}</em>`;
+      content.appendChild(noImages);
+    }
+  } else {
+    const noImages = document.createElement('div');
+    noImages.innerHTML = `<em>${t('noImages')}</em>`;
+    content.appendChild(noImages);
+  }
+  
   document.getElementById('encyclo-modal-bg').classList.remove('hidden');
 }
-function renderGallerySectionModal(el, sub) {
-  const nomNorm = normalizeName(el.nom);
-  const images = imagesByElement[nomNorm]?.[sub] || [];
-  if (!images.length) return '';
-  return `
-    <div class="gallery-title">${sub.charAt(0).toUpperCase()+sub.slice(1)}</div>
-    <div class="gallery-images">
-      ${images.map((img, idx) => `
-        <div class="gallery-img-container">
-          <img src="${img.url}" class="gallery-img" alt="" onclick="showModal('${img.url}','${getOriginalImagePath(img.file)}')">
-          <button class="gallery-switch-btn" onclick="event.stopPropagation();switchGalleryImg(this,'${img.url}','${getOriginalImagePath(img.file)}')">${currentLang==="FR"?"Voir l'original":"Show Original"}</button>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-function closeEncycloModal() {
-  encycloModalOpen = false;
-  document.getElementById('encyclo-modal-bg').classList.add('hidden');
-}
-function switchGalleryImg(btn, variant, original) {
-  const img = btn.parentNode.querySelector('.gallery-img');
-  if (img.src === variant) {
-    img.src = original;
-    btn.textContent = (currentLang==="FR"?"Voir la variante":"Show Variant");
-  } else {
-    img.src = variant;
-    btn.textContent = (currentLang==="FR"?"Voir l'original":"Show Original");
-  }
-}
-function showModal(variantUrl, originalUrl) {
-  if (encycloModalOpen) {
-    document.getElementById('encyclo-modal-bg').style.display = 'none';
-  }
+
+// --- Modal logic ---
+function showModalImage(variantUrl, originalUrl) {
   modalImgVariant = variantUrl;
   modalImgOriginal = originalUrl;
   modalImgIsVariant = true;
-  const modalImg = document.getElementById('modal-img');
-  modalImg.src = modalImgVariant;
-  modalImg.onclick = () => {
-    if (modalImgIsVariant) {
-      modalImg.src = modalImgOriginal;
-      modalImgIsVariant = false;
-    } else {
-      modalImg.src = modalImgVariant;
-      modalImgIsVariant = true;
-    }
+  const modal = document.getElementById('modal-bg');
+  const img = document.getElementById('modal-img');
+  img.src = modalImgVariant;
+  img.onclick = () => {
+    modalImgIsVariant = !modalImgIsVariant;
+    img.src = modalImgIsVariant ? modalImgVariant : modalImgOriginal;
   };
-  document.getElementById('modal-bg').classList.remove('hidden');
+  modal.classList.remove('hidden');
 }
 function closeModal() {
   document.getElementById('modal-bg').classList.add('hidden');
-  if (encycloModalOpen) {
-    document.getElementById('encyclo-modal-bg').style.display = '';
+}
+function closeEncycloModal() {
+  document.getElementById('encyclo-modal-bg').classList.add('hidden');
+}
+
+// --- Utility ---
+function debounce(fn, ms) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), ms);
   }
 }
-window.closeModal = closeModal;
-window.showModal = showModal;
-window.switchGalleryImg = switchGalleryImg;
-window.closeEncycloModal = closeEncycloModal;
-
-function debounce(fn, delay) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
 </script>
-<div id="loading-indicator" style="display:none"></div>
 </body>
 </html>
