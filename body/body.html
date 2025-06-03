@@ -178,16 +178,21 @@
 <div class="container">
   <!-- Quiz Section -->
   <section id="section-quiz">
-    <div id="quiz-timer" class="quiz-timer hidden"></div>
-    <div id="quiz-counter" style="text-align:center; margin-bottom:1rem; font-size:1.2rem;"></div>
-    <div id="quiz-image-container" class="quiz-image-container"></div>
-    <div class="quiz-input-area">
-      <input id="quiz-answer" type="text" placeholder="Type or select the name..." autocomplete="off" style="font-size:1.1rem; padding:0.5rem; width:90%; border-radius:8px; border:1px solid #bbb;">
-      <div id="autocomplete-list" class="autocomplete-list hidden"></div>
-      <button id="quiz-submit-btn" style="margin-top:0.5rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;">Confirm</button>
+    <div id="quiz-mode-selection" style="text-align:center; margin-bottom:2rem;">
+      <h3 style="margin-bottom:1rem;">Choose your quiz mode:</h3>
+      <div style="display:flex; gap:1rem; justify-content:center;">
+        <button id="quiz-mode-hard" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#d13a3a; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Hard Mode (Type answer)</button>
+        <button id="quiz-mode-easy" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#2c8c2c; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Easy Mode (Multiple choice)</button>
+      </div>
     </div>
-    <div id="quiz-feedback" class="quiz-feedback"></div>
-    <button id="quiz-next-btn" class="hidden" style="margin-top:1rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;">Next</button>
+    <div id="quiz-content" class="hidden">
+      <div id="quiz-timer" class="quiz-timer hidden"></div>
+      <div id="quiz-counter" style="text-align:center; margin-bottom:1rem; font-size:1.2rem;"></div>
+      <div id="quiz-image-container" class="quiz-image-container"></div>
+      <div id="quiz-input-area" class="quiz-input-area">
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+      </div>
+    </div>
   </section>
   <!-- Results Section -->
   <section id="section-results" class="hidden">
@@ -201,6 +206,10 @@
       <div>
         <label for="opt-num-questions" id="lbl-num-questions">Number of questions:</label>
         <input type="number" id="opt-num-questions" min="1" max="30" value="10">
+      </div>
+      <div>
+        <label for="opt-num-choices" id="lbl-num-choices">Number of choices in easy mode:</label>
+        <input type="number" id="opt-num-choices" min="2" max="10" value="4">
       </div>
       <div>
         <label>
@@ -270,7 +279,7 @@ const SUBFOLDERS = ['cartoon', 'realist', 'photo'];
 
 let bodyList = [];
 let nameToElement = {};
-let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30, feedbackSeconds: 3, darkMode: false, lang: "FR" };
+let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30, feedbackSeconds: 3, darkMode: false, lang: "FR", numChoices: 4 };
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
 let imageManifest = [];
@@ -296,11 +305,15 @@ const translations = {
     saveOptions: "Save Options",
     close: "Close",
     numQuestions: "Number of questions:",
+    numChoices: "Number of choices in easy mode:",
     enableTimer: 'Enable timer per question',
     timePerQuestion: "Time per question (seconds):",
     feedbackSeconds: "Time to show result (seconds):",
     language: "Language:",
     darkMode: "Dark mode",
+    chooseQuizMode: "Choose your quiz mode:",
+    hardMode: "Hard Mode (Type answer)",
+    easyMode: "Easy Mode (Multiple choice)",
     images: "Images",
     name: "Name",
     type: "Type",
@@ -328,11 +341,15 @@ const translations = {
     saveOptions: "Enregistrer les options",
     close: "Fermer",
     numQuestions: "Nombre de questions :",
+    numChoices: "Nombre de choix en mode facile :",
     enableTimer: 'Activer le minuteur par question',
     timePerQuestion: "Temps par question (secondes) :",
     feedbackSeconds: "Temps d'affichage du résultat (secondes) :",
     language: "Langue :",
     darkMode: "Mode sombre",
+    chooseQuizMode: "Choisissez votre mode de quiz :",
+    hardMode: "Mode difficile (Saisir la réponse)",
+    easyMode: "Mode facile (Choix multiples)",
     images: "Images",
     name: "Nom",
     type: "Type",
@@ -424,27 +441,75 @@ function applyLanguage() {
   document.getElementById('nav-quiz').textContent = t('quiz');
   document.getElementById('nav-options').textContent = t('options');
   document.getElementById('nav-encyclopedia').textContent = t('encyclopedia');
+  
+  // Quiz mode selection
+  const modeSelection = document.getElementById('quiz-mode-selection');
+  if (modeSelection) {
+    const title = modeSelection.querySelector('h3');
+    if (title) title.textContent = t('chooseQuizMode');
+    
+    const hardBtn = document.getElementById('quiz-mode-hard');
+    if (hardBtn) hardBtn.textContent = t('hardMode');
+    
+    const easyBtn = document.getElementById('quiz-mode-easy');
+    if (easyBtn) easyBtn.textContent = t('easyMode');
+  }
+
   // Quiz
-  document.getElementById('quiz-submit-btn').textContent = t('confirm');
-  document.getElementById('quiz-answer').placeholder = t('typeOrSelect');
+  const submitBtn = document.getElementById('quiz-submit-btn');
+  if (submitBtn) submitBtn.textContent = t('confirm');
+  
+  const answerInput = document.getElementById('quiz-answer');
+  if (answerInput) answerInput.placeholder = t('typeOrSelect');
+
   // Options
-  document.getElementById('lbl-num-questions').textContent = t('numQuestions');
-  document.getElementById('lbl-timer-enabled').textContent = t('enableTimer');
-  document.getElementById('lbl-timer-seconds').textContent = t('timePerQuestion');
-  document.getElementById('lbl-feedback-seconds').textContent = t('feedbackSeconds');
-  document.getElementById('lbl-lang').textContent = t('language');
-  document.getElementById('lbl-darkmode').textContent = t('darkMode');
-  document.getElementById('btn-save-options').textContent = t('saveOptions');
+  const numQuestionsLabel = document.getElementById('lbl-num-questions');
+  if (numQuestionsLabel) numQuestionsLabel.textContent = t('numQuestions');
+  
+  const numChoicesLabel = document.getElementById('lbl-num-choices');
+  if (numChoicesLabel) numChoicesLabel.textContent = t('numChoices');
+  
+  const timerEnabledLabel = document.getElementById('lbl-timer-enabled');
+  if (timerEnabledLabel) timerEnabledLabel.textContent = t('enableTimer');
+  
+  const timerSecondsLabel = document.getElementById('lbl-timer-seconds');
+  if (timerSecondsLabel) timerSecondsLabel.textContent = t('timePerQuestion');
+  
+  const feedbackSecondsLabel = document.getElementById('lbl-feedback-seconds');
+  if (feedbackSecondsLabel) feedbackSecondsLabel.textContent = t('feedbackSeconds');
+  
+  const langLabel = document.getElementById('lbl-lang');
+  if (langLabel) langLabel.textContent = t('language');
+  
+  const darkModeLabel = document.getElementById('lbl-darkmode');
+  if (darkModeLabel) darkModeLabel.textContent = t('darkMode');
+  
+  const saveOptionsBtn = document.getElementById('btn-save-options');
+  if (saveOptionsBtn) saveOptionsBtn.textContent = t('saveOptions');
+
   // Encyclopedia Table
-  document.getElementById('sort-name').textContent = t('name');
-  document.getElementById('sort-type').textContent = t('type');
-  document.getElementById('sort-images').textContent = t('images');
+  const nameHeader = document.getElementById('sort-name');
+  if (nameHeader) nameHeader.textContent = t('name');
+  
+  const typeHeader = document.getElementById('sort-type');
+  if (typeHeader) typeHeader.textContent = t('type');
+  
+  const imagesHeader = document.getElementById('sort-images');
+  if (imagesHeader) imagesHeader.textContent = t('images');
+
   // Modal
-  document.getElementById('btn-close-modal').textContent = t('close');
-  document.getElementById('btn-close-encyclo-modal').textContent = t('close');
-  document.getElementById('modal-img-tip').textContent = t('clickToSwitch');
+  const closeModalBtn = document.getElementById('btn-close-modal');
+  if (closeModalBtn) closeModalBtn.textContent = t('close');
+  
+  const closeEncycloModalBtn = document.getElementById('btn-close-encyclo-modal');
+  if (closeEncycloModalBtn) closeEncycloModalBtn.textContent = t('close');
+  
+  const modalImgTip = document.getElementById('modal-img-tip');
+  if (modalImgTip) modalImgTip.textContent = t('clickToSwitch');
+
   // Results
-  document.getElementById('results-restart-btn').textContent = t('restartQuiz');
+  const restartBtn = document.getElementById('results-restart-btn');
+  if (restartBtn) restartBtn.textContent = t('restartQuiz');
 }
 
 async function loadBodyJson() {
@@ -471,7 +536,12 @@ function showSection(section) {
   document.getElementById('section-results').classList.add('hidden');
   document.getElementById('section-options').classList.toggle('hidden', section !== 'options');
   document.getElementById('section-encyclopedia').classList.toggle('hidden', section !== 'encyclopedia');
-  if (section === 'quiz') startQuiz();
+  
+  if (section === 'quiz') {
+    // Show mode selection and hide quiz content
+    document.getElementById('quiz-mode-selection').classList.remove('hidden');
+    document.getElementById('quiz-content').classList.add('hidden');
+  }
   if (section === 'encyclopedia') renderEncyclopediaTable();
 }
 
@@ -493,18 +563,22 @@ function hideLoading() {
 
 // --- Quiz logic ---
 function setupQuiz() {
-  document.getElementById('quiz-submit-btn').onclick = () => submitQuizAnswer();
-  document.getElementById('quiz-answer').addEventListener('input', debounce(showAutocomplete, 100));
-  document.getElementById('quiz-answer').addEventListener('focus', showAutocomplete);
-  document.getElementById('quiz-answer').addEventListener('keydown', (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      submitQuizAnswer();
-    }
-  });
+  // Set up quiz mode selection
+  document.getElementById('quiz-mode-hard').onclick = () => {
+    quizOptions.quizMode = 'hard';
+    startQuiz();
+  };
+  document.getElementById('quiz-mode-easy').onclick = () => {
+    quizOptions.quizMode = 'easy';
+    startQuiz();
+  };
 }
 
 function startQuiz() {
+  // Hide mode selection and show quiz content
+  document.getElementById('quiz-mode-selection').classList.add('hidden');
+  document.getElementById('quiz-content').classList.remove('hidden');
+
   quizState = {
     questions: generateQuizQuestions(),
     current: 0,
@@ -546,72 +620,163 @@ function showQuizQuestion() {
   const elem = q.element;
   const img = q.image;
 
-  // Update question counter
-  document.getElementById('quiz-counter').textContent = `${t('questionCounter')} ${quizState.current + 1}/${quizState.questions.length}`;
+  // Clear feedback
+  const feedbackDiv = document.getElementById('quiz-feedback');
+  if (feedbackDiv) {
+    feedbackDiv.innerHTML = '';
+  }
 
-  // Hide next button initially
-  document.getElementById('quiz-next-btn').classList.add('hidden');
+  // Update question counter
+  const counterEl = document.getElementById('quiz-counter');
+  if (counterEl) {
+    counterEl.textContent = `${t('questionCounter')} ${quizState.current + 1}/${quizState.questions.length}`;
+  }
 
   // Image
   const imgDiv = document.getElementById('quiz-image-container');
-  imgDiv.innerHTML = '';
-  quizCurrentImageIsVariant = true;
-  if (img) {
-    quizCurrentImageVariantUrl = img.url;
-    quizCurrentImageOriginalUrl = getOriginalImagePath(img.file);
-    const imageEl = document.createElement('img');
-    imageEl.className = 'quiz-image';
-    imageEl.src = quizCurrentImageVariantUrl;
-    imageEl.alt = elem.nom;
-    imageEl.onclick = () => showModalImage(quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl, quizCurrentImageIsVariant ? quizCurrentImageOriginalUrl : quizCurrentImageVariantUrl);
-    imgDiv.appendChild(imageEl);
+  if (imgDiv) {
+    imgDiv.innerHTML = '';
+    quizCurrentImageIsVariant = true;
+    if (img) {
+      quizCurrentImageVariantUrl = img.url;
+      quizCurrentImageOriginalUrl = getOriginalImagePath(img.file);
+      const imageEl = document.createElement('img');
+      imageEl.className = 'quiz-image';
+      imageEl.src = quizCurrentImageVariantUrl;
+      imageEl.alt = elem.nom;
+      imageEl.onclick = () => showModalImage(quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl, quizCurrentImageIsVariant ? quizCurrentImageOriginalUrl : quizCurrentImageVariantUrl);
+      imgDiv.appendChild(imageEl);
 
-    // Show original/variant toggle button
-    const btn = document.createElement('button');
-    btn.className = 'switch-img-btn';
-    btn.textContent = t('showOriginal');
-    btn.onclick = (e) => {
-      e.preventDefault();
-      quizCurrentImageIsVariant = !quizCurrentImageIsVariant;
-      imageEl.src = quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl;
-      btn.textContent = quizCurrentImageIsVariant ? t('showOriginal') : t('showVariant');
-    };
-    imgDiv.appendChild(btn);
+      // Show original/variant toggle button
+      const btn = document.createElement('button');
+      btn.className = 'switch-img-btn';
+      btn.textContent = t('showOriginal');
+      btn.onclick = (e) => {
+        e.preventDefault();
+        quizCurrentImageIsVariant = !quizCurrentImageIsVariant;
+        imageEl.src = quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl;
+        btn.textContent = quizCurrentImageIsVariant ? t('showOriginal') : t('showVariant');
+      };
+      imgDiv.appendChild(btn);
+    }
   }
-  // Answer input
-  document.getElementById('quiz-answer').value = '';
-  document.getElementById('quiz-answer').focus();
-  document.getElementById('quiz-feedback').textContent = '';
+
+  // Answer input or multiple choice
+  const inputArea = document.getElementById('quiz-input-area');
+  if (inputArea) {
+    // Clear previous content except feedback
+    inputArea.innerHTML = '';
+    if (feedbackDiv) {
+      inputArea.appendChild(feedbackDiv);
+    }
+
+    if (quizOptions.quizMode === 'hard') {
+      // Hard mode - text input with autocomplete
+      const input = document.createElement('input');
+      input.id = 'quiz-answer';
+      input.type = 'text';
+      input.placeholder = t('typeOrSelect');
+      input.style = 'font-size:1.1rem; padding:0.5rem; width:90%; border-radius:8px; border:1px solid #bbb;';
+      input.addEventListener('input', debounce(showAutocomplete, 100));
+      input.addEventListener('focus', showAutocomplete);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          submitQuizAnswer();
+        }
+      });
+      inputArea.appendChild(input);
+
+      const autocompleteList = document.createElement('div');
+      autocompleteList.id = 'autocomplete-list';
+      autocompleteList.className = 'autocomplete-list hidden';
+      inputArea.appendChild(autocompleteList);
+
+      const submitBtn = document.createElement('button');
+      submitBtn.id = 'quiz-submit-btn';
+      submitBtn.textContent = t('confirm');
+      submitBtn.style = 'margin-top:0.5rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;';
+      submitBtn.onclick = () => submitQuizAnswer();
+      inputArea.appendChild(submitBtn);
+    } else {
+      // Easy mode - multiple choice
+      const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
+      
+      // Get wrong answers (numChoices - 1 wrong answers)
+      let wrongAnswers = bodyList
+        .filter(e => e.nom !== elem.nom)
+        .map(e => currentLang === 'FR' ? (e.FR || e.nom) : (e.EN || e.nom));
+      wrongAnswers = shuffle(wrongAnswers).slice(0, quizOptions.numChoices - 1);
+      
+      // Combine with correct answer and shuffle
+      let allAnswers = [...wrongAnswers, correctName];
+      allAnswers = shuffle(allAnswers);
+
+      // Create a container for the answer buttons
+      const answersContainer = document.createElement('div');
+      answersContainer.style.display = 'flex';
+      answersContainer.style.flexDirection = 'column';
+      answersContainer.style.alignItems = 'center';
+      answersContainer.style.width = '100%';
+      inputArea.appendChild(answersContainer);
+
+      // Create buttons for each answer
+      allAnswers.forEach(answer => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-choice-btn';
+        btn.textContent = answer;
+        btn.style = 'margin:0.5rem;padding:0.7rem 1.5rem;font-size:1.1rem;border-radius:12px;background:#2d3a4b;color:#fff;border:none;cursor:pointer;width:80%;transition:background-color 0.2s;';
+        btn.onclick = () => {
+          // Make all buttons darker first
+          document.querySelectorAll('.quiz-choice-btn').forEach(b => {
+            b.style.backgroundColor = '#2d3a4b';
+          });
+          // Make clicked button lighter
+          btn.style.backgroundColor = '#4a5c73';
+          const correct = answer === correctName;
+          submitQuizAnswer(false, answer, correct);
+        };
+        answersContainer.appendChild(btn);
+      });
+    }
+  }
+
   // Timer
-  if (quizOptions.timerEnabled) {
-    document.getElementById('quiz-timer').classList.remove('hidden');
+  const timerEl = document.getElementById('quiz-timer');
+  if (quizOptions.timerEnabled && timerEl) {
+    timerEl.classList.remove('hidden');
     quizState.timer = quizOptions.timerSeconds;
-    document.getElementById('quiz-timer').textContent = quizState.timer + 's';
+    timerEl.textContent = quizState.timer + 's';
     if (quizTimerInterval) clearInterval(quizTimerInterval);
     quizTimerInterval = setInterval(() => {
       quizState.timer--;
-      document.getElementById('quiz-timer').textContent = quizState.timer + 's';
+      timerEl.textContent = quizState.timer + 's';
       if (quizState.timer <= 0) {
         clearInterval(quizTimerInterval);
         quizTimerInterval = null;
         submitQuizAnswer(true);
       }
     }, 1000);
-  } else {
-    document.getElementById('quiz-timer').classList.add('hidden');
+  } else if (timerEl) {
+    timerEl.classList.add('hidden');
     if (quizTimerInterval) { clearInterval(quizTimerInterval); quizTimerInterval = null; }
   }
 }
 
-function submitQuizAnswer(timeout = false) {
+function submitQuizAnswer(timeout = false, selectedAnswer = null, isCorrect = null) {
   const q = quizState.questions[quizState.current];
   const elem = q.element;
-  const answer = document.getElementById('quiz-answer').value.trim();
   const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
-  let correct = false;
-  if (!timeout) {
-    correct = answer.localeCompare(correctName, undefined, { sensitivity: 'accent' }) === 0;
+  
+  let answer, correct;
+  if (quizOptions.quizMode === 'hard') {
+    answer = document.getElementById('quiz-answer').value.trim();
+    correct = !timeout && answer.localeCompare(correctName, undefined, { sensitivity: 'accent' }) === 0;
+  } else {
+    answer = selectedAnswer;
+    correct = isCorrect;
   }
+
   quizState.answers.push({
     element: elem,
     image: q.image,
@@ -619,12 +784,15 @@ function submitQuizAnswer(timeout = false) {
     correct,
     timeout
   });
+
   if (quizTimerInterval) { clearInterval(quizTimerInterval); quizTimerInterval = null; }
   showQuizFeedback(correct, correctName, q.image);
 }
 
 function showQuizFeedback(correct, correctName, img) {
   const feedbackDiv = document.getElementById('quiz-feedback');
+  if (!feedbackDiv) return;
+  
   feedbackDiv.innerHTML = '';
   if (correct) {
     feedbackDiv.innerHTML = `<span class="result-correct">${t('correct')}</span>`;
@@ -632,10 +800,14 @@ function showQuizFeedback(correct, correctName, img) {
     feedbackDiv.innerHTML = `<span class="result-wrong">${t('wrong')}</span><br>${escapeHTML(correctName)}`;
   }
 
+  // Add line break
+  feedbackDiv.appendChild(document.createElement('br'));
+
   // Show next button
-  const nextBtn = document.getElementById('quiz-next-btn');
+  const nextBtn = document.createElement('button');
+  nextBtn.id = 'quiz-next-btn';
   nextBtn.textContent = t('next');
-  nextBtn.classList.remove('hidden');
+  nextBtn.style = 'margin-top:1rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;';
   nextBtn.onclick = () => {
     clearInterval(feedbackTimer);
     feedbackTimer = null;
@@ -646,6 +818,7 @@ function showQuizFeedback(correct, correctName, img) {
       showQuizResults();
     }
   };
+  feedbackDiv.appendChild(nextBtn);
 
   // Timer for feedback
   let seconds = quizOptions.feedbackSeconds || 3;
@@ -708,7 +881,8 @@ function showQuizResults() {
   document.getElementById('results-restart-btn').onclick = () => {
     document.getElementById('section-results').classList.add('hidden');
     document.getElementById('section-quiz').classList.remove('hidden');
-    startQuiz();
+    document.getElementById('quiz-mode-selection').classList.remove('hidden');
+    document.getElementById('quiz-content').classList.add('hidden');
   };
 }
 
@@ -762,6 +936,7 @@ function setupOptions() {
   document.getElementById('options-form').onsubmit = (e) => {
     e.preventDefault();
     quizOptions.numQuestions = parseInt(document.getElementById('opt-num-questions').value, 10);
+    quizOptions.numChoices = parseInt(document.getElementById('opt-num-choices').value, 10);
     quizOptions.timerEnabled = document.getElementById('opt-timer-enabled').checked;
     quizOptions.timerSeconds = parseInt(document.getElementById('opt-timer-seconds').value, 10);
     quizOptions.feedbackSeconds = parseInt(document.getElementById('opt-feedback-seconds').value, 10);
@@ -773,6 +948,7 @@ function setupOptions() {
   };
   // Set initial values
   document.getElementById('opt-num-questions').value = quizOptions.numQuestions;
+  document.getElementById('opt-num-choices').value = quizOptions.numChoices;
   document.getElementById('opt-timer-enabled').checked = quizOptions.timerEnabled;
   document.getElementById('opt-timer-seconds').value = quizOptions.timerSeconds;
   document.getElementById('opt-feedback-seconds').value = quizOptions.feedbackSeconds;
@@ -824,6 +1000,7 @@ function renderEncyclopediaTable() {
     tbody.appendChild(tr);
   }
 }
+
 function getImagesCount(elem) {
   const norm = normalizeName(elem.nom);
   if (!imagesByElement[norm]) return 0;
