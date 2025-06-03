@@ -331,7 +331,13 @@ const translations = {
     noImages: "No images available.",
     nameFR: "French name",
     nameEN: "English name",
-    questionCounter: "Question"
+    questionCounter: "Question",
+    scoreCommentPerfect: "Perfect! Amazing job!",
+    scoreCommentGreat: "Great job!",
+    scoreCommentGood: "Good job!",
+    scoreCommentAverage: "Not bad!",
+    scoreCommentPoor: "Keep practicing!",
+    scoreCommentBad: "Oh no! Keep studying!"
   },
   FR: {
     confirm: "Confirmer",
@@ -367,7 +373,13 @@ const translations = {
     noImages: "Aucune image disponible.",
     nameFR: "Nom français",
     nameEN: "Nom anglais",
-    questionCounter: "Question"
+    questionCounter: "Question",
+    scoreCommentPerfect: "Parfait ! Excellent travail !",
+    scoreCommentGreat: "Excellent travail !",
+    scoreCommentGood: "Bon travail !",
+    scoreCommentAverage: "Pas mal !",
+    scoreCommentPoor: "Continue à t'entraîner !",
+    scoreCommentBad: "Oh non ! Continue à étudier !"
   }
 };
 function t(key) {
@@ -793,6 +805,19 @@ function showQuizFeedback(correct, correctName, img) {
   const feedbackDiv = document.getElementById('quiz-feedback');
   if (!feedbackDiv) return;
   
+  // Disable inputs/buttons during feedback
+  if (quizOptions.quizMode === 'hard') {
+    const input = document.getElementById('quiz-answer');
+    if (input) input.disabled = true;
+    const submitBtn = document.getElementById('quiz-submit-btn');
+    if (submitBtn) submitBtn.disabled = true;
+  } else {
+    // Easy mode - disable all choice buttons
+    document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
+      btn.disabled = true;
+    });
+  }
+  
   feedbackDiv.innerHTML = '';
   if (correct) {
     feedbackDiv.innerHTML = `<span class="result-correct">${t('correct')}</span>`;
@@ -852,7 +877,26 @@ function showQuizResults() {
   // Score
   const total = quizState.answers.length;
   const correct = quizState.answers.filter(a => a.correct).length;
-  document.getElementById('results-summary').textContent = `${t('score')}: ${correct} ${t('of')} ${total}`;
+  const percentage = (correct / total) * 100;
+  
+  // Get score comment based on percentage
+  let scoreComment;
+  if (percentage === 100) {
+    scoreComment = t('scoreCommentPerfect');
+  } else if (percentage >= 80) {
+    scoreComment = t('scoreCommentGreat');
+  } else if (percentage >= 60) {
+    scoreComment = t('scoreCommentGood');
+  } else if (percentage >= 40) {
+    scoreComment = t('scoreCommentAverage');
+  } else if (percentage >= 20) {
+    scoreComment = t('scoreCommentPoor');
+  } else {
+    scoreComment = t('scoreCommentBad');
+  }
+  
+  document.getElementById('results-summary').innerHTML = `${t('score')}: ${correct} ${t('of')} ${total}<br><span style="font-size:1.2rem; color:#2d3a4b;">${scoreComment}</span>`;
+  
   // List
   const list = document.getElementById('results-list');
   list.innerHTML = '';
@@ -1013,7 +1057,7 @@ function showEncyclopediaModal(elem) {
   
   // Create header content
   const header = document.createElement('div');
-  header.innerHTML = `<h2>${escapeHTML(elem.nom)}</h2>
+  header.innerHTML = `<h2>${escapeHTML( currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom))}</h2>
     <p><strong>${t('nameEN')}:</strong> ${escapeHTML(elem.EN || elem.nom)}</p>
     <p><strong>${t('nameFR')}:</strong> ${escapeHTML(elem.FR || elem.nom)}</p>
     <p><strong>${t('type')}:</strong> ${escapeHTML(elem.type)}</p>`;
