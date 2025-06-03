@@ -638,10 +638,10 @@ function showEncyclopediaInfoModal(nom) {
     <div style="margin-bottom:1rem;">
       <div><b>${currentLang==="FR"?"Nom":"Name"}:</b> <span class="lang-name lang-selected">${escapeHTML(getDisplayName(el))}</span></div>
       <div class="lang-both">
-        <span class="lang-label">FR:</span> <span class="lang-name${currentLang==="FR"?" lang-selected":""}">${escapeHTML(el.FR||el.nom)}</span>
+        <span class="lang-label"><b>FR:</b></span> <span class="lang-name${currentLang==="FR"?" lang-selected":""}">${escapeHTML(el.FR||el.nom)}</span>
       </div>
       <div class="lang-both">
-        <span class="lang-label">EN:</span> <span class="lang-name${currentLang==="EN"?" lang-selected":""}">${escapeHTML(el.EN||el.nom)}</span>
+        <span class="lang-label"><b>EN:</b></span> <span class="lang-name${currentLang==="EN"?" lang-selected":""}">${escapeHTML(el.EN||el.nom)}</span>
       </div>
       <div style="margin-top:0.3em;"><b>${currentLang==="FR"?"Type":"Type"}:</b> ${escapeHTML(el.type||'')}</div>
       <div><b>${currentLang==="FR"?"Catégories":"Categories"}:</b> ${el.categories.map(escapeHTML).join(', ')}</div>

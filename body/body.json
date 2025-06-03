@@ -392,13 +392,6 @@
     "EN": "intergluteal cleft"
   },
   {
-    "nom": "soléaire",
-    "categories": ["inf_profil"],
-    "type": "muscle",
-    "FR": "soléaire",
-    "EN": "soleus"
-  },
-  {
     "nom": "soléaires",
     "categories": ["inf_dos", "inf_profil"],
     "type": "muscle",
