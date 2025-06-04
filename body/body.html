@@ -19,8 +19,14 @@
       50% { filter: brightness(1.2) sepia(1) saturate(10000%) hue-rotate(-50deg) brightness(1.2); }
       100% { filter: brightness(1); }
     }
+    @keyframes pulseOpacity {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      70% { opacity: 0.0; }
+      100% { opacity: 1; }
+    }
     .quiz-image.variant {
-      animation: pulseRed 2s infinite;
+      animation: pulseRed 2s infinite, pulseOpacity 4s infinite;
     }
     .switch-img-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.8vh 2vw; border-radius: 12px; cursor: pointer; margin-bottom: 0.5vh; margin-top: 0.2vh; font-size: clamp(2rem, 1.8vw, 1.2rem); transition: background 0.2s; }
     .switch-img-btn:hover { background: #c2c7d2; }
