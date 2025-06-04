@@ -13,6 +13,14 @@
     .hidden { display: none !important; }
     .quiz-image-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; }
     .quiz-image { width: 320px; height: 220px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px #0002; background: #f0f0f0; margin-bottom: 0.5rem; transition: box-shadow 0.2s; cursor: pointer; }
+    @keyframes pulseRed {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.2) sepia(1) saturate(10000%) hue-rotate(-50deg) brightness(1.2); }
+      100% { filter: brightness(1); }
+    }
+    .quiz-image.variant {
+      animation: pulseRed 2s infinite;
+    }
     .switch-img-btn { background: #e0e4ea; border: none; color: #2d3a4b; padding: 0.3rem 1.2rem; border-radius: 12px; cursor: pointer; margin-bottom: 1rem; margin-top: 0.2rem; font-size: 1rem; transition: background 0.2s; }
     .switch-img-btn:hover { background: #c2c7d2; }
     .quiz-input-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1.5rem; position: relative; }
@@ -688,7 +696,7 @@ function showQuizQuestion() {
       
       // Variant image (overlay)
       const variantImage = document.createElement('img');
-      variantImage.className = 'quiz-image';
+      variantImage.className = 'quiz-image variant';
       variantImage.src = quizCurrentImageVariantUrl;
       variantImage.alt = elem.nom;
       variantImage.style.position = 'absolute';
