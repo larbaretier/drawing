@@ -950,12 +950,50 @@ function showQuizResults() {
     const div = document.createElement('div');
     div.className = 'result-item';
     if (a.image) {
-      const img = document.createElement('img');
-      img.className = 'result-img-thumb';
-      img.src = a.image.url;
-      img.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
-      img.onclick = () => showModalImage(a.image.url, getOriginalImagePath(a.image.file));
-      div.appendChild(img);
+      // Create container for layered images
+      const imgContainer = document.createElement('div');
+      imgContainer.style.position = 'relative';
+      imgContainer.style.width = '60px';
+      imgContainer.style.height = '40px';
+      imgContainer.style.cursor = 'pointer';
+      imgContainer.onclick = () => showModalImage(a.image.url, getOriginalImagePath(a.image.file));
+      
+      // Original image (background)
+      const originalImg = document.createElement('img');
+      originalImg.className = 'result-img-thumb';
+      originalImg.src = getOriginalImagePath(a.image.file);
+      originalImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
+      originalImg.style.position = 'absolute';
+      originalImg.style.top = '0';
+      originalImg.style.left = '0';
+      originalImg.style.width = '100%';
+      originalImg.style.height = '100%';
+      originalImg.style.objectFit = 'cover';
+      originalImg.style.borderRadius = '8px';
+      originalImg.style.border = '1px solid #bbb';
+      originalImg.style.background = '#eee';
+      imgContainer.appendChild(originalImg);
+      
+      // Variant image (overlay)
+      const variantImg = document.createElement('img');
+      variantImg.className = 'result-img-thumb';
+      variantImg.src = a.image.url;
+      variantImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
+      variantImg.style.position = 'absolute';
+      variantImg.style.top = '0';
+      variantImg.style.left = '0';
+      variantImg.style.width = '100%';
+      variantImg.style.height = '100%';
+      variantImg.style.objectFit = 'cover';
+      variantImg.style.borderRadius = '8px';
+      variantImg.style.border = '1px solid #bbb';
+      variantImg.style.background = 'transparent';
+      variantImg.style.opacity = '1';
+      variantImg.style.transition = 'opacity 0.3s';
+      variantImg.style.cursor = 'pointer';
+      imgContainer.appendChild(variantImg);
+      
+      div.appendChild(imgContainer);
     }
     const details = document.createElement('div');
     details.className = 'result-details';
@@ -1140,27 +1178,58 @@ function showEncyclopediaModal(elem) {
           container.style.flexDirection = 'column';
           container.style.alignItems = 'center';
           
-          const im = document.createElement('img');
-          im.src = img.url;
-          im.alt = elem.nom;
-          im.style.width = '100px';
-          im.style.height = '70px';
-          im.style.objectFit = 'cover';
-          im.style.borderRadius = '6px';
-          im.style.cursor = 'pointer';
-          im.onclick = () => showModalImage(img.url, getOriginalImagePath(img.file));
+          // Create container for layered images
+          const imgStackContainer = document.createElement('div');
+          imgStackContainer.style.position = 'relative';
+          imgStackContainer.style.width = '100px';
+          imgStackContainer.style.height = '70px';
+          imgStackContainer.style.cursor = 'pointer';
+          imgStackContainer.onclick = () => showModalImage(img.url, getOriginalImagePath(img.file));
+          
+          // Original image (background)
+          const originalImg = document.createElement('img');
+          originalImg.src = getOriginalImagePath(img.file);
+          originalImg.alt = elem.nom;
+          originalImg.style.position = 'absolute';
+          originalImg.style.top = '0';
+          originalImg.style.left = '0';
+          originalImg.style.width = '100%';
+          originalImg.style.height = '100%';
+          originalImg.style.objectFit = 'cover';
+          originalImg.style.borderRadius = '6px';
+          originalImg.style.background = '#eee';
+          imgStackContainer.appendChild(originalImg);
+          
+          // Variant image (overlay)
+          const variantImg = document.createElement('img');
+          variantImg.src = img.url;
+          variantImg.alt = elem.nom;
+          variantImg.style.position = 'absolute';
+          variantImg.style.top = '0';
+          variantImg.style.left = '0';
+          variantImg.style.width = '100%';
+          variantImg.style.height = '100%';
+          variantImg.style.objectFit = 'cover';
+          variantImg.style.borderRadius = '6px';
+          variantImg.style.background = 'transparent';
+          variantImg.style.opacity = '1';
+          variantImg.style.transition = 'opacity 0.3s';
+          variantImg.style.cursor = 'pointer';
+          imgStackContainer.appendChild(variantImg);
+          
+          container.appendChild(imgStackContainer);
           
           const btn = document.createElement('button');
           btn.className = 'gallery-switch-btn';
           btn.textContent = t('showOriginal');
           let isOriginal = false;
-          btn.onclick = () => {
+          btn.onclick = (e) => {
+            e.stopPropagation();
             isOriginal = !isOriginal;
-            im.src = isOriginal ? getOriginalImagePath(img.file) : img.url;
+            variantImg.style.opacity = isOriginal ? '0' : '1';
             btn.textContent = isOriginal ? t('showVariant') : t('showOriginal');
           };
           
-          container.appendChild(im);
           container.appendChild(btn);
           imgDiv.appendChild(container);
         });
