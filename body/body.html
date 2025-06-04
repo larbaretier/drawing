@@ -11,8 +11,8 @@
     nav button.active, nav button:hover { background: #2d3a4b; color: #fff; }
     .container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px #0002; padding: 2rem; min-height: 400px; }
     .hidden { display: none !important; }
-    .quiz-image-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; }
-    .quiz-image { width: 320px; height: 220px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px #0002; background: #f0f0f0; margin-bottom: 0.5rem; transition: box-shadow 0.2s; cursor: pointer; }
+    .quiz-image-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; width: 100%; }
+    .quiz-image { width: 100%; height: auto; max-height: 70vh; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 12px #0002; background: #f0f0f0; margin-bottom: 0.5rem; transition: box-shadow 0.2s; cursor: pointer; }
     @keyframes pulseRed {
       0% { filter: brightness(1); }
       50% { filter: brightness(1.2) sepia(1) saturate(10000%) hue-rotate(-50deg) brightness(1.2); }
@@ -673,8 +673,9 @@ function showQuizQuestion() {
       // Create container for layered images
       const imageContainer = document.createElement('div');
       imageContainer.style.position = 'relative';
-      imageContainer.style.width = '320px';
-      imageContainer.style.height = '220px';
+      imageContainer.style.width = '100%';
+      imageContainer.style.maxWidth = '900px';
+      imageContainer.style.height = '400px';
       imageContainer.style.cursor = 'pointer';
       imageContainer.onclick = () => showModalImage(quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl, quizCurrentImageIsVariant ? quizCurrentImageOriginalUrl : quizCurrentImageVariantUrl);
       
