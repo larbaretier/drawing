@@ -830,7 +830,12 @@ function showQuizQuestion() {
       btn.onclick = (e) => {
         e.preventDefault();
         quizCurrentImageIsVariant = !quizCurrentImageIsVariant;
-        variantImage.style.opacity = quizCurrentImageIsVariant ? '1' : '0';
+        if (quizCurrentImageIsVariant) {
+          variantImage.style.animation = 'pulseRed 2s infinite, pulseOpacity 4s infinite';
+        } else {
+          variantImage.style.animation = 'none';
+          variantImage.style.opacity = '0';
+        }
         btn.textContent = quizCurrentImageIsVariant ? t('showOriginal') : t('showVariant');
       };
       imgDiv.appendChild(btn);
