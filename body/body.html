@@ -652,12 +652,49 @@ function showQuizQuestion() {
     if (img) {
       quizCurrentImageVariantUrl = img.url;
       quizCurrentImageOriginalUrl = getOriginalImagePath(img.file);
-      const imageEl = document.createElement('img');
-      imageEl.className = 'quiz-image';
-      imageEl.src = quizCurrentImageVariantUrl;
-      imageEl.alt = elem.nom;
-      imageEl.onclick = () => showModalImage(quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl, quizCurrentImageIsVariant ? quizCurrentImageOriginalUrl : quizCurrentImageVariantUrl);
-      imgDiv.appendChild(imageEl);
+      
+      // Create container for layered images
+      const imageContainer = document.createElement('div');
+      imageContainer.style.position = 'relative';
+      imageContainer.style.width = '320px';
+      imageContainer.style.height = '220px';
+      imageContainer.style.cursor = 'pointer';
+      imageContainer.onclick = () => showModalImage(quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl, quizCurrentImageIsVariant ? quizCurrentImageOriginalUrl : quizCurrentImageVariantUrl);
+      
+      // Original image (background)
+      const originalImage = document.createElement('img');
+      originalImage.className = 'quiz-image';
+      originalImage.src = quizCurrentImageOriginalUrl;
+      originalImage.alt = elem.nom;
+      originalImage.style.position = 'absolute';
+      originalImage.style.top = '0';
+      originalImage.style.left = '0';
+      originalImage.style.width = '100%';
+      originalImage.style.height = '100%';
+      originalImage.style.objectFit = 'contain';
+      originalImage.style.borderRadius = '12px';
+      originalImage.style.boxShadow = '0 2px 12px #0002';
+      originalImage.style.background = '#f0f0f0';
+      imageContainer.appendChild(originalImage);
+      
+      // Variant image (overlay)
+      const variantImage = document.createElement('img');
+      variantImage.className = 'quiz-image';
+      variantImage.src = quizCurrentImageVariantUrl;
+      variantImage.alt = elem.nom;
+      variantImage.style.position = 'absolute';
+      variantImage.style.top = '0';
+      variantImage.style.left = '0';
+      variantImage.style.width = '100%';
+      variantImage.style.height = '100%';
+      variantImage.style.objectFit = 'contain';
+      variantImage.style.borderRadius = '12px';
+      variantImage.style.opacity = '1';
+      variantImage.style.transition = 'opacity 0.3s';
+      variantImage.style.background = 'transparent';
+      imageContainer.appendChild(variantImage);
+      
+      imgDiv.appendChild(imageContainer);
 
       // Show original/variant toggle button
       const btn = document.createElement('button');
@@ -666,7 +703,7 @@ function showQuizQuestion() {
       btn.onclick = (e) => {
         e.preventDefault();
         quizCurrentImageIsVariant = !quizCurrentImageIsVariant;
-        imageEl.src = quizCurrentImageIsVariant ? quizCurrentImageVariantUrl : quizCurrentImageOriginalUrl;
+        variantImage.style.opacity = quizCurrentImageIsVariant ? '1' : '0';
         btn.textContent = quizCurrentImageIsVariant ? t('showOriginal') : t('showVariant');
       };
       imgDiv.appendChild(btn);
