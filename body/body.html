@@ -793,7 +793,7 @@ function showQuizQuestion() {
       const originalImage = document.createElement('img');
       originalImage.className = 'quiz-image';
       originalImage.src = quizCurrentImageOriginalUrl;
-      originalImage.alt = elem.nom;
+      //originalImage.alt = elem.nom;
       originalImage.style.position = 'absolute';
       originalImage.style.top = '0';
       originalImage.style.left = '0';
@@ -809,7 +809,7 @@ function showQuizQuestion() {
       const variantImage = document.createElement('img');
       variantImage.className = 'quiz-image variant';
       variantImage.src = quizCurrentImageVariantUrl;
-      variantImage.alt = elem.nom;
+      //variantImage.alt = elem.nom;
       variantImage.style.position = 'absolute';
       variantImage.style.top = '0';
       variantImage.style.left = '0';
@@ -1086,7 +1086,7 @@ function showQuizResults() {
       const originalImg = document.createElement('img');
       originalImg.className = 'result-img-thumb';
       originalImg.src = getOriginalImagePath(a.image.file);
-      originalImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
+      //originalImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
       originalImg.style.position = 'absolute';
       originalImg.style.top = '0';
       originalImg.style.left = '0';
@@ -1102,7 +1102,7 @@ function showQuizResults() {
       const variantImg = document.createElement('img');
       variantImg.className = 'result-img-thumb';
       variantImg.src = a.image.url;
-      variantImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
+      //variantImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
       variantImg.style.position = 'absolute';
       variantImg.style.top = '0';
       variantImg.style.left = '0';
@@ -1313,7 +1313,7 @@ function showEncyclopediaModal(elem) {
           // Original image (background)
           const originalImg = document.createElement('img');
           originalImg.src = getOriginalImagePath(img.file);
-          originalImg.alt = elem.nom;
+          //originalImg.alt = elem.nom;
           originalImg.style.position = 'absolute';
           originalImg.style.top = '0';
           originalImg.style.left = '0';
@@ -1327,7 +1327,7 @@ function showEncyclopediaModal(elem) {
           // Variant image (overlay)
           const variantImg = document.createElement('img');
           variantImg.src = img.url;
-          variantImg.alt = elem.nom;
+          //variantImg.alt = elem.nom;
           variantImg.style.position = 'absolute';
           variantImg.style.top = '0';
           variantImg.style.left = '0';
