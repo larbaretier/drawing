@@ -165,6 +165,108 @@
       .quiz-image { width: 98vw; height: auto; }
       .gallery-img { width: 80px; height: 60px; }
       .encyclo-modal { width: 98vw; height: 98vh; }
+      
+      /* Adjust header and nav for mobile */
+      header { font-size: 1.5rem; padding: 1rem 1rem 0.5rem 1rem; }
+      nav { gap: 0.5rem; margin: 1rem 0 0.5rem 0; }
+      nav button { 
+        padding: 0.8rem 1.2rem; 
+        font-size: 1.2rem; 
+        flex: 1;
+        text-align: center;
+      }
+      
+      /* Adjust quiz mode selection buttons */
+      #quiz-mode-selection h3 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+      #quiz-mode-selection div { 
+        flex-direction: column; 
+        gap: 1rem;
+        width: 100%;
+      }
+      .quiz-mode-btn { 
+        padding: 1rem 1.5rem; 
+        font-size: 1.3rem;
+        width: 100%;
+      }
+      
+      /* Adjust quiz content */
+      #quiz-counter { font-size: 1.2rem; }
+      #quiz-timer { font-size: 1.3rem; }
+      #quiz-feedback { font-size: 1.2rem; }
+      
+      /* Adjust input and buttons */
+      #quiz-answer { font-size: 1.2rem; padding: 0.6rem; }
+      #quiz-submit-btn, #quiz-next-btn, #results-restart-btn { 
+        padding: 0.8rem 1.5rem; 
+        font-size: 1.2rem;
+        width: 90%;
+      }
+      
+      /* Adjust multiple choice buttons */
+      .quiz-choice-btn {
+        padding: 1rem 1.5rem !important;
+        font-size: 1.2rem !important;
+        margin: 0.8rem 0 !important;
+        width: 90% !important;
+      }
+      
+      /* Adjust results */
+      .results-summary { font-size: 1.4rem; }
+      .result-item { padding: 0.8rem; }
+      .result-img-thumb { width: 60px; height: 45px; }
+      .result-details { font-size: 1.1rem; }
+      
+      /* Adjust options form */
+      .options-form { padding-top: 1rem; }
+      .options-form label { font-size: 1.2rem; }
+      .options-form input[type="number"], 
+      .options-form select { 
+        width: 120px; 
+        padding: 0.5rem; 
+        font-size: 1.2rem; 
+      }
+      .options-form button { 
+        padding: 0.8rem 1.5rem; 
+        font-size: 1.2rem;
+        width: 90%;
+      }
+      
+      /* Adjust encyclopedia */
+      .encyclopedia-table th, 
+      .encyclopedia-table td { 
+        padding: 0.8rem 0.5rem; 
+        font-size: 1.2rem; 
+      }
+      
+      /* Adjust modals */
+      .modal-img { padding: 1rem; padding-top: 3rem; }
+      .modal-img-tip { font-size: 1.1rem; }
+      .close-modal-btn, 
+      .close-encyclo-modal-btn { 
+        padding: 0.5rem 1rem; 
+        font-size: 1.1rem; 
+      }
+      
+      /* Adjust gallery */
+      .gallery-title { font-size: 1.2rem; }
+      .gallery-switch-btn { 
+        padding: 0.4rem 0.8rem; 
+        font-size: 1rem; 
+      }
+    }
+    
+    /* Additional breakpoint for very small screens */
+    @media (max-width: 400px) {
+      header { font-size: 1.4rem; }
+      nav button { 
+        padding: 0.7rem 1rem; 
+        font-size: 1.1rem; 
+      }
+      .quiz-mode-btn { 
+        padding: 0.9rem 1.2rem; 
+        font-size: 1.2rem; 
+      }
+      .container { padding: 0.3rem; }
     }
   </style>
   <style id="dark-mode-style" disabled>
