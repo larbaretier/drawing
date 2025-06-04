@@ -50,21 +50,30 @@
       background: #fff;
       border-radius: 16px;
       padding: 1.5rem;
+      padding-top: 4rem;
       box-shadow: 0 2px 24px #0003;
-      max-width: 80vw;
-      max-height: 80vh;
+      max-width: 95vw;
+      max-height: 95vh;
+      width: fit-content;
+      height: fit-content;
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
+      box-sizing: border-box;
+      overflow: hidden;
     }
     .modal-img img {
-      max-width: 70vw;
-      max-height: 60vh;
+      max-width: 100%;
+      max-height: calc(95vh - 4rem - 1.5rem - 0.5rem - 1rem);
+      width: auto;
+      height: auto;
       border-radius: 12px;
       margin-bottom: 1rem;
       background: #eee;
       cursor: pointer;
+      object-fit: contain;
+      flex-shrink: 0;
     }
     .close-modal-btn, .close-encyclo-modal-btn {
       background: #2d3a4b;
@@ -74,16 +83,16 @@
       padding: 0.5rem 1.2rem;
       font-size: 1.1rem;
       cursor: pointer;
-      margin-top: 0.5rem;
       position: absolute;
-      top: 1rem;
-      right: 1rem;
-      z-index: 2;
+      top: 0.8rem;
+      right: 0.8rem;
+      z-index: 10;
     }
     .modal-img .modal-img-tip {
       font-size: 1rem;
       color: #444;
       margin-bottom: 0.5rem;
+      margin-top: 0;
     }
     .encyclo-modal-bg {
       display: flex;
@@ -1139,19 +1148,7 @@ function showEncyclopediaModal(elem) {
           im.style.objectFit = 'cover';
           im.style.borderRadius = '6px';
           im.style.cursor = 'pointer';
-          im.onclick = () => {
-            modalImgVariant = img.url;
-            modalImgOriginal = getOriginalImagePath(img.file);
-            modalImgIsVariant = true;
-            const modal = document.getElementById('modal-bg');
-            const modalImg = document.getElementById('modal-img');
-            modalImg.src = modalImgVariant;
-            modalImg.onclick = () => {
-              modalImgIsVariant = !modalImgIsVariant;
-              modalImg.src = modalImgIsVariant ? modalImgVariant : modalImgOriginal;
-            };
-            modal.classList.remove('hidden');
-          };
+          im.onclick = () => showModalImage(img.url, getOriginalImagePath(img.file));
           
           const btn = document.createElement('button');
           btn.className = 'gallery-switch-btn';
@@ -1192,12 +1189,70 @@ function showModalImage(variantUrl, originalUrl) {
   modalImgOriginal = originalUrl;
   modalImgIsVariant = true;
   const modal = document.getElementById('modal-bg');
-  const img = document.getElementById('modal-img');
-  img.src = modalImgVariant;
-  img.onclick = () => {
+  const modalImgContainer = document.querySelector('.modal-img');
+  
+  // Clear existing content
+  modalImgContainer.innerHTML = '';
+  
+  // Add close button first to ensure it's always at the top-right
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'close-modal-btn';
+  closeBtn.textContent = t('close');
+  closeBtn.onclick = closeModal;
+  modalImgContainer.appendChild(closeBtn);
+
+  // Add tip text
+  const tip = document.createElement('div');
+  tip.className = 'modal-img-tip';
+  tip.textContent = t('clickToSwitch');
+  modalImgContainer.appendChild(tip);
+  
+  // Create container for stacked images
+  const imageStackContainer = document.createElement('div');
+  imageStackContainer.style.position = 'relative';
+  imageStackContainer.style.width = 'fit-content';
+  imageStackContainer.style.margin = '0 auto';
+  
+  // Create original image (background)
+  const originalImage = document.createElement('img');
+  originalImage.src = modalImgOriginal;
+  originalImage.alt = 'Original image';
+  originalImage.style.maxWidth = '100%';
+  originalImage.style.maxHeight = '65vh';
+  originalImage.style.width = 'auto';
+  originalImage.style.height = 'auto';
+  originalImage.style.borderRadius = '12px';
+  originalImage.style.background = '#eee';
+  originalImage.style.objectFit = 'contain';
+  
+  // Create variant image (foreground)
+  const variantImage = document.createElement('img');
+  variantImage.src = modalImgVariant;
+  variantImage.alt = 'Variant image';
+  variantImage.style.position = 'absolute';
+  variantImage.style.top = '0';
+  variantImage.style.left = '0';
+  variantImage.style.maxWidth = '100%';
+  variantImage.style.maxHeight = '65vh';
+  variantImage.style.width = 'auto';
+  variantImage.style.height = 'auto';
+  variantImage.style.borderRadius = '12px';
+  variantImage.style.background = 'transparent';
+  variantImage.style.objectFit = 'contain';
+  variantImage.style.cursor = 'pointer';
+  variantImage.style.opacity = '1';
+  variantImage.style.transition = 'opacity 0.3s ease';
+  
+  // Add click handler to toggle variant visibility
+  variantImage.onclick = () => {
     modalImgIsVariant = !modalImgIsVariant;
-    img.src = modalImgIsVariant ? modalImgVariant : modalImgOriginal;
+    variantImage.style.opacity = modalImgIsVariant ? '1' : '0';
   };
+  
+  imageStackContainer.appendChild(originalImage);
+  imageStackContainer.appendChild(variantImage);
+  modalImgContainer.appendChild(imageStackContainer);
+  
   modal.classList.remove('hidden');
 }
 function closeModal() {
