@@ -56,13 +56,6 @@
     "EN": "biceps"
   },
   {
-    "nom": "bord interne omoplate",
-    "categories": ["torse_dos"],
-    "type": "os",
-    "FR": "bord interne omoplate",
-    "EN": "medial border of scapula"
-  },
-  {
     "nom": "brachial",
     "categories": ["sup_face", "sup_dos"],
     "type": "muscle",
