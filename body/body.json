@@ -294,13 +294,6 @@
     "EN": "scapula"
   },
   {
-    "nom": "os du talon",
-    "categories": ["inf_dos"],
-    "type": "os",
-    "FR": "os du talon",
-    "EN": "heel bone"
-  },
-  {
     "nom": "pectoral",
     "categories": ["torse_face"],
     "type": "muscle",
@@ -495,5 +488,34 @@
     "type": "muscle",
     "FR": "pyramidal du nez",
     "EN": "pyramidal du nez"
+  },
+  {
+    "nom": "quadriceps",
+    "categories": ["inf_face", "sup_face"],
+    "type": "muscle",
+    "FR": "quadriceps",
+    "EN": "quadriceps"
+  },
+  {
+    "nom": "epicondyle",
+    "categories": ["inf_face", "sup_face"],
+    "type": "muscle",
+    "FR": "epicondyle",
+    "EN": "epicondyle"
+  },
+  {
+    "nom": "ischiojambier",
+    "categories": ["inf_face", "sup_face"],
+    "type": "muscle",
+    "FR": "ischiojambier",
+    "EN": "hamstring"
+  },
+  {
+    "nom": "moyen fessier",
+    "categories": ["inf_face", "sup_face"],
+    "type": "muscle",
+    "FR": "moyen fessier",
+    "EN": "gluteus medius"
   }
 ]
+
