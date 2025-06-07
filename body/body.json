@@ -329,7 +329,7 @@
     "EN": "flexion crease"
   },
   {
-    "nom": "pli de l’aine",
+    "nom": "pli de l aine",
     "categories": ["torse_face"],
     "type": "peau",
     "FR": "pli de l’aine",
@@ -420,7 +420,7 @@
     "EN": "tensor fasciae latae"
   },
   {
-    "nom": "tendon d’Achille",
+    "nom": "tendon d Achille",
     "categories": ["inf_dos", "pied"],
     "type": "tendon",
     "FR": "tendon d’Achille",
