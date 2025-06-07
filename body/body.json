@@ -474,5 +474,26 @@
     "type": "muscle",
     "FR": "triceps",
     "EN": "triceps"
+  },
+  {
+    "nom": "lombaires",
+    "categories": ["inf_face", "sup_face"],
+    "type": "région",
+    "FR": "lombaires",
+    "EN": "lumbar"
+  },
+  {
+    "nom": "coussinet plantaire du pouce",
+    "categories": ["inf_face", "sup_face"],
+    "type": "graisse",
+    "FR": "coussinet plantaire du pouce",
+    "EN": "plantar fat pad of the big toe"
+  },
+  {
+    "nom": "pyramidal du nez",
+    "categories": ["inf_face", "sup_face"],
+    "type": "muscle",
+    "FR": "pyramidal du nez",
+    "EN": "pyramidal du nez"
   }
 ]
