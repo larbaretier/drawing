@@ -1282,8 +1282,15 @@ function renderEncyclopediaTable() {
   sorted.sort((a, b) => {
     let valA, valB;
     if (encyclopediaSort.by === 'name') {
-      valA = a.nom.toLowerCase();
-      valB = b.nom.toLowerCase();
+      // Get the appropriate language version and normalize accents
+      valA = (currentLang === 'FR' ? (a.FR || a.nom) : (a.EN || a.nom))
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      valB = (currentLang === 'FR' ? (b.FR || b.nom) : (b.EN || b.nom))
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
     } else if (encyclopediaSort.by === 'type') {
       valA = a.type.toLowerCase();
       valB = b.type.toLowerCase();
