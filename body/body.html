@@ -402,7 +402,7 @@ const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/larbaretier/drawing/m
 const BODY_JSON_URL = GITHUB_RAW_BASE + "body.json";
 const IMAGE_PATHS_JSON_URL = GITHUB_RAW_BASE + "image_paths.json";
 const ORIGINAL_IMAGES_FOLDER = GITHUB_RAW_BASE + "original_images/";
-const SUBFOLDERS = ['cartoon', 'realist', 'photo'];
+const SUBFOLDERS = ['cartoon', 'realist', 'photo', 'anatomic'];
 
 let bodyList = [];
 let nameToElement = {};
@@ -542,7 +542,7 @@ function parseManifest() {
     const nom = normalizeName(parts[1]);
     const sub = parts[2];
     const file = parts[3];
-    if (!imagesByElement[nom]) imagesByElement[nom] = { cartoon: [], realist: [], photo: [] };
+    if (!imagesByElement[nom]) imagesByElement[nom] = { cartoon: [], realist: [], photo: [], anatomic: [] };
     if (SUBFOLDERS.includes(sub)) {
       imagesByElement[nom][sub].push({
         file,
@@ -1256,7 +1256,7 @@ function renderEncyclopediaTable() {
 function getImagesCount(elem) {
   const norm = normalizeName(elem.nom);
   if (!imagesByElement[norm]) return 0;
-  return (imagesByElement[norm].cartoon.length + imagesByElement[norm].realist.length + imagesByElement[norm].photo.length);
+  return (imagesByElement[norm].cartoon.length + imagesByElement[norm].realist.length + imagesByElement[norm].photo.length + imagesByElement[norm].anatomic.length);
 }
 
 function showEncyclopediaModal(elem) {

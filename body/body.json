@@ -28,13 +28,6 @@
     "EN": "anconeus"
   },
   {
-    "nom": "angle thoracique",
-    "categories": ["torse_face"],
-    "type": "os",
-    "FR": "angle thoracique",
-    "EN": "thoracic angle"
-  },
-  {
     "nom": "aréoles",
     "categories": ["torse_face"],
     "type": "peau",
