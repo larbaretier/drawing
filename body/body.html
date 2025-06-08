@@ -365,6 +365,30 @@
           <span id="lbl-darkmode">Dark mode</span>
         </label>
       </div>
+      <div>
+        <label id="lbl-subfolders">Image types to include:</label>
+        <div style="margin-left: 1rem;">
+          <label>
+            <input type="checkbox" id="opt-subfolder-cartoon" checked>
+            <span>Cartoon</span>
+          </label>
+          <br>
+          <label>
+            <input type="checkbox" id="opt-subfolder-realist" checked>
+            <span>Realist</span>
+          </label>
+          <br>
+          <label>
+            <input type="checkbox" id="opt-subfolder-photo">
+            <span>Photo</span>
+          </label>
+          <br>
+          <label>
+            <input type="checkbox" id="opt-subfolder-anatomic">
+            <span>Anatomic</span>
+          </label>
+        </div>
+      </div>
       <button type="submit" id="btn-save-options">Save Options</button>
     </form>
   </section>
@@ -406,7 +430,16 @@ const SUBFOLDERS = ['cartoon', 'realist', 'photo', 'anatomic'];
 
 let bodyList = [];
 let nameToElement = {};
-let quizOptions = { numQuestions: 10, timerEnabled: false, timerSeconds: 30, feedbackSeconds: 3, darkMode: false, lang: "FR", numChoices: 4 };
+let quizOptions = { 
+  numQuestions: 10, 
+  timerEnabled: false, 
+  timerSeconds: 30, 
+  feedbackSeconds: 3, 
+  darkMode: false, 
+  lang: "FR", 
+  numChoices: 4,
+  selectedSubfolders: ['cartoon', 'realist'] // Default selected subfolders
+};
 let quizState = null;
 let encyclopediaSort = { by: 'name', asc: true };
 let imageManifest = [];
@@ -438,6 +471,7 @@ const translations = {
     feedbackSeconds: "Time to show result (seconds):",
     language: "Language:",
     darkMode: "Dark mode",
+    imageTypes: "Image types to include:",
     chooseQuizMode: "Choose your quiz mode:",
     hardMode: "Hard Mode (Type answer)",
     easyMode: "Easy Mode (Multiple choice)",
@@ -480,6 +514,7 @@ const translations = {
     feedbackSeconds: "Temps d'affichage du résultat (secondes) :",
     language: "Langue :",
     darkMode: "Mode sombre",
+    imageTypes: "Types d'images à inclure :",
     chooseQuizMode: "Choisissez votre mode de quiz :",
     hardMode: "Mode difficile (Saisir la réponse)",
     easyMode: "Mode facile (Choix multiples)",
@@ -623,6 +658,9 @@ function applyLanguage() {
   const darkModeLabel = document.getElementById('lbl-darkmode');
   if (darkModeLabel) darkModeLabel.textContent = t('darkMode');
   
+  const subfoldersLabel = document.getElementById('lbl-subfolders');
+  if (subfoldersLabel) subfoldersLabel.textContent = t('imageTypes');
+  
   const saveOptionsBtn = document.getElementById('btn-save-options');
   if (saveOptionsBtn) saveOptionsBtn.textContent = t('saveOptions');
 
@@ -744,7 +782,9 @@ function pickRandomImage(element) {
   const norm = normalizeName(element.nom);
   if (!imagesByElement[norm]) return null;
   let allImgs = [];
-  for (const sub of SUBFOLDERS) allImgs = allImgs.concat(imagesByElement[norm][sub]);
+  for (const sub of quizOptions.selectedSubfolders) {
+    allImgs = allImgs.concat(imagesByElement[norm][sub]);
+  }
   if (allImgs.length === 0) return null;
   return allImgs[Math.floor(Math.random() * allImgs.length)];
 }
@@ -1194,6 +1234,15 @@ function setupOptions() {
     quizOptions.feedbackSeconds = parseInt(document.getElementById('opt-feedback-seconds').value, 10);
     quizOptions.lang = document.getElementById('opt-lang').value;
     quizOptions.darkMode = document.getElementById('opt-darkmode').checked;
+    
+    // Get selected subfolders
+    quizOptions.selectedSubfolders = [];
+    SUBFOLDERS.forEach(sub => {
+      if (document.getElementById(`opt-subfolder-${sub}`).checked) {
+        quizOptions.selectedSubfolders.push(sub);
+      }
+    });
+    
     setLanguage(quizOptions.lang);
     applyDarkMode();
     showSection('quiz');
@@ -1206,6 +1255,11 @@ function setupOptions() {
   document.getElementById('opt-feedback-seconds').value = quizOptions.feedbackSeconds;
   document.getElementById('opt-darkmode').checked = quizOptions.darkMode;
   document.getElementById('timer-settings').classList.toggle('hidden', !quizOptions.timerEnabled);
+  
+  // Set initial subfolder selections
+  SUBFOLDERS.forEach(sub => {
+    document.getElementById(`opt-subfolder-${sub}`).checked = quizOptions.selectedSubfolders.includes(sub);
+  });
 }
 
 function applyDarkMode() {
@@ -1256,7 +1310,11 @@ function renderEncyclopediaTable() {
 function getImagesCount(elem) {
   const norm = normalizeName(elem.nom);
   if (!imagesByElement[norm]) return 0;
-  return (imagesByElement[norm].cartoon.length + imagesByElement[norm].realist.length + imagesByElement[norm].photo.length + imagesByElement[norm].anatomic.length);
+  let count = 0;
+  for (const sub of quizOptions.selectedSubfolders) {
+    count += imagesByElement[norm][sub].length;
+  }
+  return count;
 }
 
 function showEncyclopediaModal(elem) {
@@ -1275,7 +1333,7 @@ function showEncyclopediaModal(elem) {
   const norm = normalizeName(elem.nom);
   if (imagesByElement[norm]) {
     let hasAnyImages = false;
-    for (const sub of SUBFOLDERS) {
+    for (const sub of quizOptions.selectedSubfolders) {
       const imgs = imagesByElement[norm][sub];
       if (imgs.length > 0) {
         hasAnyImages = true;
