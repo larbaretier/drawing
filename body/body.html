@@ -310,6 +310,7 @@
       <div style="display:flex; gap:1rem; justify-content:center;">
         <button id="quiz-mode-hard" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#d13a3a; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Hard Mode (Type answer)</button>
         <button id="quiz-mode-easy" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#2c8c2c; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Easy Mode (Multiple choice)</button>
+        <button id="quiz-mode-reverse" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#2d3a4b; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Reverse Mode (Image choice)</button>
       </div>
     </div>
     <div id="quiz-content" class="hidden">
@@ -475,6 +476,7 @@ const translations = {
     chooseQuizMode: "Choose your quiz mode:",
     hardMode: "Hard Mode (Type answer)",
     easyMode: "Easy Mode (Multiple choice)",
+    reverseMode: "Reverse Mode (Image choice)",
     images: "Images",
     name: "Name",
     type: "Type",
@@ -518,6 +520,7 @@ const translations = {
     chooseQuizMode: "Choisissez votre mode de quiz :",
     hardMode: "Mode difficile (Saisir la réponse)",
     easyMode: "Mode facile (Choix multiples)",
+    reverseMode: "Mode inverse (Choix d'image)",
     images: "Images",
     name: "Nom",
     type: "Type",
@@ -627,6 +630,9 @@ function applyLanguage() {
     
     const easyBtn = document.getElementById('quiz-mode-easy');
     if (easyBtn) easyBtn.textContent = t('easyMode');
+    
+    const reverseBtn = document.getElementById('quiz-mode-reverse');
+    if (reverseBtn) reverseBtn.textContent = t('reverseMode');
   }
 
   // Quiz
@@ -749,6 +755,10 @@ function setupQuiz() {
     quizOptions.quizMode = 'easy';
     startQuiz();
   };
+  document.getElementById('quiz-mode-reverse').onclick = () => {
+    quizOptions.quizMode = 'reverse';
+    startQuiz();
+  };
 }
 
 function startQuiz() {
@@ -816,7 +826,131 @@ function showQuizQuestion() {
   if (imgDiv) {
     imgDiv.innerHTML = '';
     quizCurrentImageIsVariant = true;
-    if (img) {
+    
+    if (quizOptions.quizMode === 'reverse') {
+      // For reverse mode, show the name as the question
+      const questionDiv = document.createElement('div');
+      questionDiv.style.fontSize = '1.5rem';
+      questionDiv.style.fontWeight = 'bold';
+      questionDiv.style.marginBottom = '1rem';
+      questionDiv.style.textAlign = 'center';
+      questionDiv.textContent = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
+      imgDiv.appendChild(questionDiv);
+      
+      // Get wrong answers (numChoices - 1 wrong answers)
+      let wrongElements = bodyList
+        .filter(e => e.nom !== elem.nom)
+        .filter(e => getImagesCount(e) > 0);
+      wrongElements = shuffle(wrongElements).slice(0, quizOptions.numChoices - 1);
+      
+      // Combine with correct answer and shuffle
+      let allElements = [...wrongElements, elem];
+      allElements = shuffle(allElements);
+      
+      // Create a grid container for the images
+      const gridContainer = document.createElement('div');
+      gridContainer.style.display = 'grid';
+      gridContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';
+      gridContainer.style.gap = '1.5rem';
+      gridContainer.style.width = '100%';
+      gridContainer.style.maxWidth = '1200px';
+      gridContainer.style.margin = '0 auto';
+      
+      // Create image containers for each choice
+      allElements.forEach((choiceElem, index) => {
+        const choiceImg = pickRandomImage(choiceElem);
+        if (!choiceImg) return;
+        
+        const choiceContainer = document.createElement('div');
+        choiceContainer.style.position = 'relative';
+        choiceContainer.style.width = '100%';
+        choiceContainer.style.paddingBottom = '75%'; // 4:3 aspect ratio container
+        choiceContainer.style.cursor = 'pointer';
+        choiceContainer.style.borderRadius = '12px';
+        choiceContainer.style.overflow = 'hidden';
+        choiceContainer.style.boxShadow = '0 2px 12px #0002';
+        choiceContainer.setAttribute('data-element-name', choiceElem.nom);
+        choiceContainer.onclick = () => {
+          // Remove selection from all containers
+          document.querySelectorAll('.choice-container').forEach(c => {
+            c.style.border = 'none';
+            c.style.transform = 'scale(1)';
+          });
+          // Add selection to clicked container
+          choiceContainer.style.border = '3px solid #2d3a4b';
+          choiceContainer.style.transform = 'scale(1.02)';
+          // Store selected element
+          quizState.selectedElement = choiceElem;
+        };
+        choiceContainer.className = 'choice-container';
+        
+        // Original image (background)
+        const originalImg = document.createElement('img');
+        originalImg.src = getOriginalImagePath(choiceImg.file);
+        originalImg.style.position = 'absolute';
+        originalImg.style.top = '0';
+        originalImg.style.left = '0';
+        originalImg.style.width = '100%';
+        originalImg.style.height = '100%';
+        originalImg.style.objectFit = 'contain';
+        originalImg.style.background = '#f0f0f0';
+        choiceContainer.appendChild(originalImg);
+        
+        // Variant image (overlay)
+        const variantImg = document.createElement('img');
+        variantImg.src = choiceImg.url;
+        variantImg.style.position = 'absolute';
+        variantImg.style.top = '0';
+        variantImg.style.left = '0';
+        variantImg.style.width = '100%';
+        variantImg.style.height = '100%';
+        variantImg.style.objectFit = 'contain';
+        variantImg.style.background = 'transparent';
+        variantImg.style.opacity = '1';
+        variantImg.style.animation = 'pulseRed 2s infinite, pulseOpacity 4s infinite';
+        choiceContainer.appendChild(variantImg);
+        
+        gridContainer.appendChild(choiceContainer);
+      });
+      
+      imgDiv.appendChild(gridContainer);
+
+      // Add confirm button
+      const confirmBtn = document.createElement('button');
+      confirmBtn.textContent = t('confirm');
+      confirmBtn.style = 'margin-top:1rem;padding:0.7rem 2rem;font-size:1.1rem;border-radius:12px;background:#2d3a4b;color:#fff;border:none;cursor:pointer;';
+      confirmBtn.disabled = true; // Initially disabled
+      confirmBtn.style.opacity = '0.5'; // Visual feedback for disabled state
+      confirmBtn.onclick = () => {
+        if (quizState.selectedElement) {
+          // Disable confirm button and all image choices
+          confirmBtn.disabled = true;
+          confirmBtn.style.opacity = '0.5';
+          document.querySelectorAll('.choice-container').forEach(c => {
+            c.style.pointerEvents = 'none';
+          });
+          const correct = quizState.selectedElement.nom === elem.nom;
+          submitQuizAnswer(false, quizState.selectedElement.nom, correct);
+        }
+      };
+      imgDiv.appendChild(confirmBtn);
+
+      // Update confirm button state when selection changes
+      const updateConfirmButton = () => {
+        confirmBtn.disabled = !quizState.selectedElement;
+        confirmBtn.style.opacity = quizState.selectedElement ? '1' : '0.5';
+      };
+
+      // Update click handlers to use the new update function
+      document.querySelectorAll('.choice-container').forEach(container => {
+        const originalClick = container.onclick;
+        container.onclick = () => {
+          originalClick();
+          updateConfirmButton();
+        };
+      });
+    } else if (img) {
+      // Original quiz modes (hard and easy)
       quizCurrentImageVariantUrl = img.url;
       quizCurrentImageOriginalUrl = getOriginalImagePath(img.file);
       
@@ -833,7 +967,6 @@ function showQuizQuestion() {
       const originalImage = document.createElement('img');
       originalImage.className = 'quiz-image';
       originalImage.src = quizCurrentImageOriginalUrl;
-      //originalImage.alt = elem.nom;
       originalImage.style.position = 'absolute';
       originalImage.style.top = '0';
       originalImage.style.left = '0';
@@ -849,7 +982,6 @@ function showQuizQuestion() {
       const variantImage = document.createElement('img');
       variantImage.className = 'quiz-image variant';
       variantImage.src = quizCurrentImageVariantUrl;
-      //variantImage.alt = elem.nom;
       variantImage.style.position = 'absolute';
       variantImage.style.top = '0';
       variantImage.style.left = '0';
@@ -920,7 +1052,7 @@ function showQuizQuestion() {
       submitBtn.style = 'margin-top:0.5rem;padding:0.5rem 2rem;font-size:1.1rem; border-radius:12px; background:#2d3a4b;color:#fff;border:none;cursor:pointer;';
       submitBtn.onclick = () => submitQuizAnswer();
       inputArea.appendChild(submitBtn);
-    } else {
+    } else if (quizOptions.quizMode === 'easy') {
       // Easy mode - multiple choice
       const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
       
@@ -1021,10 +1153,24 @@ function showQuizFeedback(correct, correctName, img) {
     if (input) input.disabled = true;
     const submitBtn = document.getElementById('quiz-submit-btn');
     if (submitBtn) submitBtn.disabled = true;
-  } else {
+  } else if (quizOptions.quizMode === 'easy') {
     // Easy mode - disable all choice buttons
     document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
       btn.disabled = true;
+    });
+  } else if (quizOptions.quizMode === 'reverse') {
+    // Reverse mode - highlight correct and incorrect answers
+    const currentQuestion = quizState.questions[quizState.current];
+    document.querySelectorAll('.choice-container').forEach(container => {
+      const elementName = container.getAttribute('data-element-name');
+      if (elementName === currentQuestion.element.nom) {
+        // Correct answer - green border
+        container.style.border = '4px solid #2c8c2c';
+        container.style.transform = 'scale(1.02)';
+      } else if (elementName === quizState.selectedElement.nom && !correct) {
+        // Wrong selected answer - red border
+        container.style.border = '2px solid #d13a3a';
+      }
     });
   }
   
