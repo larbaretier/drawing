@@ -1325,7 +1325,9 @@ function showEncyclopediaModal(elem) {
   const header = document.createElement('div');
   header.innerHTML = `<h2>${escapeHTML( currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom))}</h2>
     <p><strong>${t('nameEN')}:</strong> ${escapeHTML(elem.EN || elem.nom)}</p>
+    <p><strong>Description (EN):</strong> ${escapeHTML(elem.descriptionEN || '')}</p>
     <p><strong>${t('nameFR')}:</strong> ${escapeHTML(elem.FR || elem.nom)}</p>
+    <p><strong>Description (FR):</strong> ${escapeHTML(elem.descriptionFR || '')}</p>
     <p><strong>${t('type')}:</strong> ${escapeHTML(elem.type)}</p>`;
   content.appendChild(header);
 

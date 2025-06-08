@@ -4,490 +4,630 @@
     "categories": ["torse_face"],
     "type": "muscle",
     "FR": "abdominaux",
-    "EN": "abdominals"
+    "EN": "abdominals",
+    "descriptionFR": "Les abdominaux sont un groupe de muscles qui forment la paroi antérieure de l'abdomen. Ils comprennent le droit de l'abdomen, les obliques externes et internes, et le transverse. Ces muscles jouent un rôle crucial dans la stabilisation du tronc, la protection des organes internes et la respiration. Saviez-vous que les abdominaux sont composés de plusieurs couches de muscles qui travaillent en synergie pour créer les fameuses 'tablettes de chocolat' ?",
+    "descriptionEN": "The abdominal muscles are a group of muscles that form the anterior wall of the abdomen. They include the rectus abdominis, external and internal obliques, and transversus abdominis. These muscles play a crucial role in trunk stabilization, protection of internal organs, and breathing. Did you know that the abdominal muscles are composed of several layers of muscles that work in synergy to create the famous 'six-pack'?"
   },
   {
     "nom": "adducteurs",
     "categories": ["inf_face", "inf_profil"],
     "type": "muscle",
     "FR": "adducteurs",
-    "EN": "adductors"
+    "EN": "adductors",
+    "descriptionFR": "Les adducteurs sont un groupe de muscles situés sur la face interne de la cuisse. Ils comprennent le grand adducteur, le long adducteur, le court adducteur, le gracile et le pectiné. Ces muscles permettent l'adduction de la hanche (rapprochement de la jambe vers l'axe du corps) et participent à la stabilisation du bassin. Un fait intéressant : les adducteurs sont particulièrement sollicités dans les sports comme le football ou le hockey sur glace pour les changements de direction rapides.",
+    "descriptionEN": "The adductors are a group of muscles located on the inner side of the thigh. They include the adductor magnus, longus, brevis, gracilis, and pectineus. These muscles enable hip adduction (bringing the leg closer to the body's axis) and participate in pelvis stabilization. An interesting fact: the adductors are particularly engaged in sports like football or ice hockey for quick direction changes."
   },
   {
     "nom": "amorce du cou",
     "categories": ["torse_face"],
     "type": "région",
     "FR": "amorce du cou",
-    "EN": "base of the neck"
+    "EN": "base of the neck",
+    "descriptionFR": "L'amorce du cou est la zone de transition entre le thorax et le cou, située juste au-dessus des clavicules. Cette région anatomique est marquée par la présence de plusieurs structures importantes : le muscle sternocléidomastoïdien, les vaisseaux sanguins cervicaux et les ganglions lymphatiques. Cette zone est particulièrement sensible car elle contient de nombreux vaisseaux sanguins et nerfs vitaux.",
+    "descriptionEN": "The base of the neck is the transition zone between the thorax and neck, located just above the collarbones. This anatomical region is marked by the presence of several important structures: the sternocleidomastoid muscle, cervical blood vessels, and lymph nodes. This area is particularly sensitive as it contains many vital blood vessels and nerves."
   },
   {
     "nom": "anconé",
     "categories": ["sup_dos"],
     "type": "muscle",
     "FR": "anconé",
-    "EN": "anconeus"
+    "EN": "anconeus",
+    "descriptionFR": "L'anconé est un petit muscle triangulaire situé à la face postérieure du coude. Il s'insère sur l'épicondyle latéral de l'humérus et se termine sur la face postérieure de l'olécrâne. Ce muscle participe à l'extension du coude et à la stabilisation de l'articulation. Malgré sa petite taille, il joue un rôle crucial dans la stabilité du coude lors des mouvements d'extension.",
+    "descriptionEN": "The anconeus is a small triangular muscle located on the posterior aspect of the elbow. It originates from the lateral epicondyle of the humerus and inserts on the posterior aspect of the olecranon. This muscle participates in elbow extension and joint stabilization. Despite its small size, it plays a crucial role in elbow stability during extension movements."
   },
   {
     "nom": "aréoles",
     "categories": ["torse_face"],
     "type": "peau",
     "FR": "aréoles",
-    "EN": "areolas"
+    "EN": "areolas",
+    "descriptionFR": "Les aréoles sont des zones pigmentées de la peau qui entourent les mamelons. Elles sont situées sur la poitrine, au centre des seins. Les aréoles contiennent des glandes de Montgomery qui sécrètent une substance lubrifiante et protectrice. Chaque personne a une aréole unique, avec une taille et une couleur qui lui sont propres, variant selon l'âge, la grossesse et les changements hormonaux.",
+    "descriptionEN": "Areolas are pigmented areas of skin that surround the nipples. They are located on the chest, at the center of the breasts. The areolas contain Montgomery's glands that secrete a lubricating and protective substance. Each person has a unique areola, with its own size and color, varying according to age, pregnancy, and hormonal changes."
   },
   {
     "nom": "arcade zygomatique",
     "categories": ["crane"],
     "type": "os",
     "FR": "arcade zygomatique",
-    "EN": "zygomatic arch"
+    "EN": "zygomatic arch",
+    "descriptionFR": "L'arcade zygomatique est une structure osseuse formée par l'articulation entre l'os temporal et l'os zygomatique. Elle forme la partie latérale de l'orbite et soutient les pommettes. Cette structure est cruciale pour la mastication car elle sert de point d'attache pour le muscle masséter et protège les structures profondes de la face. Saviez-vous que l'arcade zygomatique est l'une des structures les plus solides du crâne, capable de résister à des forces importantes ?",
+    "descriptionEN": "The zygomatic arch is a bony structure formed by the articulation between the temporal bone and the zygomatic bone. It forms the lateral part of the orbit and supports the cheekbones. This structure is crucial for chewing as it serves as an attachment point for the masseter muscle and protects the deep structures of the face. Did you know that the zygomatic arch is one of the strongest structures of the skull, capable of withstanding significant forces?"
   },
   {
     "nom": "biceps",
     "categories": ["inf_dos", "sup_face", "sup_profil"],
     "type": "muscle",
     "FR": "biceps",
-    "EN": "biceps"
+    "EN": "biceps",
+    "descriptionFR": "Le biceps brachial est un muscle à deux chefs (long et court) situé sur la face antérieure du bras. Il s'insère sur l'omoplate et se termine sur le radius. Ce muscle permet la flexion du coude et la supination de l'avant-bras. Le biceps est souvent considéré comme un symbole de force physique, mais il ne représente qu'une petite partie de la force totale du bras.",
+    "descriptionEN": "The biceps brachii is a two-headed muscle (long and short) located on the anterior aspect of the arm. It originates from the scapula and inserts on the radius. This muscle enables elbow flexion and forearm supination. The biceps is often considered a symbol of physical strength, but it represents only a small part of the total arm strength."
   },
   {
     "nom": "brachial",
     "categories": ["sup_face", "sup_dos"],
     "type": "muscle",
     "FR": "brachial",
-    "EN": "brachialis"
+    "EN": "brachialis",
+    "descriptionFR": "Le muscle brachial est un muscle profond situé sous le biceps brachial. Il s'insère sur la face antérieure de l'humérus et se termine sur le processus coronoïde de l'ulna. Bien que moins visible que le biceps, il est en réalité le principal fléchisseur du coude, contribuant à environ 50% de la force de flexion.",
+    "descriptionEN": "The brachialis muscle is a deep muscle located under the biceps brachii. It originates from the anterior aspect of the humerus and inserts on the coronoid process of the ulna. Although less visible than the biceps, it is actually the main elbow flexor, contributing to about 50% of the flexion force."
   },
   {
     "nom": "calcanéum",
     "categories": ["pied"],
     "type": "os",
     "FR": "calcanéum",
-    "EN": "calcaneus"
+    "EN": "calcaneus",
+    "descriptionFR": "Le calcanéum est le plus grand os du tarse, formant la structure du talon. Il s'articule avec le talus en haut et le cuboïde en avant. Cet os supporte le poids du corps lors de la marche et sert de point d'attache pour le tendon d'Achille et plusieurs muscles de la jambe. Saviez-vous que le calcanéum est le premier os à toucher le sol lors de la marche, absorbant jusqu'à 110% du poids du corps à chaque pas ?",
+    "descriptionEN": "The calcaneus is the largest bone of the tarsus, forming the heel structure. It articulates with the talus above and the cuboid in front. This bone supports body weight during walking and serves as an attachment point for the Achilles tendon and several leg muscles. Did you know that the calcaneus is the first bone to touch the ground during walking, absorbing up to 110% of body weight with each step?"
   },
   {
     "nom": "cage thoracique",
     "categories": ["torse_profil"],
     "type": "os",
     "FR": "cage thoracique",
-    "EN": "rib cage"
+    "EN": "rib cage",
+    "descriptionFR": "La cage thoracique est une structure osseuse formée par les côtes, le sternum et les vertèbres thoraciques. Elle protège les organes vitaux (cœur, poumons) et participe à la mécanique respiratoire. La cage thoracique est flexible grâce aux articulations costo-vertébrales et aux cartilages costaux, permettant l'expansion nécessaire à la respiration. Saviez-vous que la cage thoracique effectue environ 20 000 mouvements respiratoires par jour ?",
+    "descriptionEN": "The rib cage is a bony structure formed by the ribs, sternum, and thoracic vertebrae. It protects vital organs (heart, lungs) and participates in respiratory mechanics. The rib cage is flexible thanks to the costovertebral joints and costal cartilages, allowing the necessary expansion for breathing. Did you know that the rib cage performs about 20,000 respiratory movements per day?"
   },
   {
     "nom": "clavicules",
     "categories": ["torse_face"],
     "type": "os",
     "FR": "clavicules",
-    "EN": "clavicles"
+    "EN": "clavicles",
+    "descriptionFR": "Les clavicules sont des os en forme de S qui relient le sternum aux omoplates. Elles forment la partie antérieure de la ceinture scapulaire et servent de point d'attache pour plusieurs muscles du cou et de l'épaule. Les clavicules sont les premiers os à s'ossifier pendant le développement fœtal (5ème semaine) mais les derniers à terminer leur croissance (25 ans). Saviez-vous que la clavicule est l'os le plus fréquemment fracturé chez l'adulte ?",
+    "descriptionEN": "The clavicles are S-shaped bones that connect the sternum to the scapulae. They form the anterior part of the shoulder girdle and serve as attachment points for several neck and shoulder muscles. The clavicles are the first bones to ossify during fetal development (5th week) but the last to complete their growth (25 years). Did you know that the clavicle is the most frequently fractured bone in adults?"
   },
   {
     "nom": "coude",
     "categories": ["sup_dos", "sup_profil"],
     "type": "articulation",
     "FR": "coude (extrémités du cubitus)",
-    "EN": "elbow (ulnar ends)"
+    "EN": "elbow (ulnar ends)",
+    "descriptionFR": "Le coude est une articulation complexe formée par l'humérus, le radius et l'ulna (cubitus). Il permet la flexion-extension et la pronation-supination. L'articulation est stabilisée par des ligaments collatéraux et la capsule articulaire. Le coude est l'une des articulations les plus stables du corps humain grâce à sa structure complexe de ligaments et à l'emboîtement osseux.",
+    "descriptionEN": "The elbow is a complex joint formed by the humerus, radius, and ulna. It enables flexion-extension and pronation-supination. The joint is stabilized by collateral ligaments and the joint capsule. The elbow is one of the most stable joints in the human body thanks to its complex ligament structure and bony interlocking."
   },
   {
     "nom": "couturier",
     "categories": ["inf_face"],
     "type": "muscle",
     "FR": "couturier",
-    "EN": "sartorius"
+    "EN": "sartorius",
+    "descriptionFR": "Le muscle couturier (sartorius) est le plus long muscle du corps humain. Il s'étend de l'épine iliaque antéro-supérieure jusqu'à la face médiale du tibia. Ce muscle permet la flexion, l'abduction et la rotation externe de la hanche, ainsi que la flexion du genou. Son nom vient de la position assise en tailleur qu'il permet d'adopter, comme les couturiers d'autrefois.",
+    "descriptionEN": "The sartorius muscle is the longest muscle in the human body. It extends from the anterior superior iliac spine to the medial surface of the tibia. This muscle allows flexion, abduction, and external rotation of the hip, as well as knee flexion. Its name comes from the cross-legged sitting position it enables, like tailors of old."
   },
   {
     "nom": "crête iliaque",
     "categories": ["torse_profil"],
     "type": "os",
     "FR": "crête iliaque",
-    "EN": "iliac crest"
+    "EN": "iliac crest",
+    "descriptionFR": "La crête iliaque est la partie supérieure de l'os iliaque, formant la limite supérieure du bassin. Elle s'étend de l'épine iliaque antéro-supérieure à l'épine iliaque postéro-supérieure. Cette structure osseuse sert de point d'attache pour les muscles abdominaux et les muscles de la hanche. Saviez-vous que la crête iliaque est un site privilégié pour les prélèvements de moelle osseuse car elle est facilement accessible et contient une grande quantité de moelle hématopoïétique ?",
+    "descriptionEN": "The iliac crest is the upper part of the iliac bone, forming the upper boundary of the pelvis. It extends from the anterior superior iliac spine to the posterior superior iliac spine. This bony structure serves as an attachment point for the abdominal and hip muscles. Did you know that the iliac crest is a preferred site for bone marrow sampling because it is easily accessible and contains a large amount of hematopoietic marrow?"
   },
   {
     "nom": "câbles arrières genou",
     "categories": ["inf_dos"],
     "type": "tendon",
     "FR": "câbles arrières genou",
-    "EN": "posterior knee tendons"
+    "EN": "posterior knee tendons",
+    "descriptionFR": "Les tendons postérieurs du genou sont les terminaisons tendineuses des muscles ischio-jambiers (biceps fémoral, semi-tendineux et semi-membraneux). Ils s'insèrent sur le tibia et le péroné, permettant la flexion du genou et l'extension de la hanche. Ces tendons sont particulièrement sollicités dans les sports nécessitant des accélérations et des sauts, et sont souvent le siège de blessures sportives.",
+    "descriptionEN": "The posterior knee tendons are the tendon endings of the hamstring muscles (biceps femoris, semitendinosus, and semimembranosus). They insert on the tibia and fibula, allowing knee flexion and hip extension. These tendons are particularly stressed in sports requiring accelerations and jumps, and are often the site of sports injuries."
   },
   {
     "nom": "deltoïde",
     "categories": ["sup_face"],
     "type": "muscle",
     "FR": "deltoïde",
-    "EN": "deltoid"
+    "EN": "deltoid",
+    "descriptionFR": "Le deltoïde est un muscle triangulaire qui recouvre l'articulation de l'épaule. Il est divisé en trois faisceaux : antérieur (claviculaire), moyen (acromial) et postérieur (spinal). Chaque faisceau a des actions spécifiques : le faisceau antérieur permet la flexion et la rotation interne, le moyen l'abduction, et le postérieur l'extension et la rotation externe. Saviez-vous que le deltoïde est le muscle principal responsable de l'abduction du bras au-delà de 15 degrés ?",
+    "descriptionEN": "The deltoid is a triangular muscle that covers the shoulder joint. It is divided into three bundles: anterior (clavicular), middle (acromial), and posterior (spinal). Each bundle has specific actions: the anterior bundle allows flexion and internal rotation, the middle abduction, and the posterior extension and external rotation. Did you know that the deltoid is the main muscle responsible for arm abduction beyond 15 degrees?"
   },
   {
     "nom": "échancrure thoracique",
     "categories": ["torse_face"],
     "type": "os",
     "FR": "échancrure thoracique",
-    "EN": "thoracic notch"
+    "EN": "thoracic notch",
+    "descriptionFR": "L'échancrure thoracique (ou jugulaire) est une dépression osseuse située à la base du cou, entre les deux clavicules. Elle est formée par l'encoche jugulaire du sternum et constitue un point de repère important pour l'anatomie de surface. Cette région contient des structures vitales comme la veine jugulaire interne, l'artère carotide commune et la trachée. Saviez-vous que l'échancrure thoracique est utilisée comme point de repère pour la mesure de la pression veineuse centrale ?",
+    "descriptionEN": "The thoracic notch (or jugular notch) is a bony depression located at the base of the neck, between the two clavicles. It is formed by the jugular notch of the sternum and is an important landmark for surface anatomy. This region contains vital structures such as the internal jugular vein, common carotid artery, and trachea. Did you know that the thoracic notch is used as a landmark for measuring central venous pressure?"
   },
   {
     "nom": "épine dorsale",
     "categories": ["torse_profil"],
     "type": "os",
     "FR": "épine dorsale",
-    "EN": "spinal column"
+    "EN": "spinal column",
+    "descriptionFR": "La colonne vertébrale (ou rachis) est une structure osseuse formée de 33 vertèbres empilées : 7 cervicales, 12 thoraciques, 5 lombaires, 5 sacrées (fusionnées) et 4 coccygiennes. Elle protège la moelle épinière et supporte le poids du corps. Les vertèbres sont séparées par des disques intervertébraux qui agissent comme des amortisseurs. Saviez-vous que la colonne vertébrale peut supporter jusqu'à 5 fois le poids du corps lors de certains mouvements ?",
+    "descriptionEN": "The spinal column (or spine) is a bony structure formed by 33 stacked vertebrae: 7 cervical, 12 thoracic, 5 lumbar, 5 sacral (fused), and 4 coccygeal. It protects the spinal cord and supports the body's weight. The vertebrae are separated by intervertebral discs that act as shock absorbers. Did you know that the spinal column can support up to 5 times the body's weight during certain movements?"
   },
   {
     "nom": "épine iliaque",
     "categories": ["torse_face", "torse_profil"],
     "type": "os",
     "FR": "épine iliaque",
-    "EN": "iliac spine"
+    "EN": "iliac spine",
+    "descriptionFR": "L'épine iliaque antéro-supérieure est une protubérance osseuse située à l'extrémité antérieure de la crête iliaque. Elle sert de point d'attache pour le muscle couturier et le ligament inguinal. Cette structure est un point de repère important pour les examens cliniques et les interventions chirurgicales de la région inguinale. Saviez-vous que l'épine iliaque antéro-supérieure est utilisée comme point de repère pour la mesure de la longueur des membres inférieurs ?",
+    "descriptionEN": "The anterior superior iliac spine is a bony prominence located at the anterior end of the iliac crest. It serves as an attachment point for the sartorius muscle and the inguinal ligament. This structure is an important landmark for clinical examinations and surgical interventions in the inguinal region. Did you know that the anterior superior iliac spine is used as a landmark for measuring lower limb length?"
   },
   {
     "nom": "épines osseuses postérieures du bassin",
     "categories": ["torse_dos", "torse_profil"],
     "type": "os",
     "FR": "épines osseuses postérieures du bassin",
-    "EN": "posterior superior iliac spines"
+    "EN": "posterior superior iliac spines",
+    "descriptionFR": "Les épines iliaques postéro-supérieures sont des protubérances osseuses situées à l'extrémité postérieure de la crête iliaque. Elles servent de point d'attache pour les ligaments sacro-iliaques et les muscles du dos. Ces structures sont des points de repère importants pour l'évaluation de la symétrie du bassin et le diagnostic des dysfonctions sacro-iliaques. Saviez-vous que les épines iliaques postéro-supérieures sont utilisées comme repères pour la réalisation d'infiltrations épidurales ?",
+    "descriptionEN": "The posterior superior iliac spines are bony prominences located at the posterior end of the iliac crest. They serve as attachment points for the sacroiliac ligaments and back muscles. These structures are important landmarks for assessing pelvic symmetry and diagnosing sacroiliac dysfunctions. Did you know that the posterior superior iliac spines are used as landmarks for performing epidural injections?"
   },
   {
     "nom": "épitrochlée",
     "categories": ["sup_face"],
     "type": "os",
     "FR": "épitrochlée",
-    "EN": "medial epicondyle"
+    "EN": "medial epicondyle",
+    "descriptionFR": "L'épitrochlée (ou épicondyle médial) est une protubérance osseuse située à l'extrémité distale de l'humérus, sur sa face médiale. Elle sert de point d'attache pour les muscles fléchisseurs de l'avant-bras et les ligaments collatéraux du coude. Cette structure est importante pour la stabilité du coude et est souvent le siège de douleurs appelées 'golfer's elbow' (épicondylite médiale). Saviez-vous que l'épitrochlée est plus saillante que l'épicondyle latéral, ce qui la rend plus vulnérable aux traumatismes ?",
+    "descriptionEN": "The medial epicondyle is a bony prominence located at the distal end of the humerus, on its medial side. It serves as an attachment point for the forearm flexor muscles and the collateral ligaments of the elbow. This structure is important for elbow stability and is often the site of pain called 'golfer's elbow' (medial epicondylitis). Did you know that the medial epicondyle is more prominent than the lateral epicondyle, making it more vulnerable to trauma?"
   },
   {
     "nom": "extenseur",
     "categories": ["sup_face", "sup_dos"],
     "type": "muscle",
     "FR": "extenseur",
-    "EN": "extensor"
+    "EN": "extensor",
+    "descriptionFR": "Les muscles extenseurs de l'avant-bras sont un groupe de muscles situés sur la face postérieure de l'avant-bras. Ils comprennent l'extenseur radial long et court du carpe, l'extenseur ulnaire du carpe, et les extenseurs des doigts. Ces muscles permettent l'extension du poignet et des doigts, ainsi que la stabilisation de l'articulation du poignet. Saviez-vous que les muscles extenseurs sont plus nombreux que les fléchisseurs dans l'avant-bras, reflétant la complexité des mouvements d'extension ?",
+    "descriptionEN": "The extensor muscles of the forearm are a group of muscles located on the posterior side of the forearm. They include the extensor carpi radialis longus and brevis, extensor carpi ulnaris, and the finger extensors. These muscles allow extension of the wrist and fingers, as well as stabilization of the wrist joint. Did you know that the extensor muscles are more numerous than the flexors in the forearm, reflecting the complexity of extension movements?"
   },
   {
     "nom": "extrémité claviculaire",
     "categories": ["torse_dos"],
     "type": "os",
     "FR": "extrémité claviculaire",
-    "EN": "clavicular end"
+    "EN": "clavicular end",
+    "descriptionFR": "L'extrémité acromiale de la clavicule est la partie latérale de l'os qui s'articule avec l'acromion de l'omoplate. Cette articulation, appelée articulation acromio-claviculaire, est stabilisée par des ligaments puissants. Cette structure est cruciale pour la mobilité de l'épaule et est souvent le siège de luxations lors de traumatismes. Saviez-vous que l'articulation acromio-claviculaire est l'une des premières à montrer des signes d'arthrose avec l'âge ?",
+    "descriptionEN": "The acromial end of the clavicle is the lateral part of the bone that articulates with the acromion of the scapula. This joint, called the acromioclavicular joint, is stabilized by strong ligaments. This structure is crucial for shoulder mobility and is often the site of dislocations in trauma. Did you know that the acromioclavicular joint is one of the first to show signs of osteoarthritis with age?"
   },
   {
     "nom": "fascia lata",
     "categories": ["inf_dos", "inf_profil"],
     "type": "fascia",
     "FR": "fascia lata",
-    "EN": "fascia lata"
+    "EN": "fascia lata",
+    "descriptionFR": "Le fascia lata est une aponévrose profonde qui enveloppe les muscles de la cuisse. Il s'étend de la crête iliaque jusqu'au genou et se renforce latéralement pour former la bandelette ilio-tibiale. Cette structure joue un rôle crucial dans la stabilisation de la hanche et du genou, et participe à la transmission des forces entre ces articulations. Saviez-vous que le fascia lata est l'un des tissus conjonctifs les plus résistants du corps, capable de supporter des forces de traction importantes ?",
+    "descriptionEN": "The fascia lata is a deep aponeurosis that envelops the thigh muscles. It extends from the iliac crest to the knee and is reinforced laterally to form the iliotibial band. This structure plays a crucial role in stabilizing the hip and knee, and participates in the transmission of forces between these joints. Did you know that the fascia lata is one of the most resistant connective tissues in the body, capable of withstanding significant tensile forces?"
   },
   {
     "nom": "fléchisseur",
     "categories": ["sup_face"],
     "type": "muscle",
     "FR": "fléchisseur",
-    "EN": "flexor"
+    "EN": "flexor",
+    "descriptionFR": "Les muscles fléchisseurs de l'avant-bras sont un groupe de muscles situés sur la face antérieure de l'avant-bras. Ils comprennent le fléchisseur radial du carpe, le fléchisseur ulnaire du carpe, et les fléchisseurs des doigts. Ces muscles permettent la flexion du poignet et des doigts, ainsi que la stabilisation de l'articulation du poignet. Saviez-vous que les muscles fléchisseurs sont plus puissants que les extenseurs, reflétant l'importance de la préhension dans l'évolution humaine ?",
+    "descriptionEN": "The flexor muscles of the forearm are a group of muscles located on the anterior side of the forearm. They include the flexor carpi radialis, flexor carpi ulnaris, and the finger flexors. These muscles allow flexion of the wrist and fingers, as well as stabilization of the wrist joint. Did you know that the flexor muscles are more powerful than the extensors, reflecting the importance of grip in human evolution?"
   },
   {
     "nom": "grand dentelé",
     "categories": ["torse_profil"],
     "type": "muscle",
     "FR": "grand dentelé",
-    "EN": "serratus anterior"
+    "EN": "serratus anterior",
+    "descriptionFR": "Le grand dentelé est un muscle qui stabilise l'omoplate et aide à l'élévation du bras. Il est situé sur le côté du thorax, entre les côtes et l'omoplate. Saviez-vous que ce muscle est surnommé le 'muscle du boxeur' car il est essentiel pour les mouvements de poussée vers l'avant ?",
+    "descriptionEN": "The serratus anterior is a muscle that stabilizes the scapula and helps with arm elevation. It is located on the side of the thorax, between the ribs and the scapula. Did you know that this muscle is nicknamed the 'boxer's muscle' because it is essential for forward pushing movements?"
   },
   {
     "nom": "grand dorsal",
     "categories": ["torse_profil"],
     "type": "muscle",
     "FR": "grand dorsal",
-    "EN": "latissimus dorsi"
+    "EN": "latissimus dorsi",
+    "descriptionFR": "Le grand dorsal est le plus large muscle du dos, permettant l'adduction et la rotation interne du bras. Il est situé sur la partie inférieure du dos, s'étendant des vertèbres lombaires jusqu'à l'humérus. Saviez-vous que ce muscle est souvent appelé le 'muscle du nageur' car il est crucial pour les mouvements de brasse ?",
+    "descriptionEN": "The latissimus dorsi is the largest muscle of the back, allowing adduction and internal rotation of the arm. It is located on the lower part of the back, extending from the lumbar vertebrae to the humerus. Did you know that this muscle is often called the 'swimmer's muscle' because it is crucial for breaststroke movements?"
   },
   {
     "nom": "grand fessier",
     "categories": ["inf_dos"],
     "type": "muscle",
     "FR": "grand fessier",
-    "EN": "gluteus maximus"
+    "EN": "gluteus maximus",
+    "descriptionFR": "Le grand fessier est un muscle qui permet la rotation de la hanche et la flexion de la cuisse. Il est situé à l'arrière de la hanche. Le grand fessier est important pour la stabilité de la hanche et pour la marche.",
+    "descriptionEN": "The gluteus maximus is a muscle that allows hip rotation and thigh flexion. It is located at the back of the hip. The gluteus maximus is important for hip stability and for walking."
   },
   {
     "nom": "grand rond",
     "categories": ["torse_face", "torse_dos", "torse_profil"],
     "type": "muscle",
     "FR": "grand rond",
-    "EN": "teres major"
+    "EN": "teres major",
+    "descriptionFR": "Le grand rond est un muscle qui permet la rotation de la hanche et la flexion de la cuisse. Il est situé à l'arrière de la hanche. Le grand rond est important pour la stabilité de la hanche et pour la respiration profonde.",
+    "descriptionEN": "The teres major is a muscle that allows hip rotation and thigh flexion. It is located at the back of the hip. The teres major is important for hip stability and for deep breathing."
   },
   {
     "nom": "grand trochanter",
     "categories": ["inf_face", "inf_dos", "inf_profil"],
     "type": "os",
     "FR": "grand trochanter",
-    "EN": "greater trochanter"
+    "EN": "greater trochanter",
+    "descriptionFR": "Le grand trochanter est une protubérance osseuse située à l'extrémité supérieure de l'os femoral. Elle est située à l'arrière de l'os femoral. Cette structure osseuse est importante pour la stabilité de la hanche et pour la flexion de la cuisse.",
+    "descriptionEN": "The greater trochanter is a bony prominence located at the upper end of the femur. It is located at the back of the femur. This bony structure is important for hip stability and for thigh flexion."
   },
   {
     "nom": "hsr",
     "categories": ["sup_face", "sup_dos"],
     "type": "muscle",
     "FR": "hsr (huméro-stylo-radial) (brachio-radial)",
-    "EN": "brachioradialis"
+    "EN": "brachioradialis",
+    "descriptionFR": "Le hsr est un muscle qui permet la flexion du coude et la rotation de l'avant-bras. Il est situé sur la face postérieure du bras. Le hsr est important pour la stabilité du coude et pour la rotation de l'avant-bras.",
+    "descriptionEN": "The brachioradialis is a muscle that allows elbow flexion and forearm rotation. It is located on the posterior side of the arm. The brachioradialis is important for elbow stability and for forearm rotation."
   },
   {
     "nom": "jumeaux",
     "categories": ["inf_dos", "inf_profil"],
     "type": "muscle",
     "FR": "jumeaux",
-    "EN": "gastrocnemius"
+    "EN": "gastrocnemius",
+    "descriptionFR": "Les jumeaux sont deux muscles qui permettent de porter le poids du corps. Ils sont situés à l'arrière du pied, à la jonction de la cuisse et de la jambe. Les jumeaux sont importants pour la stabilité de la hanche et pour la marche.",
+    "descriptionEN": "The gastrocnemius muscles are two muscles that help support body weight. They are located at the back of the foot, at the junction of the thigh and leg. The gastrocnemius muscles are important for hip stability and for walking."
   },
   {
     "nom": "malléole externe",
     "categories": ["inf_profil"],
     "type": "os",
     "FR": "malléole externe (péroné)",
-    "EN": "lateral malleolus (fibula)"
+    "EN": "lateral malleolus (fibula)",
+    "descriptionFR": "La malléole externe est une protubérance osseuse située à l'extrémité externe de la jambe. Elle est située à l'extrémité externe de la jambe, à la jonction de la cuisse et de la jambe. Cette structure osseuse est importante pour la stabilité de la jambe et pour la marche.",
+    "descriptionEN": "The lateral malleolus is a bony prominence located at the outer end of the leg. It is situated at the outer end of the leg, at the junction of the thigh and leg. This bony structure is important for leg stability and for walking."
   },
   {
     "nom": "malléole interne",
     "categories": ["inf_profil"],
     "type": "os",
     "FR": "malléole interne (tibia)",
-    "EN": "medial malleolus (tibia)"
+    "EN": "medial malleolus (tibia)",
+    "descriptionFR": "La malléole interne est une protubérance osseuse située à l'extrémité interne de la jambe. Elle est située à l'extrémité interne de la jambe, à la jonction de la cuisse et de la jambe. Cette structure osseuse est importante pour la stabilité de la jambe et pour la marche.",
+    "descriptionEN": "The medial malleolus is a bony prominence located at the inner end of the leg. It is situated at the inner end of the leg, at the junction of the thigh and leg. This bony structure is important for leg stability and for walking."
   },
   {
     "nom": "mandibule",
     "categories": ["crane"],
     "type": "os",
     "FR": "mandibule",
-    "EN": "mandible"
+    "EN": "mandible",
+    "descriptionFR": "La mandibule est une protubérance osseuse située à l'extrémité inférieure de la mâchoire. Elle est située à l'extrémité inférieure de la mâchoire, à la jonction avec la mâchoire supérieure. La mandibule est importante pour la mastication et la respiration.",
+    "descriptionEN": "The mandible is a bony prominence located at the lower end of the jaw. It is situated at the lower end of the jaw, at the junction with the upper jaw. The mandible is important for chewing and breathing."
   },
   {
     "nom": "masséter",
     "categories": ["crane"],
     "type": "muscle",
     "FR": "masséter",
-    "EN": "masseter"
+    "EN": "masseter",
+    "descriptionFR": "Le masséter est un muscle qui permet la mastication. Il est situé à l'arrière de la mâchoire. Le masséter est important pour la mastication et pour la respiration.",
+    "descriptionEN": "The masseter is a muscle that enables chewing. It is located at the back of the jaw. The masseter is important for chewing and breathing."
   },
   {
     "nom": "maxillaire",
     "categories": ["crane"],
     "type": "os",
     "FR": "maxillaire",
-    "EN": "maxilla"
+    "EN": "maxilla",
+    "descriptionFR": "Le maxillaire est une protubérance osseuse située à l'extrémité supérieure de la mâchoire. Elle est située à l'extrémité supérieure de la mâchoire, à la jonction avec la mâchoire supérieure. Le maxillaire est important pour la mastication et la respiration.",
+    "descriptionEN": "The maxilla is a bony prominence located at the upper end of the jaw. It is situated at the upper end of the jaw, at the junction with the upper jaw. The maxilla is important for chewing and breathing."
   },
   {
     "nom": "oblique",
     "categories": ["torse_profil"],
     "type": "muscle",
     "FR": "oblique",
-    "EN": "oblique"
+    "EN": "oblique",
+    "descriptionFR": "Les muscles obliques sont des muscles abdominaux qui permettent la rotation et la flexion latérale du tronc. Ils sont situés sur les côtés de l'abdomen, entre les côtes et le bassin. Saviez-vous que les obliques sont essentiels pour la stabilité du tronc et sont souvent appelés les 'muscles de la taille' ?",
+    "descriptionEN": "The oblique muscles are abdominal muscles that allow rotation and lateral flexion of the trunk. They are located on the sides of the abdomen, between the ribs and pelvis. Did you know that the obliques are essential for trunk stability and are often called the 'waist muscles'?"
   },
   {
     "nom": "nombril",
     "categories": ["torse_face"],
     "type": "peau",
     "FR": "nombril",
-    "EN": "navel"
+    "EN": "navel",
+    "descriptionFR": "Le nombril, ou ombilic, est une cicatrice située au centre de l'abdomen, résultant de la chute du cordon ombilical après la naissance. Il ne joue aucun rôle physiologique chez l'adulte, mais il marque l'ancien point d'attache entre la mère et le fœtus. Fait amusant : la forme du nombril (creux ou saillant) dépend de la manière dont le cordon ombilical cicatrise, et chaque nombril est unique !",
+    "descriptionEN": "The navel, or umbilicus, is a scar located in the center of the abdomen, resulting from the fall of the umbilical cord after birth. It has no physiological role in adults, but marks the former attachment point between mother and fetus. Fun fact: the shape of the navel (innie or outie) depends on how the umbilical cord heals, and each navel is unique!"
   },
   {
     "nom": "omoplate",
     "categories": ["torse_profil", "torse_dos"],
     "type": "os",
     "FR": "omoplate",
-    "EN": "scapula"
+    "EN": "scapula",
+    "descriptionFR": "L'omoplate, ou scapula, est un os plat et triangulaire situé à l'arrière du thorax. Elle relie l'humérus à la clavicule et forme la partie postérieure de la ceinture scapulaire. L'omoplate joue un rôle clé dans la mobilité et la stabilité de l'épaule grâce à ses nombreuses insertions musculaires. Fait amusant : l'omoplate peut bouger dans six directions différentes, ce qui permet une grande amplitude de mouvement du bras !",
+    "descriptionEN": "The scapula, or shoulder blade, is a flat, triangular bone located at the back of the thorax. It connects the humerus to the clavicle and forms the posterior part of the shoulder girdle. The scapula plays a key role in shoulder mobility and stability through its numerous muscle insertions. Fun fact: the scapula can move in six different directions, allowing for a wide range of arm movement!"
   },
   {
     "nom": "pectoral",
     "categories": ["torse_face"],
     "type": "muscle",
     "FR": "pectoral",
-    "EN": "pectoral"
+    "EN": "pectoral",
+    "descriptionFR": "Le muscle pectoral, principalement le grand pectoral, est un muscle large et puissant de la poitrine. Il s'étend du sternum, des côtes et de la clavicule jusqu'à l'humérus. Il permet l'adduction, la flexion et la rotation interne du bras. Fait amusant : le grand pectoral est si puissant qu'il peut générer une force de plus de 100 kg lors d'un développé couché chez certains athlètes !",
+    "descriptionEN": "The pectoral muscle, mainly the pectoralis major, is a large and powerful muscle of the chest. It extends from the sternum, ribs, and clavicle to the humerus. It enables adduction, flexion, and internal rotation of the arm. Fun fact: the pectoralis major is so powerful that it can generate a force of more than 100 kg during bench press in some athletes!"
   },
   {
     "nom": "pédieux",
     "categories": ["pied"],
     "type": "muscle",
     "FR": "pédieux",
-    "EN": "extensor digitorum brevis"
+    "EN": "extensor digitorum brevis",
+    "descriptionFR": "Le muscle pédieux, ou court extenseur des orteils, est situé sur la face dorsale du pied. Il permet l'extension des orteils 2 à 4. Ce muscle est essentiel pour la propulsion lors de la marche et de la course. Fait amusant : le pédieux est parfois absent chez certaines personnes sans conséquence fonctionnelle !",
+    "descriptionEN": "The extensor digitorum brevis, or short extensor of the toes, is located on the dorsal surface of the foot. It enables extension of toes 2 to 4. This muscle is essential for propulsion during walking and running. Fun fact: the extensor digitorum brevis is sometimes absent in some people without functional consequences!"
   },
   {
     "nom": "pisiforme",
     "categories": ["main"],
     "type": "os",
     "FR": "pisiforme",
-    "EN": "pisiform"
+    "EN": "pisiform",
+    "descriptionFR": "Le pisiforme est un petit os de forme arrondie situé à la face antérieure du poignet, du côté ulnaire (petit doigt). Il fait partie des os du carpe et sert de point d'attache à des tendons et ligaments importants, notamment le fléchisseur ulnaire du carpe. Fait amusant : le pisiforme est un os sésamoïde, c'est-à-dire qu'il se développe à l'intérieur d'un tendon !",
+    "descriptionEN": "The pisiform is a small, rounded bone located on the anterior side of the wrist, on the ulnar side (little finger). It is part of the carpal bones and serves as an attachment point for important tendons and ligaments, notably the flexor carpi ulnaris. Fun fact: the pisiform is a sesamoid bone, meaning it develops inside a tendon!"
   },
   {
     "nom": "pli de flexion",
     "categories": ["torse_face"],
     "type": "peau",
     "FR": "pli de flexion",
-    "EN": "flexion crease"
+    "EN": "flexion crease",
+    "descriptionFR": "Le pli de flexion est une ligne cutanée située à la jonction entre la peau et une articulation, comme le pli du coude ou du poignet. Ces plis permettent à la peau de s'adapter aux mouvements répétés des articulations. Fait amusant : la profondeur des plis de flexion varie selon l'âge, l'hydratation et la génétique !",
+    "descriptionEN": "The flexion crease is a skin line located at the junction between the skin and a joint, such as the elbow or wrist crease. These creases allow the skin to adapt to repeated joint movements. Fun fact: the depth of flexion creases varies according to age, hydration, and genetics!"
   },
   {
     "nom": "pli de l aine",
     "categories": ["torse_face"],
     "type": "peau",
-    "FR": "pli de l’aine",
-    "EN": "groin fold"
+    "FR": "pli de l'aine",
+    "EN": "groin fold",
+    "descriptionFR": "Le pli de l'aine est un sillon cutané situé entre la cuisse et le bas-ventre, marquant la limite entre l'abdomen et la racine de la cuisse. Il correspond à la projection en surface du ligament inguinal. Ce pli est important pour la mobilité de la hanche et la flexion de la cuisse. Fait amusant : la profondeur du pli de l'aine varie selon la posture et la tonicité musculaire !",
+    "descriptionEN": "The groin fold is a skin groove located between the thigh and the lower abdomen, marking the boundary between the abdomen and the root of the thigh. It corresponds to the surface projection of the inguinal ligament. This fold is important for hip mobility and thigh flexion. Fun fact: the depth of the groin fold varies according to posture and muscle tone!"
   },
   {
     "nom": "pommettes",
     "categories": ["crane"],
     "type": "os",
     "FR": "pommettes",
-    "EN": "cheekbones"
+    "EN": "cheekbones",
+    "descriptionFR": "Les pommettes correspondent à la partie saillante de l'os zygomatique, situé sur la partie latérale du visage, sous l'œil. Elles jouent un rôle dans la protection de l'œil et servent de point d'attache à plusieurs muscles du visage impliqués dans la mastication et l'expression faciale. Fait amusant : la forme des pommettes varie beaucoup selon les populations et influence la perception du visage !",
+    "descriptionEN": "The cheekbones correspond to the prominent part of the zygomatic bone, located on the lateral part of the face, under the eye. They play a role in protecting the eye and serve as an attachment point for several facial muscles involved in chewing and facial expression. Fun fact: the shape of the cheekbones varies greatly between populations and influences the perception of the face!"
   },
   {
     "nom": "pubis",
     "categories": ["torse_face"],
     "type": "os",
     "FR": "pubis",
-    "EN": "pubis"
+    "EN": "pubis",
+    "descriptionFR": "Le pubis est la partie antérieure de l'os coxal, formant la partie avant du bassin. Il s'articule avec le pubis opposé au niveau de la symphyse pubienne. Le pubis joue un rôle dans la stabilité du bassin et la protection des organes génitaux internes. Fait amusant : la symphyse pubienne s'assouplit chez la femme enceinte pour faciliter l'accouchement !",
+    "descriptionEN": "The pubis is the anterior part of the coxal bone, forming the front part of the pelvis. It articulates with the opposite pubis at the pubic symphysis. The pubis plays a role in pelvic stability and protection of the internal genital organs. Fun fact: the pubic symphysis becomes more flexible in pregnant women to facilitate childbirth!"
   },
   {
     "nom": "rotule",
     "categories": ["inf_face", "inf_profil"],
     "type": "os",
     "FR": "rotule",
-    "EN": "patella"
+    "EN": "patella",
+    "descriptionFR": "La rotule, ou patella, est un os sésamoïde situé à l'avant du genou, inclus dans le tendon du quadriceps. Elle protège l'articulation du genou et améliore l'efficacité du muscle quadriceps lors de l'extension de la jambe. Fait amusant : la rotule est le plus grand os sésamoïde du corps humain !",
+    "descriptionEN": "The patella, or kneecap, is a sesamoid bone located at the front of the knee, embedded in the quadriceps tendon. It protects the knee joint and improves the efficiency of the quadriceps muscle during leg extension. Fun fact: the patella is the largest sesamoid bone in the human body!"
   },
   {
     "nom": "sillon cervical",
     "categories": ["torse_dos"],
     "type": "région",
     "FR": "sillon cervical",
-    "EN": "cervical groove"
+    "EN": "cervical groove",
+    "descriptionFR": "Le sillon cervical est une dépression visible à la base du cou, sur la ligne médiane postérieure, correspondant à la gouttière vertébrale. Il marque la séparation entre les muscles trapèzes droit et gauche. Ce sillon est un repère important pour l'examen clinique du rachis cervical. Fait amusant : la profondeur du sillon cervical augmente lors de la contraction des trapèzes !",
+    "descriptionEN": "The cervical groove is a visible depression at the base of the neck, on the posterior midline, corresponding to the vertebral groove. It marks the separation between the right and left trapezius muscles. This groove is an important landmark for clinical examination of the cervical spine. Fun fact: the depth of the cervical groove increases when the trapezius muscles contract!"
   },
   {
     "nom": "sillon inter fessier",
     "categories": ["torse_dos"],
     "type": "peau",
     "FR": "sillon inter fessier",
-    "EN": "intergluteal cleft"
+    "EN": "intergluteal cleft",
+    "descriptionFR": "Le sillon inter fessier est la dépression cutanée qui sépare les deux fesses, s'étendant du sacrum jusqu'à la partie inférieure du périnée. Il permet la flexion et la mobilité des hanches. Fait amusant : la longueur du sillon inter fessier varie d'une personne à l'autre et peut être un critère d'identification anatomique !",
+    "descriptionEN": "The intergluteal cleft is the skin depression that separates the two buttocks, extending from the sacrum to the lower part of the perineum. It allows flexion and mobility of the hips. Fun fact: the length of the intergluteal cleft varies from person to person and can be an anatomical identification criterion!"
   },
   {
     "nom": "soléaires",
     "categories": ["inf_dos", "inf_profil"],
     "type": "muscle",
     "FR": "soléaires",
-    "EN": "soleus muscles"
+    "EN": "soleus muscles",
+    "descriptionFR": "Les muscles soléaires forment, avec les jumeaux, le triceps sural. Ils sont situés à l'arrière de la jambe, sous les muscles jumeaux, et permettent la flexion plantaire du pied (pousser sur la pointe des pieds). Fait amusant : le soléaire est très endurant et peut fonctionner pendant des heures lors de la marche ou de la station debout !",
+    "descriptionEN": "The soleus muscles, together with the gastrocnemius, form the triceps surae. They are located at the back of the leg, under the gastrocnemius muscles, and allow plantar flexion of the foot (standing on tiptoe). Fun fact: the soleus is very enduring and can work for hours during walking or standing!"
   },
   {
     "nom": "sternocléidomastoïdien",
     "categories": ["cou"],
     "type": "muscle",
     "FR": "sternocléidomastoïdien",
-    "EN": "sternocleidomastoid"
+    "EN": "sternocleidomastoid",
+    "descriptionFR": "Le sternocléidomastoïdien est un muscle du cou qui permet la rotation et la flexion latérale de la tête. Il s'étend du sternum et de la clavicule jusqu'au processus mastoïde de l'os temporal. Fait amusant : ce muscle est souvent visible sous la peau et peut être contracté volontairement pour faire ressortir le cou !",
+    "descriptionEN": "The sternocleidomastoid is a neck muscle that allows rotation and lateral flexion of the head. It extends from the sternum and clavicle to the mastoid process of the temporal bone. Fun fact: this muscle is often visible under the skin and can be voluntarily contracted to make the neck stand out!"
   },
   {
     "nom": "sternum",
     "categories": ["torse_face"],
     "type": "os",
     "FR": "sternum",
-    "EN": "sternum"
+    "EN": "sternum",
+    "descriptionFR": "Le sternum est un os plat situé à l'avant du thorax, formé de trois parties : le manubrium, le corps et le processus xiphoïde. Il s'articule avec les côtes et la clavicule, protégeant le cœur et les poumons. Fait amusant : le sternum est un site fréquent de prélèvement de moelle osseuse chez l'adulte !",
+    "descriptionEN": "The sternum is a flat bone located at the front of the thorax, formed of three parts: the manubrium, the body, and the xiphoid process. It articulates with the ribs and clavicle, protecting the heart and lungs. Fun fact: the sternum is a common site for bone marrow sampling in adults!"
   },
   {
     "nom": "talon de la main",
     "categories": ["main"],
     "type": "région",
     "FR": "talon de la main",
-    "EN": "heel of the hand"
+    "EN": "heel of the hand",
+    "descriptionFR": "Le talon de la main correspond à la partie inférieure de la paume, formée par l'éminence hypothénar et les os du carpe. Il sert de point d'appui lors de la préhension et des appuis au sol. Fait amusant : le talon de la main est souvent utilisé en arts martiaux pour délivrer des coups puissants sans risque de fracture des doigts !",
+    "descriptionEN": "The heel of the hand corresponds to the lower part of the palm, formed by the hypothenar eminence and the carpal bones. It serves as a support point during gripping and when pressing on the ground. Fun fact: the heel of the hand is often used in martial arts to deliver powerful strikes without risking finger fractures!"
   },
   {
     "nom": "temporal",
     "categories": ["crane"],
     "type": "muscle",
     "FR": "temporal",
-    "EN": "temporalis"
+    "EN": "temporalis",
+    "descriptionFR": "Le muscle temporal est un muscle large et puissant de la mastication, situé dans la fosse temporale du crâne. Il permet l'élévation et la rétraction de la mandibule. Fait amusant : ce muscle peut exercer une force de plus de 70 kg lors de la mastication !",
+    "descriptionEN": "The temporalis muscle is a large and powerful chewing muscle, located in the temporal fossa of the skull. It allows elevation and retraction of the mandible. Fun fact: this muscle can exert a force of more than 70 kg during chewing!"
   },
   {
     "nom": "tenseur fascia lata",
     "categories": ["inf_dos", "inf_profil"],
     "type": "muscle",
     "FR": "tenseur fascia lata",
-    "EN": "tensor fasciae latae"
+    "EN": "tensor fasciae latae",
+    "descriptionFR": "Le tenseur du fascia lata est un muscle situé sur la face latérale de la cuisse. Il participe à la stabilisation du genou et à l'abduction de la hanche. Fait amusant : ce muscle est souvent impliqué dans le syndrome de la bandelette ilio-tibiale, une blessure fréquente chez les coureurs !",
+    "descriptionEN": "The tensor fasciae latae is a muscle located on the lateral side of the thigh. It participates in knee stabilization and hip abduction. Fun fact: this muscle is often involved in iliotibial band syndrome, a common injury among runners!"
   },
   {
     "nom": "tendon d Achille",
     "categories": ["inf_dos", "pied"],
     "type": "tendon",
-    "FR": "tendon d’Achille",
-    "EN": "Achilles tendon"
+    "FR": "tendon d'Achille",
+    "EN": "Achilles tendon",
+    "descriptionFR": "Le tendon d'Achille est le plus gros et le plus résistant du corps humain. Il relie les muscles du mollet (triceps sural) au calcanéum et permet la flexion plantaire du pied. Fait amusant : le tendon d'Achille peut supporter des charges allant jusqu'à 12 fois le poids du corps lors d'un sprint !",
+    "descriptionEN": "The Achilles tendon is the largest and strongest in the human body. It connects the calf muscles (triceps surae) to the calcaneus and allows plantar flexion of the foot. Fun fact: the Achilles tendon can withstand loads up to 12 times body weight during a sprint!"
   },
   {
     "nom": "tendon du jambier",
     "categories": ["inf_profil"],
     "type": "tendon",
     "FR": "tendon du jambier",
-    "EN": "tibialis tendon"
+    "EN": "tibialis tendon",
+    "descriptionFR": "Le tendon du jambier postérieur relie le muscle tibial postérieur à l'os naviculaire du pied. Il joue un rôle clé dans le maintien de la voûte plantaire et la stabilité de la cheville. Fait amusant : une rupture de ce tendon peut entraîner un affaissement du pied (pied plat acquis) !",
+    "descriptionEN": "The posterior tibial tendon connects the posterior tibial muscle to the navicular bone of the foot. It plays a key role in maintaining the arch of the foot and ankle stability. Fun fact: a rupture of this tendon can lead to a collapsed foot (acquired flatfoot)!"
   },
   {
     "nom": "tendon externe biceps cuisse",
     "categories": ["inf_profil"],
     "type": "tendon",
     "FR": "tendon externe biceps cuisse",
-    "EN": "external hamstring tendon"
+    "EN": "external hamstring tendon",
+    "descriptionFR": "Le tendon externe du biceps fémoral relie la partie latérale du muscle biceps fémoral à la tête du péroné. Il participe à la flexion du genou et à la rotation externe de la jambe. Fait amusant : ce tendon est souvent sollicité lors des sprints et peut être le siège de blessures chez les sportifs !",
+    "descriptionEN": "The external tendon of the biceps femoris connects the lateral part of the biceps femoris muscle to the head of the fibula. It participates in knee flexion and external rotation of the leg. Fun fact: this tendon is often stressed during sprints and can be the site of injuries in athletes!"
   },
   {
     "nom": "têtes des métacarpes",
     "categories": ["main"],
     "type": "os",
     "FR": "têtes des métacarpes",
-    "EN": "metacarpal heads"
+    "EN": "metacarpal heads",
+    "descriptionFR": "Les têtes des métacarpes sont les extrémités distales des os métacarpiens, formant les articulations des doigts (métacarpo-phalangiennes). Elles permettent la flexion, l'extension et l'écartement des doigts. Fait amusant : les têtes des métacarpes sont souvent appelées 'articulations des poings' car elles deviennent proéminentes lors de la fermeture du poing !",
+    "descriptionEN": "The metacarpal heads are the distal ends of the metacarpal bones, forming the finger joints (metacarpophalangeal joints). They allow flexion, extension, and spreading of the fingers. Fun fact: the metacarpal heads are often called 'knuckle joints' because they become prominent when making a fist!"
   },
   {
     "nom": "tibia epine",
     "categories": ["inf_face", "inf_profil"],
     "type": "os",
     "FR": "tibia (épine)",
-    "EN": "tibia (shin)"
+    "EN": "tibia (shin)",
+    "descriptionFR": "Le tibia est l'os principal de la jambe, situé en avant de la fibula. L'épine tibiale est une saillie osseuse sur la face antérieure du tibia, palpable sous la peau. Le tibia supporte la majeure partie du poids du corps lors de la marche. Fait amusant : le tibia est le deuxième plus long os du squelette humain après le fémur !",
+    "descriptionEN": "The tibia is the main bone of the leg, located in front of the fibula. The tibial spine is a bony prominence on the anterior surface of the tibia, palpable under the skin. The tibia supports most of the body's weight during walking. Fun fact: the tibia is the second longest bone in the human skeleton after the femur!"
   },
   {
     "nom": "trapèze",
     "categories": ["torse_dos"],
     "type": "muscle",
     "FR": "trapèze",
-    "EN": "trapezius"
+    "EN": "trapezius",
+    "descriptionFR": "Le trapèze est un muscle superficiel du dos, en forme de losange, qui permet l'élévation, la rétraction et la rotation de l'omoplate. Il s'étend de la base du crâne aux vertèbres thoraciques et jusqu'à l'acromion. Fait amusant : le trapèze est souvent le siège de tensions liées au stress, d'où son surnom de 'muscle du stress' !",
+    "descriptionEN": "The trapezius is a superficial diamond-shaped muscle of the back that allows elevation, retraction, and rotation of the scapula. It extends from the base of the skull to the thoracic vertebrae and to the acromion. Fun fact: the trapezius is often the site of stress-related tension, hence its nickname 'the stress muscle'!"
   },
   {
     "nom": "triceps",
     "categories": ["inf_face", "sup_face"],
     "type": "muscle",
     "FR": "triceps",
-    "EN": "triceps"
+    "EN": "triceps",
+    "descriptionFR": "Le triceps brachial est un muscle situé à l'arrière du bras, composé de trois chefs (long, latéral et médial). Il permet l'extension du coude. Fait amusant : le triceps représente environ 60% de la masse musculaire du bras !",
+    "descriptionEN": "The triceps brachii is a muscle located at the back of the arm, composed of three heads (long, lateral, and medial). It allows elbow extension. Fun fact: the triceps accounts for about 60% of the arm's muscle mass!"
   },
   {
     "nom": "lombaires",
     "categories": ["inf_face", "sup_face"],
     "type": "région",
     "FR": "lombaires",
-    "EN": "lumbar"
+    "EN": "lumbar",
+    "descriptionFR": "Les vertèbres lombaires sont situées dans la partie inférieure du dos, entre les vertèbres thoraciques et sacrées. Elles supportent une grande partie du poids du corps et permettent la flexion, l'extension et la rotation du tronc. Fait amusant : la région lombaire est la plus fréquemment touchée par les douleurs dorsales !",
+    "descriptionEN": "The lumbar vertebrae are located in the lower back, between the thoracic and sacral vertebrae. They support a large part of the body's weight and allow flexion, extension, and rotation of the trunk. Fun fact: the lumbar region is the most frequently affected by back pain!"
   },
   {
     "nom": "coussinet plantaire du pouce",
     "categories": ["inf_face", "sup_face"],
     "type": "graisse",
     "FR": "coussinet plantaire du pouce",
-    "EN": "plantar fat pad of the big toe"
+    "EN": "plantar fat pad of the big toe",
+    "descriptionFR": "Le coussinet plantaire du pouce est une zone de tissu adipeux située sous la tête du premier métatarsien, à la base du gros orteil. Il amortit les chocs lors de la marche et protège les structures osseuses sous-jacentes. Fait amusant : ce coussinet s'amincit avec l'âge, ce qui peut entraîner des douleurs plantaires !",
+    "descriptionEN": "The plantar fat pad of the big toe is an area of fatty tissue located under the head of the first metatarsal, at the base of the big toe. It cushions shocks during walking and protects the underlying bony structures. Fun fact: this fat pad thins with age, which can lead to plantar pain!"
   },
   {
     "nom": "pyramidal du nez",
     "categories": ["inf_face", "sup_face"],
     "type": "muscle",
     "FR": "pyramidal du nez",
-    "EN": "pyramidal du nez"
+    "EN": "pyramidal du nez",
+    "descriptionFR": "Le muscle pyramidal du nez, ou procerus, est un petit muscle situé à la racine du nez, entre les sourcils. Il permet de froncer le nez et de plisser la peau du front. Fait amusant : ce muscle est souvent impliqué dans l'expression des émotions, notamment la colère et la concentration !",
+    "descriptionEN": "The pyramidal muscle of the nose, or procerus, is a small muscle located at the root of the nose, between the eyebrows. It allows wrinkling of the nose and creasing of the forehead skin. Fun fact: this muscle is often involved in the expression of emotions, particularly anger and concentration!"
   },
   {
     "nom": "quadriceps",
     "categories": ["inf_face", "sup_face"],
     "type": "muscle",
     "FR": "quadriceps",
-    "EN": "quadriceps"
+    "EN": "quadriceps",
+    "descriptionFR": "Le quadriceps fémoral est un groupe de quatre muscles situés à l'avant de la cuisse : le droit fémoral, le vaste latéral, le vaste médial et le vaste intermédiaire. Il permet l'extension du genou et la flexion de la hanche (par le droit fémoral). Fait amusant : le quadriceps est le muscle le plus volumineux et le plus puissant du corps humain !",
+    "descriptionEN": "The quadriceps femoris is a group of four muscles located at the front of the thigh: the rectus femoris, vastus lateralis, vastus medialis, and vastus intermedius. It allows knee extension and hip flexion (by the rectus femoris). Fun fact: the quadriceps is the largest and most powerful muscle in the human body!"
   },
   {
     "nom": "epicondyle",
     "categories": ["inf_face", "sup_face"],
     "type": "muscle",
     "FR": "epicondyle",
-    "EN": "epicondyle"
+    "EN": "epicondyle",
+    "descriptionFR": "L'épicondyle latéral de l'humérus est une proéminence osseuse située à l'extrémité distale de l'humérus, sur la face latérale du coude. Il sert de point d'attache aux muscles extenseurs du poignet et des doigts. Fait amusant : la douleur de l'épicondyle latéral est connue sous le nom de 'tennis elbow' (épicondylite latérale) !",
+    "descriptionEN": "The lateral epicondyle of the humerus is a bony prominence located at the distal end of the humerus, on the lateral side of the elbow. It serves as an attachment point for the extensor muscles of the wrist and fingers. Fun fact: pain in the lateral epicondyle is known as 'tennis elbow' (lateral epicondylitis)!"
   },
   {
     "nom": "ischiojambier",
     "categories": ["inf_face", "sup_face"],
     "type": "muscle",
     "FR": "ischiojambier",
-    "EN": "hamstring"
+    "EN": "hamstring",
+    "descriptionFR": "Les ischiojambiers sont un groupe de trois muscles situés à l'arrière de la cuisse : le biceps fémoral, le semi-tendineux et le semi-membraneux. Ils permettent la flexion du genou et l'extension de la hanche. Fait amusant : les blessures des ischiojambiers sont parmi les plus fréquentes chez les sportifs de haut niveau, notamment les sprinters !",
+    "descriptionEN": "The hamstrings are a group of three muscles located at the back of the thigh: the biceps femoris, semitendinosus, and semimembranosus. They allow knee flexion and hip extension. Fun fact: hamstring injuries are among the most common in elite athletes, especially sprinters!"
   },
   {
     "nom": "moyen fessier",
     "categories": ["inf_face", "sup_face"],
     "type": "muscle",
     "FR": "moyen fessier",
-    "EN": "gluteus medius"
+    "EN": "gluteus medius",
+    "descriptionFR": "Le moyen fessier est un muscle épais et en forme d'éventail situé sur la face latérale de la hanche. Il permet l'abduction de la hanche et stabilise le bassin lors de la marche. Fait amusant : une faiblesse du moyen fessier peut entraîner une boiterie caractéristique appelée 'boiterie de Trendelenburg' !",
+    "descriptionEN": "The gluteus medius is a thick, fan-shaped muscle located on the lateral side of the hip. It allows hip abduction and stabilizes the pelvis during walking. Fun fact: weakness of the gluteus medius can cause a characteristic limp called 'Trendelenburg gait'!"
   }
 ]
 
