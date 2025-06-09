@@ -704,7 +704,7 @@
   {
     "nom": "epicondyle",
     "categories": ["inf_face", "sup_face"],
-    "type": "muscle",
+    "type": "os",
     "FR": "epicondyle",
     "EN": "epicondyle",
     "descriptionFR": "L'épicondyle latéral de l'humérus est une proéminence osseuse située à l'extrémité distale de l'humérus, sur la face latérale du coude. Il sert de point d'attache aux muscles extenseurs du poignet et des doigts. Fait amusant : la douleur de l'épicondyle latéral est connue sous le nom de 'tennis elbow' (épicondylite latérale) !",

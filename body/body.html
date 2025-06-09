@@ -311,6 +311,7 @@
         <button id="quiz-mode-hard" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#d13a3a; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Hard Mode (Type answer)</button>
         <button id="quiz-mode-easy" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#2c8c2c; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Easy Mode (Multiple choice)</button>
         <button id="quiz-mode-reverse" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#2d3a4b; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Reverse Mode (Image choice)</button>
+        <button id="quiz-mode-muscle" class="quiz-mode-btn" style="padding:1rem 2rem; font-size:1.2rem; border-radius:12px; background:#8c2c8c; color:#fff; border:none; cursor:pointer; transition:background 0.2s;">Muscle Mode (Origin/Insertion)</button>
       </div>
     </div>
     <div id="quiz-content" class="hidden">
@@ -477,6 +478,11 @@ const translations = {
     hardMode: "Hard Mode (Type answer)",
     easyMode: "Easy Mode (Multiple choice)",
     reverseMode: "Reverse Mode (Image choice)",
+    muscleMode: "Muscle Mode (Origin/Insertion)",
+    origin: "Origin",
+    insertion: "Insertion",
+    selectOrigin: "Select the origin",
+    selectInsertion: "Select the insertion",
     images: "Images",
     name: "Name",
     type: "Type",
@@ -521,6 +527,11 @@ const translations = {
     hardMode: "Mode difficile (Saisir la réponse)",
     easyMode: "Mode facile (Choix multiples)",
     reverseMode: "Mode inverse (Choix d'image)",
+    muscleMode: "Mode muscle (Origine/Insertion)",
+    origin: "Origine",
+    insertion: "Insertion",
+    selectOrigin: "Sélectionnez l'origine",
+    selectInsertion: "Sélectionnez l'insertion",
     images: "Images",
     name: "Nom",
     type: "Type",
@@ -633,6 +644,9 @@ function applyLanguage() {
     
     const reverseBtn = document.getElementById('quiz-mode-reverse');
     if (reverseBtn) reverseBtn.textContent = t('reverseMode');
+    
+    const muscleBtn = document.getElementById('quiz-mode-muscle');
+    if (muscleBtn) muscleBtn.textContent = t('muscleMode');
   }
 
   // Quiz
@@ -759,6 +773,10 @@ function setupQuiz() {
     quizOptions.quizMode = 'reverse';
     startQuiz();
   };
+  document.getElementById('quiz-mode-muscle').onclick = () => {
+    quizOptions.quizMode = 'muscle';
+    startQuiz();
+  };
 }
 
 function startQuiz() {
@@ -780,12 +798,18 @@ function startQuiz() {
 
 function generateQuizQuestions() {
   // Only pick elements with at least 1 image
-  let eligible = bodyList.filter(e => getImagesCount(e) > 0);
+  let eligible;
+  if (quizOptions.quizMode === 'muscle') {
+    // For muscle mode, only pick muscles
+    eligible = bodyList.filter(e => e.type === 'muscle');
+  } else {
+    eligible = bodyList.filter(e => getImagesCount(e) > 0);
+  }
   eligible = shuffle([...eligible]);
   let n = Math.min(quizOptions.numQuestions, eligible.length);
   return eligible.slice(0, n).map(e => ({
     element: e,
-    image: pickRandomImage(e)
+    image: quizOptions.quizMode === 'muscle' ? null : pickRandomImage(e)
   }));
 }
 function pickRandomImage(element) {
@@ -825,9 +849,17 @@ function showQuizQuestion() {
   const imgDiv = document.getElementById('quiz-image-container');
   if (imgDiv) {
     imgDiv.innerHTML = '';
-    quizCurrentImageIsVariant = true;
     
-    if (quizOptions.quizMode === 'reverse') {
+    if (quizOptions.quizMode === 'muscle') {
+      // For muscle mode, show the muscle name as the question
+      const questionDiv = document.createElement('div');
+      questionDiv.style.fontSize = '1.5rem';
+      questionDiv.style.fontWeight = 'bold';
+      questionDiv.style.marginBottom = '1rem';
+      questionDiv.style.textAlign = 'center';
+      questionDiv.textContent = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
+      imgDiv.appendChild(questionDiv);
+    } else if (quizOptions.quizMode === 'reverse') {
       // For reverse mode, show the name as the question
       const questionDiv = document.createElement('div');
       questionDiv.style.fontSize = '1.5rem';
@@ -1024,7 +1056,126 @@ function showQuizQuestion() {
       inputArea.appendChild(feedbackDiv);
     }
 
-    if (quizOptions.quizMode === 'hard') {
+    if (quizOptions.quizMode === 'muscle') {
+      // Create container for origin and insertion questions
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.gap = '2rem';
+      container.style.width = '100%';
+      inputArea.appendChild(container);
+
+      // Origin question
+      const originSection = document.createElement('div');
+      originSection.style.display = 'flex';
+      originSection.style.flexDirection = 'column';
+      originSection.style.gap = '1rem';
+      
+      const originTitle = document.createElement('div');
+      originTitle.style.fontSize = '1.2rem';
+      originTitle.style.fontWeight = 'bold';
+      originTitle.textContent = t('selectOrigin');
+      originSection.appendChild(originTitle);
+
+      // Get wrong origins (numChoices - 1 wrong answers)
+      let wrongOrigins = bodyList
+        .filter(e => e.type === 'muscle' && e.nom !== elem.nom)
+        .filter(e => {
+          const origin = currentLang === 'FR' ? e.originFR : e.originEN;
+          return origin && origin.trim() !== '';
+        })
+        .map(e => currentLang === 'FR' ? e.originFR : e.originEN)
+        .filter((o, i, arr) => arr.indexOf(o) === i); // Remove duplicates
+      wrongOrigins = shuffle(wrongOrigins).slice(0, quizOptions.numChoices - 1);
+      
+      // Combine with correct answer and shuffle
+      const correctOrigin = currentLang === 'FR' ? (elem.originFR || '') : (elem.originEN || '');
+      let allOrigins = [...wrongOrigins, correctOrigin];
+      allOrigins = shuffle(allOrigins);
+
+      // Create buttons for each origin
+      allOrigins.forEach(origin => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-choice-btn';
+        btn.textContent = origin;
+        btn.style = 'margin:0.5rem;padding:0.7rem 1.5rem;font-size:1.1rem;border-radius:12px;background:#2d3a4b;color:#fff;border:none;cursor:pointer;width:80%;transition:background-color 0.2s;';
+        btn.onclick = () => {
+          // Make all origin buttons darker first
+          originSection.querySelectorAll('.quiz-choice-btn').forEach(b => {
+            b.style.backgroundColor = '#2d3a4b';
+          });
+          // Make clicked button lighter
+          btn.style.backgroundColor = '#4a5c73';
+          quizState.selectedOrigin = origin;
+          updateMuscleConfirmButton();
+        };
+        originSection.appendChild(btn);
+      });
+      container.appendChild(originSection);
+
+      // Insertion question
+      const insertionSection = document.createElement('div');
+      insertionSection.style.display = 'flex';
+      insertionSection.style.flexDirection = 'column';
+      insertionSection.style.gap = '1rem';
+      
+      const insertionTitle = document.createElement('div');
+      insertionTitle.style.fontSize = '1.2rem';
+      insertionTitle.style.fontWeight = 'bold';
+      insertionTitle.textContent = t('selectInsertion');
+      insertionSection.appendChild(insertionTitle);
+
+      // Get wrong insertions (numChoices - 1 wrong answers)
+      let wrongInsertions = bodyList
+        .filter(e => e.type === 'muscle' && e.nom !== elem.nom)
+        .filter(e => {
+          const insertion = currentLang === 'FR' ? e.insertionFR : e.insertionEN;
+          return insertion && insertion.trim() !== '';
+        })
+        .map(e => currentLang === 'FR' ? e.insertionFR : e.insertionEN)
+        .filter((i, i2, arr) => arr.indexOf(i) === i2); // Remove duplicates
+      wrongInsertions = shuffle(wrongInsertions).slice(0, quizOptions.numChoices - 1);
+      
+      // Combine with correct answer and shuffle
+      const correctInsertion = currentLang === 'FR' ? (elem.insertionFR || '') : (elem.insertionEN || '');
+      let allInsertions = [...wrongInsertions, correctInsertion];
+      allInsertions = shuffle(allInsertions);
+
+      // Create buttons for each insertion
+      allInsertions.forEach(insertion => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-choice-btn';
+        btn.textContent = insertion;
+        btn.style = 'margin:0.5rem;padding:0.7rem 1.5rem;font-size:1.1rem;border-radius:12px;background:#2d3a4b;color:#fff;border:none;cursor:pointer;width:80%;transition:background-color 0.2s;';
+        btn.onclick = () => {
+          // Make all insertion buttons darker first
+          insertionSection.querySelectorAll('.quiz-choice-btn').forEach(b => {
+            b.style.backgroundColor = '#2d3a4b';
+          });
+          // Make clicked button lighter
+          btn.style.backgroundColor = '#4a5c73';
+          quizState.selectedInsertion = insertion;
+          updateMuscleConfirmButton();
+        };
+        insertionSection.appendChild(btn);
+      });
+      container.appendChild(insertionSection);
+
+      // Add confirm button
+      const confirmBtn = document.createElement('button');
+      confirmBtn.id = 'muscle-confirm-btn';
+      confirmBtn.textContent = t('confirm');
+      confirmBtn.style = 'margin-top:1rem;padding:0.7rem 2rem;font-size:1.1rem;border-radius:12px;background:#2d3a4b;color:#fff;border:none;cursor:pointer;opacity:0.5;';
+      confirmBtn.disabled = true;
+      confirmBtn.onclick = () => {
+        const correctOrigin = currentLang === 'FR' ? (elem.originFR || '') : (elem.originEN || '');
+        const correctInsertion = currentLang === 'FR' ? (elem.insertionFR || '') : (elem.insertionEN || '');
+        const originCorrect = quizState.selectedOrigin === correctOrigin;
+        const insertionCorrect = quizState.selectedInsertion === correctInsertion;
+        submitQuizAnswer(false, { origin: quizState.selectedOrigin, insertion: quizState.selectedInsertion }, originCorrect && insertionCorrect);
+      };
+      container.appendChild(confirmBtn);
+    } else if (quizOptions.quizMode === 'hard') {
       // Hard mode - text input with autocomplete
       const input = document.createElement('input');
       input.id = 'quiz-answer';
@@ -1117,14 +1268,26 @@ function showQuizQuestion() {
   }
 }
 
+function updateMuscleConfirmButton() {
+  const confirmBtn = document.getElementById('muscle-confirm-btn');
+  if (confirmBtn) {
+    const canConfirm = quizState.selectedOrigin && quizState.selectedInsertion;
+    confirmBtn.disabled = !canConfirm;
+    confirmBtn.style.opacity = canConfirm ? '1' : '0.5';
+  }
+}
+
 function submitQuizAnswer(timeout = false, selectedAnswer = null, isCorrect = null) {
   const q = quizState.questions[quizState.current];
   const elem = q.element;
-  const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
   
   let answer, correct;
-  if (quizOptions.quizMode === 'hard') {
+  if (quizOptions.quizMode === 'muscle') {
+    answer = selectedAnswer;
+    correct = isCorrect;
+  } else if (quizOptions.quizMode === 'hard') {
     answer = document.getElementById('quiz-answer').value.trim();
+    const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
     correct = !timeout && answer.localeCompare(correctName, undefined, { sensitivity: 'accent' }) === 0;
   } else {
     answer = selectedAnswer;
@@ -1140,35 +1303,58 @@ function submitQuizAnswer(timeout = false, selectedAnswer = null, isCorrect = nu
   });
 
   if (quizTimerInterval) { clearInterval(quizTimerInterval); quizTimerInterval = null; }
-  showQuizFeedback(correct, correctName, q.image);
+  showQuizFeedback(correct, elem, q.image);
 }
 
-function showQuizFeedback(correct, correctName, img) {
+function showQuizFeedback(correct, elem, img) {
   const feedbackDiv = document.getElementById('quiz-feedback');
   if (!feedbackDiv) return;
   
   // Disable inputs/buttons during feedback
-  if (quizOptions.quizMode === 'hard') {
+  if (quizOptions.quizMode === 'muscle') {
+    // Get correct answers
+    const correctOrigin = currentLang === 'FR' ? (elem.originFR || '') : (elem.originEN || '');
+    const correctInsertion = currentLang === 'FR' ? (elem.insertionFR || '') : (elem.insertionEN || '');
+    
+    // Highlight origin buttons
+    document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
+      btn.disabled = true;
+      if (btn.textContent === correctOrigin) {
+        btn.style.backgroundColor = '#2c8c2c'; // Green for correct
+      } else if (btn.textContent === quizState.selectedOrigin && btn.textContent !== correctOrigin) {
+        btn.style.backgroundColor = '#d13a3a'; // Red for incorrect
+      }
+    });
+    
+    // Highlight insertion buttons
+    document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
+      if (btn.textContent === correctInsertion) {
+        btn.style.backgroundColor = '#2c8c2c'; // Green for correct
+      } else if (btn.textContent === quizState.selectedInsertion && btn.textContent !== correctInsertion) {
+        btn.style.backgroundColor = '#d13a3a'; // Red for incorrect
+      }
+    });
+    
+    // Disable confirm button
+    const confirmBtn = document.getElementById('muscle-confirm-btn');
+    if (confirmBtn) confirmBtn.disabled = true;
+  } else if (quizOptions.quizMode === 'hard') {
     const input = document.getElementById('quiz-answer');
     if (input) input.disabled = true;
     const submitBtn = document.getElementById('quiz-submit-btn');
     if (submitBtn) submitBtn.disabled = true;
   } else if (quizOptions.quizMode === 'easy') {
-    // Easy mode - disable all choice buttons
     document.querySelectorAll('.quiz-choice-btn').forEach(btn => {
       btn.disabled = true;
     });
   } else if (quizOptions.quizMode === 'reverse') {
-    // Reverse mode - highlight correct and incorrect answers
     const currentQuestion = quizState.questions[quizState.current];
     document.querySelectorAll('.choice-container').forEach(container => {
       const elementName = container.getAttribute('data-element-name');
       if (elementName === currentQuestion.element.nom) {
-        // Correct answer - green border
         container.style.border = '4px solid #2c8c2c';
         container.style.transform = 'scale(1.02)';
       } else if (elementName === quizState.selectedElement.nom && !correct) {
-        // Wrong selected answer - red border
         container.style.border = '2px solid #d13a3a';
       }
     });
@@ -1178,7 +1364,16 @@ function showQuizFeedback(correct, correctName, img) {
   if (correct) {
     feedbackDiv.innerHTML = `<span class="result-correct">${t('correct')}</span>`;
   } else {
-    feedbackDiv.innerHTML = `<span class="result-wrong">${t('wrong')}</span><br>${escapeHTML(correctName)}`;
+    let feedback = `<span class="result-wrong">${t('wrong')}</span><br>`;
+    if (quizOptions.quizMode === 'muscle') {
+      const correctOrigin = currentLang === 'FR' ? (elem.originFR || '') : (elem.originEN || '');
+      const correctInsertion = currentLang === 'FR' ? (elem.insertionFR || '') : (elem.insertionEN || '');
+      feedback += `${t('origin')}: ${escapeHTML(correctOrigin)}<br>${t('insertion')}: ${escapeHTML(correctInsertion)}`;
+    } else {
+      const correctName = currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom);
+      feedback += escapeHTML(correctName);
+    }
+    feedbackDiv.innerHTML = feedback;
   }
 
   // Add line break
@@ -1272,7 +1467,6 @@ function showQuizResults() {
       const originalImg = document.createElement('img');
       originalImg.className = 'result-img-thumb';
       originalImg.src = getOriginalImagePath(a.image.file);
-      //originalImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
       originalImg.style.position = 'absolute';
       originalImg.style.top = '0';
       originalImg.style.left = '0';
@@ -1288,7 +1482,6 @@ function showQuizResults() {
       const variantImg = document.createElement('img');
       variantImg.className = 'result-img-thumb';
       variantImg.src = a.image.url;
-      //variantImg.alt = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
       variantImg.style.position = 'absolute';
       variantImg.style.top = '0';
       variantImg.style.left = '0';
@@ -1310,8 +1503,18 @@ function showQuizResults() {
     const displayName = currentLang === 'FR' ? (a.element.FR || a.element.nom) : (a.element.EN || a.element.nom);
     details.innerHTML = `<strong>${escapeHTML(displayName)}</strong><br>
       <span class="${a.correct ? 'result-correct' : 'result-wrong'}">${a.correct ? t('correct') : t('wrong')}</span>`;
+    
     if (!a.correct && a.answer) {
-      details.innerHTML += `<br><span style="color:#888">${escapeHTML(a.answer)}</span>`;
+      if (quizOptions.quizMode === 'muscle') {
+        const correctOrigin = currentLang === 'FR' ? (a.element.originFR || '') : (a.element.originEN || '');
+        const correctInsertion = currentLang === 'FR' ? (a.element.insertionFR || '') : (a.element.insertionEN || '');
+        details.innerHTML += `<br><span style="color:#888">
+          ${t('origin')}: ${escapeHTML(a.answer.origin)} → ${escapeHTML(correctOrigin)}<br>
+          ${t('insertion')}: ${escapeHTML(a.answer.insertion)} → ${escapeHTML(correctInsertion)}
+        </span>`;
+      } else {
+        details.innerHTML += `<br><span style="color:#888">${escapeHTML(a.answer)}</span>`;
+      }
     }
     div.appendChild(details);
     list.appendChild(div);
@@ -1485,15 +1688,91 @@ function showEncyclopediaModal(elem) {
   const content = document.getElementById('encyclo-modal-content');
   content.innerHTML = ''; // Clear content first
   
-  // Create header content
+  // Create header with type
   const header = document.createElement('div');
-  header.innerHTML = `<h2>${escapeHTML( currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom))}</h2>
-    <p><strong>${t('nameEN')}:</strong> ${escapeHTML(elem.EN || elem.nom)}</p>
-    <p><strong>Description (EN):</strong> ${escapeHTML(elem.descriptionEN || '')}</p>
-    <p><strong>${t('nameFR')}:</strong> ${escapeHTML(elem.FR || elem.nom)}</p>
-    <p><strong>Description (FR):</strong> ${escapeHTML(elem.descriptionFR || '')}</p>
+  header.innerHTML = `<h2>${escapeHTML(currentLang === 'FR' ? (elem.FR || elem.nom) : (elem.EN || elem.nom))}</h2>
     <p><strong>${t('type')}:</strong> ${escapeHTML(elem.type)}</p>`;
   content.appendChild(header);
+
+  // Create tab container
+  const tabContainer = document.createElement('div');
+  tabContainer.style.marginTop = '20px';
+  tabContainer.style.borderBottom = '1px solid #ccc';
+  tabContainer.style.display = 'flex';
+  tabContainer.style.gap = '20px';
+  tabContainer.style.marginBottom = '20px';
+
+  // Create tab buttons
+  const enTab = document.createElement('button');
+  enTab.textContent = 'English';
+  enTab.style.padding = '10px 20px';
+  enTab.style.border = 'none';
+  enTab.style.background = 'none';
+  enTab.style.cursor = 'pointer';
+  enTab.style.borderBottom = currentLang === 'EN' ? '2px solid #2d3a4b' : 'none';
+  enTab.style.color = currentLang === 'EN' ? '#2d3a4b' : '#666';
+  enTab.style.fontWeight = currentLang === 'EN' ? 'bold' : 'normal';
+
+  const frTab = document.createElement('button');
+  frTab.textContent = 'Français';
+  frTab.style.padding = '10px 20px';
+  frTab.style.border = 'none';
+  frTab.style.background = 'none';
+  frTab.style.cursor = 'pointer';
+  frTab.style.borderBottom = currentLang === 'FR' ? '2px solid #2d3a4b' : 'none';
+  frTab.style.color = currentLang === 'FR' ? '#2d3a4b' : '#666';
+  frTab.style.fontWeight = currentLang === 'FR' ? 'bold' : 'normal';
+
+  // Create content sections
+  const enContent = document.createElement('div');
+  enContent.style.display = currentLang === 'EN' ? 'block' : 'none';
+  enContent.innerHTML = `
+    <p><strong>${t('nameEN')}:</strong> ${escapeHTML(elem.EN || elem.nom)}</p>
+    <p><strong>Description :</strong> ${escapeHTML(elem.descriptionEN || '')}</p>
+    ${elem.type === 'muscle' ? `
+      <p><strong>Origin :</strong> ${escapeHTML(elem.originEN || '')}</p>
+      <p><strong>Insertion :</strong> ${escapeHTML(elem.insertionEN || '')}</p>
+    ` : ''}`;
+
+  const frContent = document.createElement('div');
+  frContent.style.display = currentLang === 'FR' ? 'block' : 'none';
+  frContent.innerHTML = `
+    <p><strong>${t('nameFR')}:</strong> ${escapeHTML(elem.FR || elem.nom)}</p>
+    <p><strong>Description :</strong> ${escapeHTML(elem.descriptionFR || '')}</p>
+    ${elem.type === 'muscle' ? `
+      <p><strong>Origin :</strong> ${escapeHTML(elem.originFR || '')}</p>
+      <p><strong>Insertion :</strong> ${escapeHTML(elem.insertionFR || '')}</p>
+    ` : ''}`;
+
+  // Add tab click handlers
+  enTab.onclick = () => {
+    enTab.style.borderBottom = '2px solid #2d3a4b';
+    enTab.style.color = '#2d3a4b';
+    enTab.style.fontWeight = 'bold';
+    frTab.style.borderBottom = 'none';
+    frTab.style.color = '#666';
+    frTab.style.fontWeight = 'normal';
+    enContent.style.display = 'block';
+    frContent.style.display = 'none';
+  };
+
+  frTab.onclick = () => {
+    frTab.style.borderBottom = '2px solid #2d3a4b';
+    frTab.style.color = '#2d3a4b';
+    frTab.style.fontWeight = 'bold';
+    enTab.style.borderBottom = 'none';
+    enTab.style.color = '#666';
+    enTab.style.fontWeight = 'normal';
+    frContent.style.display = 'block';
+    enContent.style.display = 'none';
+  };
+
+  // Assemble the tabbed interface
+  tabContainer.appendChild(enTab);
+  tabContainer.appendChild(frTab);
+  content.appendChild(tabContainer);
+  content.appendChild(enContent);
+  content.appendChild(frContent);
 
   // Images by category
   const norm = normalizeName(elem.nom);
@@ -1508,6 +1787,7 @@ function showEncyclopediaModal(elem) {
         // Create section
         const section = document.createElement('div');
         section.className = 'gallery-section';
+        section.style.marginTop = '30px';
         
         // Add title
         const title = document.createElement('div');
