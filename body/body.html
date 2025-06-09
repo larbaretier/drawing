@@ -1463,6 +1463,17 @@ function renderEncyclopediaTable() {
 function getImagesCount(elem) {
   const norm = normalizeName(elem.nom);
   if (!imagesByElement[norm]) return 0;
+  
+  // If we're in the encyclopedia table, count all images
+  if (document.getElementById('section-encyclopedia') && !document.getElementById('section-encyclopedia').classList.contains('hidden')) {
+    let count = 0;
+    for (const sub of SUBFOLDERS) {
+      count += imagesByElement[norm][sub].length;
+    }
+    return count;
+  }
+  
+  // For quiz mode, only count selected subfolders
   let count = 0;
   for (const sub of quizOptions.selectedSubfolders) {
     count += imagesByElement[norm][sub].length;
@@ -1488,7 +1499,8 @@ function showEncyclopediaModal(elem) {
   const norm = normalizeName(elem.nom);
   if (imagesByElement[norm]) {
     let hasAnyImages = false;
-    for (const sub of quizOptions.selectedSubfolders) {
+    // Show all categories that have images, regardless of filters
+    for (const sub of SUBFOLDERS) {
       const imgs = imagesByElement[norm][sub];
       if (imgs.length > 0) {
         hasAnyImages = true;
@@ -1526,7 +1538,6 @@ function showEncyclopediaModal(elem) {
           // Original image (background)
           const originalImg = document.createElement('img');
           originalImg.src = getOriginalImagePath(img.file);
-          //originalImg.alt = elem.nom;
           originalImg.style.position = 'absolute';
           originalImg.style.top = '0';
           originalImg.style.left = '0';
@@ -1540,7 +1551,6 @@ function showEncyclopediaModal(elem) {
           // Variant image (overlay)
           const variantImg = document.createElement('img');
           variantImg.src = img.url;
-          //variantImg.alt = elem.nom;
           variantImg.style.position = 'absolute';
           variantImg.style.top = '0';
           variantImg.style.left = '0';
